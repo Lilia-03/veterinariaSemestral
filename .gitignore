@@ -1,0 +1,19 @@
+#ignorar archivo de conexión
+backend/include/conexion.php
+
+#ignorar librerias creadas por composer (para el tema de los pdf)
+vendor/
+
+# Ignorar subidas de archivos
+/uploads/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno
+.env
+
+# Logs y temporales
+*.log
+*.tmp
