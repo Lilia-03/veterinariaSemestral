@@ -181,14 +181,8 @@
     <script>
         // Inicializar protección de autenticación
         initAuth().then(auth => {
-            console.log('Usuario en localStorage:', usuario);
+            console.log('Usuario en localStorage:', AuthUtils.getUsuario());
             
-            // Verificar que el usuario sea administrador
-            if (!AuthUtils.isAdmin()) {
-                alert('No tienes permisos de administrador');
-                window.location.href = '../login.html';
-                return;
-            }
             
             // Cargar estadísticas del dashboard
             cargarEstadisticasAdmin();
