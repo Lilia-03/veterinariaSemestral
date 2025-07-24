@@ -32,10 +32,5 @@ class SanitizarEntrada {
     public static function validarTexto($valor) {
         return preg_match("/^[a-zA-Z\s]+$/", trim($valor));
     }
-
-    public static function limpiarEmail($valor) {
-        $valor = self::limpiarCadena($valor);
-        return filter_var($valor, FILTER_VALIDATE_EMAIL);
-    }
 }
 ?>

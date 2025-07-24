@@ -13,7 +13,7 @@
 html {
     width: 100%;
     height: 100%;
-    background-image: url('../imagenes/fondo de pantalla para formularios.png');
+    background-image: url('../img/fondoPatitas.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -433,21 +433,6 @@ body {
 }
 
 
-/* FOOTER */
-.footer {
-    background-color: #035E8D;
-    color: white;
-    padding: 1rem 0;
-    margin-top: auto;
-    text-align: center;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
 
 /* Responsive */
 @media (max-width: 992px) {
