@@ -1563,5 +1563,511 @@ EXEC CambiarEstadoUsuario 3, 0, 2;
 
 -- 6. Operador intenta desactivar admin (error)
 EXEC CambiarEstadoUsuario 1, 0, 2;
-------------------------------------------
 
+
+---------------------------------------------------------------
+-------------------------------------------------------------------
+-- PROCEDIMIENTOS ALMACENADOS PARA GESTIÓN DE INVENTARIO
+-- ====================================================
+-----------------
+-- Procedimiento actualizado para incluir el precio
+CREATE PROCEDURE ObtenerProductosInventario
+AS
+BEGIN
+    SELECT DISTINCT 
+        sp.IDITEM, 
+        sp.NombreProducto, 
+        sp.PrecioITEM, 
+        ISNULL(i.CantidadDisponible, 0) AS CantidadDisponible
+    FROM Servicio_Producto sp
+    LEFT JOIN (
+        SELECT IDITEM, CantidadDisponible,
+               ROW_NUMBER() OVER (PARTITION BY IDITEM ORDER BY IDInventario DESC) AS rn
+        FROM Inventario
+    ) i ON sp.IDITEM = i.IDITEM AND i.rn = 1
+    WHERE sp.Tipo = 'Producto'
+    ORDER BY sp.NombreProducto
+END
+------------------------------------
+CREATE PROCEDURE ObtenerDetalleProductoServicio
+    @IDITEM INT
+AS
+BEGIN
+    SELECT sp.*, 
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN ISNULL(i.CantidadDisponible, 0)
+            ELSE NULL
+        END AS CantidadDisponible
+    FROM Servicio_Producto sp
+    LEFT JOIN (
+        SELECT IDITEM, CantidadDisponible,
+               ROW_NUMBER() OVER (PARTITION BY IDITEM ORDER BY IDInventario DESC) AS rn
+        FROM Inventario
+    ) i ON sp.IDITEM = i.IDITEM AND i.rn = 1
+    WHERE sp.IDITEM = @IDITEM
+END
+
+------------------------------------
+-- Procedimiento para obtener reporte de inventario para Excel
+CREATE PROCEDURE ObtenerReporteInventario
+AS
+BEGIN
+    SELECT 
+        sp.IDITEM as 'Código',
+        sp.NombreProducto as 'Producto',
+        sp.PrecioITEM as 'Precio Unitario',
+        ISNULL(i.CantidadDisponible, 0) as 'Cantidad Disponible',
+        (sp.PrecioITEM * ISNULL(i.CantidadDisponible, 0)) as 'Valor Total'
+    FROM Servicio_Producto sp
+    LEFT JOIN (
+        SELECT IDITEM, CantidadDisponible,
+        ROW_NUMBER() OVER (PARTITION BY IDITEM ORDER BY IDInventario DESC) as rn
+        FROM Inventario
+    ) i ON sp.IDITEM = i.IDITEM AND i.rn = 1
+    WHERE sp.Tipo = 'Producto'
+    ORDER BY sp.NombreProducto;
+END;
+
+------------------------------------------------------------------------------
+
+--PROCEDIMIENTO PARA AGREGAR PRODUCTO
+-- ========================================
+CREATE PROCEDURE AgregarProducto
+    @Codigo NVARCHAR(50),
+    @Nombre NVARCHAR(100),
+    @Precio MONEY,
+    @Stock INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- Verificar si ya existe el código
+        IF EXISTS (SELECT 1 FROM Servicio_Producto WHERE IDITEM = @Codigo)
+        BEGIN
+            RAISERROR('Ya existe un producto con ese código', 16, 1);
+            RETURN;
+        END
+        
+        -- Insertar en Servicio_Producto (necesitamos usar IDENTITY_INSERT si queremos código personalizado)
+        DECLARE @NewID INT;
+        
+        INSERT INTO Servicio_Producto (NombreProducto, Tipo, PrecioITEM)
+        VALUES (@Nombre, 'Producto', @Precio);
+        
+        SET @NewID = SCOPE_IDENTITY();
+        
+        -- Insertar en Inventario con el stock inicial
+        INSERT INTO Inventario (IDITEM, EntradaInventario, SalidaInventario, CantidadDisponible)
+        VALUES (@NewID, @Stock, 0, @Stock);
+        
+        COMMIT TRANSACTION;
+        
+        SELECT @NewID as NuevoID, 'Producto agregado exitosamente' as Mensaje;
+        
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+----------------------------------------------------------------------
+--PROCEDIMIENTO PARA ELIMINAR PRODUCTO
+-- ========================================
+CREATE PROCEDURE EliminarProducto
+    @IDITEM INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- Verificar si el producto existe
+        IF NOT EXISTS (SELECT 1 FROM Servicio_Producto WHERE IDITEM = @IDITEM)
+        BEGIN
+            RAISERROR('El producto no existe', 16, 1);
+            RETURN;
+        END
+        
+        -- Verificar si tiene movimientos en ventas
+        IF EXISTS (SELECT 1 FROM Venta WHERE IDITEM = @IDITEM)
+        BEGIN
+            RAISERROR('No se puede eliminar el producto porque tiene movimientos registrados', 16, 1);
+            RETURN;
+        END
+        
+        -- Eliminar del inventario primero
+        DELETE FROM Inventario WHERE IDITEM = @IDITEM;
+        
+        -- Eliminar del catálogo de productos
+        DELETE FROM Servicio_Producto WHERE IDITEM = @IDITEM;
+        
+        COMMIT TRANSACTION;
+        
+        SELECT 'Producto eliminado exitosamente' as Mensaje;
+        
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+--------------------------------------------------------
+-- PROCEDIMIENTO PARA VERIFICAR CÓDIGO DE PRODUCTO
+-- ================================================
+CREATE PROCEDURE VerificarCodigoProducto
+    @Codigo NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM Servicio_Producto WHERE IDITEM = @Codigo)
+            THEN 1 
+            ELSE 0 
+        END as Existe;
+END;
+GO
+----------------------------------------------------------------------------
+--PROCEDIMIENTO MEJORADO PARA OBTENER PRODUCTOS DE INVENTARIO
+-- ============================================================
+ALTER PROCEDURE ObtenerProductosInventario
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.PrecioITEM,
+        sp.Tipo,
+        ISNULL(i.CantidadDisponible, 0) as CantidadDisponible,
+        ISNULL(i.EntradaInventario, 0) as EntradaInventario,
+        ISNULL(i.SalidaInventario, 0) as SalidaInventario
+    FROM Servicio_Producto sp
+    LEFT JOIN Inventario i ON sp.IDITEM = i.IDITEM
+    WHERE sp.Tipo = 'Producto'
+    ORDER BY sp.NombreProducto;
+END;
+GO
+-------------------------------------------------------------------
+--PROCEDIMIENTO PARA BUSCAR PRODUCTOS
+-- =====================================
+CREATE PROCEDURE BuscarProductos
+    @Termino NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.PrecioITEM,
+        sp.Tipo,
+        ISNULL(i.CantidadDisponible, 0) as CantidadDisponible
+    FROM Servicio_Producto sp
+    LEFT JOIN Inventario i ON sp.IDITEM = i.IDITEM
+    WHERE sp.Tipo = 'Producto'
+      AND (sp.NombreProducto LIKE '%' + @Termino + '%' 
+           OR CAST(sp.IDITEM as NVARCHAR) LIKE '%' + @Termino + '%')
+    ORDER BY sp.NombreProducto;
+END;
+GO
+-------------------------------------------------------------
+--PROCEDIMIENTO PARA OBTENER PRODUCTO POR ID
+-- ============================================
+CREATE PROCEDURE ObtenerProductoPorId
+    @IDITEM INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.PrecioITEM,
+        sp.Tipo,
+        ISNULL(i.CantidadDisponible, 0) as CantidadDisponible,
+        ISNULL(i.EntradaInventario, 0) as EntradaInventario,
+        ISNULL(i.SalidaInventario, 0) as SalidaInventario
+    FROM Servicio_Producto sp
+    LEFT JOIN Inventario i ON sp.IDITEM = i.IDITEM
+    WHERE sp.IDITEM = @IDITEM;
+END;
+GO
+-----------------------------------------------------------------
+--PROCEDIMIENTO MEJORADO PARA ACTUALIZAR INVENTARIO
+-- ==================================================
+ALTER PROCEDURE ActualizarInventario
+    @IDITEM INT,
+    @CantidadAgregada INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- Verificar si el producto existe
+        IF NOT EXISTS (SELECT 1 FROM Servicio_Producto WHERE IDITEM = @IDITEM)
+        BEGIN
+            RAISERROR('El producto no existe', 16, 1);
+            RETURN;
+        END
+        
+        -- Verificar si existe registro en inventario
+        IF EXISTS (SELECT 1 FROM Inventario WHERE IDITEM = @IDITEM)
+        BEGIN
+            -- Actualizar inventario existente
+            UPDATE Inventario 
+            SET 
+                EntradaInventario = EntradaInventario + @CantidadAgregada,
+                CantidadDisponible = CantidadDisponible + @CantidadAgregada
+            WHERE IDITEM = @IDITEM;
+        END
+        ELSE
+        BEGIN
+            -- Crear nuevo registro en inventario
+            INSERT INTO Inventario (IDITEM, EntradaInventario, SalidaInventario, CantidadDisponible)
+            VALUES (@IDITEM, @CantidadAgregada, 0, @CantidadAgregada);
+        END
+        
+        COMMIT TRANSACTION;
+        
+        SELECT 'Inventario actualizado exitosamente' as Mensaje;
+        
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+---------------------------------------------------------------
+-------------------------------------------------------------------
+-- PROCEDIMIENTOS ALMACENADOS PARA GESTIÓN DE SERVICIOS
+-- ====================================================
+
+-- 1. PROCEDIMIENTO PARA AGREGAR SERVICIO
+CREATE OR ALTER PROCEDURE AgregarServicio
+    @Codigo NVARCHAR(50),
+    @Nombre NVARCHAR(100),
+    @Precio MONEY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- Verificar si ya existe un servicio con el mismo código
+        -- Buscamos por el código que está al inicio del nombre
+        IF EXISTS (SELECT 1 FROM Servicio_Producto 
+                  WHERE NombreProducto LIKE @Codigo + ' -%' AND Tipo = 'Servicio')
+        BEGIN
+            RAISERROR('Ya existe un servicio con ese código', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        -- Insertar el servicio
+        -- Guardamos el código como parte del nombre para poder identificarlo después
+        DECLARE @NombreCompleto NVARCHAR(200) = @Codigo + ' - ' + @Nombre;
+        
+        INSERT INTO Servicio_Producto (NombreProducto, Tipo, PrecioITEM)
+        VALUES (@NombreCompleto, 'Servicio', @Precio);
+        
+        -- Obtener el ID generado automáticamente
+        DECLARE @NuevoID INT = SCOPE_IDENTITY();
+        
+        COMMIT TRANSACTION;
+        
+        SELECT @NuevoID as NuevoID, @Codigo as CodigoUtilizado, 'Servicio agregado exitosamente' as Mensaje;
+        
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+GO
+-----------------------------------------------------------------------------------
+-- 2. PROCEDIMIENTO PARA VERIFICAR CÓDIGO
+CREATE OR ALTER PROCEDURE VerificarCodigoServicio
+    @Codigo NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM Servicio_Producto 
+                        WHERE NombreProducto LIKE @Codigo + ' -%' AND Tipo = 'Servicio')
+            THEN 1 
+            ELSE 0 
+        END as Existe;
+END;
+GO
+-------------------------------------------------------------------------------------
+-- 3. PROCEDIMIENTO PARA OBTENER SERVICIOS
+CREATE OR ALTER PROCEDURE ObtenerServicios
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        IDITEM,
+        -- Extraer el código del nombre (parte antes del ' - ')
+        CASE 
+            WHEN CHARINDEX(' - ', NombreProducto) > 0 
+            THEN LEFT(NombreProducto, CHARINDEX(' - ', NombreProducto) - 1)
+            ELSE CAST(IDITEM AS NVARCHAR)
+        END as CodigoDisplay,
+        -- Extraer solo el nombre (parte después del ' - ')
+        CASE 
+            WHEN CHARINDEX(' - ', NombreProducto) > 0 
+            THEN SUBSTRING(NombreProducto, CHARINDEX(' - ', NombreProducto) + 3, LEN(NombreProducto))
+            ELSE NombreProducto
+        END as NombreServicio,
+        NombreProducto as NombreCompleto,
+        PrecioITEM,
+        Tipo
+    FROM Servicio_Producto 
+    WHERE Tipo = 'Servicio'
+    ORDER BY NombreProducto;
+END;
+GO
+-----------------------------------------------------------------------
+-- 4. PROCEDIMIENTO PARA BUSCAR SERVICIOS
+CREATE OR ALTER PROCEDURE BuscarServicios
+    @Termino NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        IDITEM,
+        -- Extraer el código del nombre
+        CASE 
+            WHEN CHARINDEX(' - ', NombreProducto) > 0 
+            THEN LEFT(NombreProducto, CHARINDEX(' - ', NombreProducto) - 1)
+            ELSE CAST(IDITEM AS NVARCHAR)
+        END as CodigoDisplay,
+        -- Extraer solo el nombre
+        CASE 
+            WHEN CHARINDEX(' - ', NombreProducto) > 0 
+            THEN SUBSTRING(NombreProducto, CHARINDEX(' - ', NombreProducto) + 3, LEN(NombreProducto))
+            ELSE NombreProducto
+        END as NombreServicio,
+        NombreProducto as NombreCompleto,
+        PrecioITEM,
+        Tipo
+    FROM Servicio_Producto 
+    WHERE Tipo = 'Servicio'
+      AND (NombreProducto LIKE '%' + @Termino + '%' 
+           OR CAST(IDITEM as NVARCHAR) LIKE '%' + @Termino + '%')
+    ORDER BY NombreProducto;
+END;
+GO
+---------------------------------------------------------------
+-- 5. PROCEDIMIENTO PARA OBTENER SERVICIO POR ID
+CREATE OR ALTER PROCEDURE ObtenerServicioPorId
+    @IDITEM INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        IDITEM,
+        -- Extraer el código del nombre
+        CASE 
+            WHEN CHARINDEX(' - ', NombreProducto) > 0 
+            THEN LEFT(NombreProducto, CHARINDEX(' - ', NombreProducto) - 1)
+            ELSE CAST(IDITEM AS NVARCHAR)
+        END as CodigoDisplay,
+        -- Extraer solo el nombre
+        CASE 
+            WHEN CHARINDEX(' - ', NombreProducto) > 0 
+            THEN SUBSTRING(NombreProducto, CHARINDEX(' - ', NombreProducto) + 3, LEN(NombreProducto))
+            ELSE NombreProducto
+        END as NombreServicio,
+        NombreProducto as NombreCompleto,
+        PrecioITEM,
+        Tipo
+    FROM Servicio_Producto 
+    WHERE IDITEM = @IDITEM AND Tipo = 'Servicio';
+END;
+GO
+---------------------------------------------------------
+-- 6. PROCEDIMIENTO PARA ELIMINAR SERVICIO - CORREGIDO SIN DEPENDENCIAS EXTERNAS
+CREATE OR ALTER PROCEDURE EliminarServicio
+    @IDITEM INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- Verificar si el servicio existe
+        IF NOT EXISTS (SELECT 1 FROM Servicio_Producto WHERE IDITEM = @IDITEM AND Tipo = 'Servicio')
+        BEGIN
+            RAISERROR('El servicio no existe', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        EN
+        -- Eliminar el servicio
+        DELETE FROM Servicio_Producto 
+        WHERE IDITEM = @IDITEM AND Tipo = 'Servicio';
+        
+        -- Verificar si se eliminó alguna fila
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR('No se pudo eliminar el servicio', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        COMMIT TRANSACTION;
+        
+        SELECT 'Servicio eliminado exitosamente' as Mensaje;
+        
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
+        DECLARE @ErrorState INT = ERROR_STATE();
+        
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
+END;
+GO
+---------------------------------------------------------
+-- 7. PROCEDIMIENTO ADICIONAL PARA OBTENER ESTADÍSTICAS
+CREATE OR ALTER PROCEDURE ObtenerEstadisticasServicios
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        COUNT(*) as TotalServicios,
+        AVG(CAST(PrecioITEM as FLOAT)) as PrecioPromedio,
+        MIN(PrecioITEM) as PrecioMinimo,
+        MAX(PrecioITEM) as PrecioMaximo,
+        SUM(CASE WHEN PrecioITEM > 0 THEN 1 ELSE 0 END) as ServiciosConPrecio
+    FROM Servicio_Producto 
+    WHERE Tipo = 'Servicio';
+END;
+GO
