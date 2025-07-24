@@ -17,6 +17,114 @@ class Conexion {
         return $this->pdo;
     }
 
+     // ========== MÉTODOS DE AUTENTICACIÓN del Usuario ==========
+    
+    public function autenticarUsuario($nombreUsuario, $password) {
+        try {
+            // Usar el procedimiento almacenado AutenticarUsuario
+            $sql = "EXEC AutenticarUsuario ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$nombreUsuario]);
+            
+            $usuario = $stmt->fetch();
+            
+            if ($usuario && password_verify($password, $usuario['PasswordHash'])) {
+                // Verificar si el usuario está activo
+                if (!$usuario['Activo']) {
+                    return [
+                        'success' => false,
+                        'message' => 'Usuario desactivado. Contacte al administrador.'
+                    ];
+                }
+                
+                // Obtener permisos del usuario
+                $permisos = $this->obtenerPermisos($usuario['UsuarioID']);
+                
+                return [
+                    'success' => true,
+                    'usuario' => [
+                        'id' => $usuario['UsuarioID'],
+                        'nombreUsuario' => $usuario['NombreUsuario'],
+                        'email' => $usuario['Email'],
+                        'nombreCompleto' => $usuario['NombreCompleto'],
+                        'rolId' => $usuario['RolID'],
+                        'nombreRol' => $usuario['NombreRol'],
+                        'cedulaCliente' => $usuario['CedulaCliente'],
+                        'permisos' => $permisos
+                    ]
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Credenciales incorrectas'
+                ];
+            }
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error en el servidor: ' . $e->getMessage()
+            ];
+        }
+    }
+    
+    public function obtenerPermisos($usuarioId) {
+        try {
+            $sql = "EXEC ObtenerPermisosUsuario ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$usuarioId]);
+            
+            $permisos = [];
+            while ($row = $stmt->fetch()) {
+                $permisos[] = $row['NombrePermiso'];
+            }
+            
+            return $permisos;
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+    
+    public function obtenerInfoCompleta($usuarioId) {
+        try {
+            $sql = "EXEC ObtenerInfoCompletaUsuario ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$usuarioId]);
+            
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+    public function crearUsuario($datos, $usuarioCreadorId = null) {
+        try {
+            $sql = "EXEC CrearUsuario ?, ?, ?, ?, ?, ?, ?";
+            $stmt = $this->pdo->prepare($sql);
+            
+            $passwordHash = password_hash($datos['password'], PASSWORD_DEFAULT);
+            
+            $stmt->execute([
+                $datos['nombreUsuario'],
+                $datos['email'],
+                $passwordHash,
+                $datos['nombreCompleto'],
+                $datos['rolId'],
+                $datos['cedulaCliente'],
+                $usuarioCreadorId
+            ]);
+            
+            return [
+                'success' => true,
+                'message' => 'Usuario creado exitosamente'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error al crear usuario: ' . $e->getMessage()
+            ];
+        }
+    }
+
     public function registrarCliente($cedula, $nombre, $telefono, $email, $direccion) {
         $sql = "EXEC RegistrarCliente @Cedula = ?, @Nombre = ?, @Teléfono = ?, @Email = ?, @Dirección = ?";
         $stmt = $this->pdo->prepare($sql);

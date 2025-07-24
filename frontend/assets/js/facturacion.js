@@ -280,7 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Cargar productos desde la base de datos
     async function cargarProductos() {
         try {
-            const response = await fetch('../controllers/facturacionController.php?accion=obtenerProductos');
+            // RUTA CORREGIDA: Desde frontend/admin/ hacia backend/controller/
+            const response = await fetch('../../backend/controller/facturacionController.php?accion=obtenerProductos');
             const result = await response.json();
             
             if (result.estado === 'ok') {
@@ -289,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     result.productos.forEach(producto => {
                         const option = document.createElement('option');
                         option.value = producto.IDITEM;
-                        option.textContent = `${producto.NombreProducto} - $${parseFloat(producto.PrecioITEM).toFixed(2)}`;
+                        option.textContent = `${producto.NombreProducto} - ${parseFloat(producto.PrecioITEM).toFixed(2)}`;
                         option.dataset.precio = producto.PrecioITEM;
                         option.dataset.nombre = producto.NombreProducto;
                         select.appendChild(option);
@@ -308,7 +309,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Cargar servicios desde la base de datos
     async function cargarServicios() {
         try {
-            const response = await fetch('../controllers/facturacionController.php?accion=obtenerServicios');
+            // RUTA CORREGIDA: Desde frontend/admin/ hacia backend/controller/
+            const response = await fetch('../../backend/controller/facturacionController.php?accion=obtenerServicios');
             const result = await response.json();
             
             if (result.estado === 'ok') {
@@ -317,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     result.servicios.forEach(servicio => {
                         const option = document.createElement('option');
                         option.value = servicio.IDITEM;
-                        option.textContent = `${servicio.NombreProducto} - $${parseFloat(servicio.PrecioITEM).toFixed(2)}`;
+                        option.textContent = `${servicio.NombreProducto} - ${parseFloat(servicio.PrecioITEM).toFixed(2)}`;
                         option.dataset.precio = servicio.PrecioITEM;
                         option.dataset.nombre = servicio.NombreProducto;
                         select.appendChild(option);
@@ -363,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Buscar cliente real en la base de datos
                 console.log("🔍 Buscando cliente con cédula:", cedula);
                 
-                const response = await fetch(`../controllers/facturacionController.php?accion=obtenerCliente&cedula=${encodeURIComponent(cedula)}`);
+                const response = await fetch(`../../backend/controller/facturacionController.php?accion=obtenerCliente&cedula=${encodeURIComponent(cedula)}`);
                 
                 if (!response.ok) {
                     throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
@@ -444,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Buscar mascotas del cliente
     async function buscarMascotas(cedula) {
         try {
-            const response = await fetch(`../controllers/facturacionController.php?accion=obtenerMascotas&cedula=${encodeURIComponent(cedula)}`);
+            const response = await fetch(`../../backend/controller/facturacionController.php?accion=obtenerMascotas&cedula=${encodeURIComponent(cedula)}`);
             const result = await response.json();
             
             const select = document.getElementById('mascotaSelect');
@@ -713,7 +715,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 idMascota: facturaActual.mascota && facturaActual.mascota.id !== 0 ? facturaActual.mascota.id : null
             };
 
-            const response = await fetch('../controllers/facturacionController.php?accion=generarFactura', {
+            const response = await fetch('../../backend/controller/facturacionController.php?accion=generarFactura', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -764,7 +766,7 @@ document.addEventListener("DOMContentLoaded", () => {
             cantidad: producto.cantidad
         };
 
-        const response = await fetch('../controllers/facturacionController.php?accion=agregarProducto', {
+        const response = await fetch('../../backend/controller/facturacionController.php?accion=agregarProducto', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -787,7 +789,7 @@ document.addEventListener("DOMContentLoaded", () => {
             idItem: servicio.id
         };
 
-        const response = await fetch('../controllers/facturacionController.php?accion=agregarServicio', {
+        const response = await fetch('../../backend/controller/facturacionController.php?accion=agregarServicio', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -806,7 +808,7 @@ document.addEventListener("DOMContentLoaded", () => {
             idFactura: facturaActual.id
         };
 
-        const response = await fetch('../controllers/facturacionController.php?accion=completarFactura', {
+        const response = await fetch('../../backend/controller/facturacionController.php?accion=completarFactura', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -949,7 +951,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         try {
             // llamar al controlador PHP para generar el PDF
-            const pdfUrl = `../controllers/generarPDF.php?id=${facturaActual.id}`;
+            const pdfUrl = `../../backend/controller/generarPDF.php?id=${facturaActual.id}`;
             
             console.log("📄 Descargando PDF desde:", pdfUrl);
             
