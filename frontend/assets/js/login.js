@@ -98,11 +98,11 @@ async function realizarLogin(usuario, password) {
 function determinarRedirect(rolId) {
     switch (rolId) {
         case 1: // Administrador
-            return '../frontend/admin/admin.html';  // CAMBIAR A admin.html
+            return 'admin/admin.html';  // CAMBIAR A admin.html
         case 2: // Trabajador/Operador
-            return '../frontend/trabajador/trabajador.html';
+            return 'trabajador/trabajador.html';
         case 3: // Cliente
-            return '../frontend/cliente/cliente.html';
+            return 'cliente/cliente.html';
         default:
             return 'index.html';
     }

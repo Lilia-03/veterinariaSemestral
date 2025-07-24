@@ -97,15 +97,15 @@ class AuthController {
     
     private function determinarRedirect($rolId) {
     // Obtener la ruta base del proyecto
-    $baseUrl = '/veterinariaSemestral/';
+    $baseUrl = '/veterinariaSemestral/frontend/';
     
     switch ($rolId) {
         case 1: // Administrador
-            return $baseUrl . 'frontend/admin/admin.html';
+            return $baseUrl . 'admin/admin.html';
         case 2: // Operador/Trabajador
-            return $baseUrl . 'frontend/trabajador/mostrarFactura.html';
+            return $baseUrl . 'trabajador/trabajador.html';
         case 3: // Cliente
-            return $baseUrl . 'frontend/cliente/mostrarFactura.html';
+            return $baseUrl . 'cliente/cliente.html';
         default:
             return $baseUrl . 'index.html';
     }
