@@ -181,7 +181,7 @@
     <script>
         // Inicializar protección de autenticación
         initAuth().then(auth => {
-            console.log('Dashboard de administrador protegido y cargado');
+            console.log('Usuario en localStorage:', usuario);
             
             // Verificar que el usuario sea administrador
             if (!AuthUtils.isAdmin()) {

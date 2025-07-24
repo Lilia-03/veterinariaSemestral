@@ -1,7 +1,7 @@
 // frontend/assets/js/auth-middleware.js
 class AuthMiddleware {
     constructor() {
-        this.apiUrl = '../../backend/controller/authController.php';
+        this.apiUrl = '/veterinariaSemestral/backend/controller/authController.php';
         this.init();
     }
     
@@ -23,6 +23,8 @@ class AuthMiddleware {
         try {
             const response = await fetch(`${this.apiUrl}?action=verificar`);
             const data = await response.json();
+
+            console.log('Respuesta de backend:', data);
             
             if (data.success) {
                 // Actualizar localStorage con datos frescos
