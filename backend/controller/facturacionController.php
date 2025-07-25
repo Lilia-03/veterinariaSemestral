@@ -82,6 +82,8 @@ try {
             }
 
             if ($accion === 'generarFactura') {
+                session_start(); // Iniciar sesión
+
                 $cedulaCliente = $input['cedulaCliente'] ?? '';
                 $idMascota = $input['idMascota'] ?? null;
                 
@@ -89,9 +91,14 @@ try {
                     echo json_encode(["estado" => "error", "mensaje" => "Cédula del cliente requerida"]);
                     exit;
                 }
+                // Verificar autenticación
+                if (!isset($_SESSION['usuario_id'])) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
+                    exit;
+                }
 
                 $factura->setDatos($cedulaCliente, $idMascota);
-                $idFactura = $factura->generar();
+                $idFactura = $factura->generar($_SESSION['usuario_id']);
                 
                 echo json_encode([
                     "estado" => "ok", 

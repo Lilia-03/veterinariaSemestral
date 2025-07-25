@@ -21,32 +21,45 @@ class Factura {
         $this->idMascota = $idMascota ? SanitizarEntrada::validarEntero($idMascota) : null;
     }
 
-    // Generar nueva factura
-    public function generar() {
-    try {
-        $sql = "EXEC GenerarFactura ?, ?";
-        $stmt = $this->conexion->getPDO()->prepare($sql);
-        $stmt->execute([$this->cedulaCliente, $this->idMascota]);
-        
-        // Saltear cualquier resultado que no tenga campos (PRINT statements) y recibe el id de la factura
-        do {
-            if ($stmt->columnCount() > 0) {
-                $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($resultado && isset($resultado['IDFactura'])) {
-                    $this->idFactura = $resultado['IDFactura'];
-                    return $this->idFactura;
+    // Generar nueva factura CON FIRMA
+    public function generar($usuarioFirma = null) {
+        try {
+            // Si no se pasa usuario, intentar obtener de sesión
+            if (!$usuarioFirma) {
+                if (!isset($_SESSION)) {
+                    session_start();
                 }
+                $usuarioFirma = $_SESSION['usuario_id'] ?? null;
             }
-        } while ($stmt->nextRowset());
-        
-        throw new Exception("No se pudo obtener el ID de la factura");
-        
-    } catch (PDOException $e) {
-        throw new Exception("Error al generar factura: " . $e->getMessage());
-    }
-}
+            
+            if (!$usuarioFirma) {
+                throw new Exception("Se requiere un usuario autenticado para firmar la factura");
+            }
 
-    // Agregar producto a la factura
+            // AHORA CON 3 PARÁMETROS
+            $sql = "EXEC GenerarFactura ?, ?, ?";
+            $stmt = $this->conexion->getPDO()->prepare($sql);
+            $stmt->execute([$this->cedulaCliente, $this->idMascota, $usuarioFirma]);
+            
+            // Saltear cualquier resultado que no tenga campos y recibir el id de la factura
+            do {
+                if ($stmt->columnCount() > 0) {
+                    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($resultado && isset($resultado['IDFactura'])) {
+                        $this->idFactura = $resultado['IDFactura'];
+                        return $this->idFactura;
+                    }
+                }
+            } while ($stmt->nextRowset());
+            
+            throw new Exception("No se pudo obtener el ID de la factura");
+            
+        } catch (PDOException $e) {
+            throw new Exception("Error al generar factura: " . $e->getMessage());
+        }
+    }
+
+    // agregar producto a la factura
     public function agregarProducto($idItem, $cantidad) {
         try {
             $sql = "EXEC ComprarProducto @IDITEM = ?, @Cantidad = ?, @IDFactura = ?";
@@ -57,7 +70,6 @@ class Factura {
         }
     }
 
-    // Agregar servicio a la factura
     public function agregarServicio($idMascota, $idItem) {
         try {
             $sql = "EXEC RegistrarServicioMascota @IDMascota = ?, @IDITEM = ?, @IDFactura = ?";
@@ -68,7 +80,6 @@ class Factura {
         }
     }
 
-    // Completar factura
     public function completar() {
         try {
             $sql = "EXEC CompletarFactura @IDFactura = ?";
@@ -79,7 +90,6 @@ class Factura {
         }
     }
 
-    // Obtener cliente por cédula
     public function obtenerCliente($cedula) {
         try {
             $sql = "SELECT Cedula, Nombre, Teléfono, Email, Dirección FROM Cliente WHERE Cedula = ?";
@@ -91,7 +101,6 @@ class Factura {
         }
     }
 
-    // Obtener mascotas por cédula del cliente
     public function obtenerMascotasPorCliente($cedulaCliente) {
         try {
             $sql = "SELECT IDMascota, Nombre FROM Mascota WHERE CedulaCliente = ?";
@@ -103,7 +112,6 @@ class Factura {
         }
     }
 
-    // Obtener productos disponibles
     public function obtenerProductos() {
         try {
             $sql = "SELECT IDITEM, NombreProducto, PrecioITEM FROM Servicio_Producto WHERE Tipo = 'Producto'";
@@ -115,7 +123,6 @@ class Factura {
         }
     }
 
-    // Obtener servicios disponibles
     public function obtenerServicios() {
         try {
             $sql = "SELECT IDITEM, NombreProducto, PrecioITEM FROM Servicio_Producto WHERE Tipo = 'Servicio'";
@@ -127,47 +134,38 @@ class Factura {
         }
     }
 
-    // Obtener detalles de factura para visualización
-    public function obtenerDetalles($idFactura) {
-        try {
-            // Obtener información de la factura
-            $sqlFactura = "SELECT f.IDFactura, f.Fecha, f.subtotalf, f.ITBMSFactura, f.totalFactura,
-                                  c.Nombre AS NombreCliente, c.Cedula,
-                                  m.Nombre AS NombreMascota
-                           FROM Factura f 
-                           LEFT JOIN Cliente c ON f.CedulaCliente = c.Cedula
-                           LEFT JOIN Mascota m ON f.IDMascota = m.IDMascota
-                           WHERE f.IDFactura = ?";
-            
-            $stmt = $this->conexion->getPDO()->prepare($sqlFactura);
-            $stmt->execute([$idFactura]);
-            $factura = $stmt->fetch(PDO::FETCH_ASSOC);
+   public function obtenerDetalles($idFactura) {
+    try {
+        // Usar el procedimiento almacenado 
+        $sql = "EXEC ObtenerFacturaConFirma ?";
+        $stmt = $this->conexion->getPDO()->prepare($sql);
+        $stmt->execute([$idFactura]);
+        $factura = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$factura) {
-                throw new Exception("Factura no encontrada");
-            }
-
-            // Obtener items de la factura
-            $sqlItems = "SELECT sp.IDITEM, sp.NombreProducto, sp.Tipo, 
-                               v.CantidadVendida, v.PrecioBruto, v.ITBMSLinea, v.totalLinea
-                        FROM Venta v 
-                        JOIN Servicio_Producto sp ON v.IDITEM = sp.IDITEM 
-                        WHERE v.IDFactura = ?";
-            
-            $stmt = $this->conexion->getPDO()->prepare($sqlItems);
-            $stmt->execute([$idFactura]);
-            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            return [
-                'factura' => $factura,
-                'items' => $items
-            ];
-        } catch (PDOException $e) {
-            throw new Exception("Error al obtener detalles de factura: " . $e->getMessage());
+        if (!$factura) {
+            throw new Exception("Factura no encontrada");
         }
-    }
 
-    // Getters
+        // Obtener items de la factura (este SELECT sí es necesario)
+        $sqlItems = "SELECT sp.IDITEM, sp.NombreProducto, sp.Tipo, 
+                           v.CantidadVendida, v.PrecioBruto, v.ITBMSLinea, v.totalLinea
+                    FROM Venta v 
+                    JOIN Servicio_Producto sp ON v.IDITEM = sp.IDITEM 
+                    WHERE v.IDFactura = ?";
+        
+        $stmt = $this->conexion->getPDO()->prepare($sqlItems);
+        $stmt->execute([$idFactura]);
+        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'factura' => $factura,  // incluye información de firma
+            'items' => $items
+        ];
+    } catch (PDOException $e) {
+        throw new Exception("Error al obtener detalles de factura: " . $e->getMessage());
+    }
+}
+
     public function getIdFactura() {
         return $this->idFactura;
     }
