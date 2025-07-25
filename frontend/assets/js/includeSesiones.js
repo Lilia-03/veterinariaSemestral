@@ -8,4 +8,4 @@ function includeHTML(id, file) {
         });
 }
 
-includeHTML("footer", "components/footer.html");
+includeHTML("footer", "../assets/components/footer.html");

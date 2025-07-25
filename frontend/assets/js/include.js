@@ -8,5 +8,5 @@ function includeHTML(id, file) {
         });
 }
 
-includeHTML("navbar", "components/nav.html");
-includeHTML("footer", "components/footer.html");
+includeHTML("navbar", "assets/components/nav.html");
+includeHTML("footer", "assets/components/footer.html");
