@@ -81,6 +81,218 @@ class Conexion {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////Gestion de Inventario///////////////////////////
+    ///////////////////////////////////////////////////////////////////////
 
+  // Obtener lista de productos de inventario
+    public function obtenerProductosInventario() {
+        $sql = "EXEC ObtenerProductosInventario";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } 
+
+    // Método agregado para el reporte de inventario 
+    public function obtenerReporteInventario() {
+        $sql = "EXEC ObtenerProductosInventario";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener productos y servicios con búsqueda
+    public function obtenerProductosServicios($busqueda = '', $tipo = '') {
+        $sql = "EXEC ObtenerProductosServicios ?, ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$busqueda, $tipo]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener detalle de un producto o servicio específico
+    public function obtenerDetalleProductoServicio($idItem) {
+        $sql = "EXEC ObtenerDetalleProductoServicio ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idItem]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function actualizarInventario($idItem, $cantidadAgregada) {
+        $sql = "EXEC ActualizarInventario @IDITEM = ?, @CantidadAgregada = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$idItem, $cantidadAgregada]);
+    }
+    // Agregar nuevo producto
+    public function agregarProducto($codigo, $nombre, $precio, $stock) {
+        try {
+            $sql = "EXEC AgregarProducto ?, ?, ?, ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$codigo, $nombre, $precio, $stock]);
+        } catch (PDOException $e) {
+            if (strpos($e->getMessage(), 'Ya existe un producto') !== false) {
+                throw new Exception("Ya existe un producto con ese código");
+            }
+            throw new Exception("Error al agregar producto: " . $e->getMessage());
+        }
+    }
+
+    // Verificar si existe un código de producto
+    public function existeCodigoProducto($codigo) {
+        $sql = "EXEC VerificarCodigoProducto @Codigo = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$codigo]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['Existe'] == 1;
+    }
+
+    // Eliminar producto - CORREGIDO para usar SP
+    public function eliminarProducto($idItem) {
+        try {
+            $sql = "EXEC EliminarProducto ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$idItem]);
+        } catch (PDOException $e) {
+            if (strpos($e->getMessage(), 'movimientos registrados') !== false) {
+                throw new Exception("No se puede eliminar el producto porque tiene movimientos registrados");
+            }
+            if (strpos($e->getMessage(), 'no existe') !== false) {
+                throw new Exception("El producto no existe");
+            }
+            throw new Exception("Error al eliminar producto: " . $e->getMessage());
+        }}
+
+    // Obtener un producto específico por ID
+    public function obtenerProductoPorId($idItem) {
+        $sql = "EXEC ObtenerProductoPorId ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idItem]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Método para búsqueda de productos
+    public function buscarProductos($termino) {
+        $sql = "EXEC BuscarProductos @Termino = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$termino]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Método adicional: verificar si un producto tiene movimientos
+    private function tieneMovimientos($idItem) {
+        $sql = "SELECT COUNT(*) as total FROM Venta WHERE IDITEM = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idItem]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] > 0;
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////Gestion de Servicios///////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+
+    public function obtenerServiciosDisponibles() {
+        try {
+            $sql = "EXEC ObtenerServicios";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Debug log
+            error_log("Servicios obtenidos: " . count($result));
+            
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Error en obtenerServiciosDisponibles: " . $e->getMessage());
+            throw new Exception("Error al obtener servicios: " . $e->getMessage());
+        }
+    }
+
+    public function agregarServicio($codigo, $nombre, $precio) {
+        try {
+            $sql = "EXEC AgregarServicio @Codigo = ?, @Nombre = ?, @Precio = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([$codigo, $nombre, $precio]);
+            
+            error_log("Servicio agregado - Código: $codigo, Resultado: " . ($result ? 'éxito' : 'fallo'));
+            
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Error agregando servicio: " . $e->getMessage());
+            if (strpos($e->getMessage(), 'Ya existe un servicio') !== false) {
+                throw new Exception("Ya existe un servicio con ese código");
+            }
+            throw new Exception("Error al agregar servicio: " . $e->getMessage());
+        }
+    }
+
+    public function existeCodigoServicio($codigo) {
+        try {
+            $sql = "EXEC VerificarCodigoServicio @Codigo = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$codigo]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return isset($result['Existe']) && $result['Existe'] == 1;
+        } catch (PDOException $e) {
+            error_log("Error verificando código servicio: " . $e->getMessage());
+            throw new Exception("Error al verificar código: " . $e->getMessage());
+        }
+    }
+
+
+    public function eliminarServicio($idServicio) {
+        try {
+            $sql = "EXEC EliminarServicio @IDITEM = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $result = $stmt->execute([$idServicio]);
+            
+            error_log("Servicio eliminado - ID: $idServicio, Resultado: " . ($result ? 'éxito' : 'fallo'));
+            
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Error eliminando servicio: " . $e->getMessage());
+            if (strpos($e->getMessage(), 'no existe') !== false) {
+                throw new Exception("El servicio no existe");
+            }
+            if (strpos($e->getMessage(), 'registros asociados') !== false) {
+                throw new Exception("No se puede eliminar el servicio porque tiene registros asociados");
+            }
+            throw new Exception("Error al eliminar servicio: " . $e->getMessage());
+        }
+    }
+
+    public function obtenerServicioPorId($idServicio) {
+        try {
+            $sql = "EXEC ObtenerServicioPorId @IDITEM = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$idServicio]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error obteniendo servicio por ID: " . $e->getMessage());
+            throw new Exception("Error al obtener servicio: " . $e->getMessage());
+        }
+    }
+
+    public function buscarServicios($termino) {
+        try {
+            $sql = "EXEC BuscarServicios @Termino = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$termino]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error buscando servicios: " . $e->getMessage());
+            throw new Exception("Error al buscar servicios: " . $e->getMessage());
+        }
+    }
+
+    public function obtenerReporteServicios() {
+        try {
+            return $this->obtenerServiciosDisponibles();
+        } catch (Exception $e) {
+            error_log("Error obteniendo reporte servicios: " . $e->getMessage());
+            throw new Exception("Error al obtener reporte: " . $e->getMessage());
+        }
+    }
 }
 ?>
