@@ -116,6 +116,19 @@
 }
 
 
+.login-placeholder {
+  width: 160px;
+  height: 20px;
+  margin-left: 10px;
+  flex-shrink: 0;
+  visibility: hidden;
+  position: relative;
+  top: 0px; 
+  right: 0px;
+}
+
+
+
 /* MENÚ MÓVIL */
 .mobile-menu {
     display: none;

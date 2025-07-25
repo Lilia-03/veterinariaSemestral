@@ -33,6 +33,7 @@ class SanitizarEntrada {
         return preg_match("/^[a-zA-Z\s]+$/", trim($valor));
     }
 
+
     //////////////validaciones grace//////////////
 // Sanitiza texto simple
     public static function sanitizarTexto($texto, $maxLength = 255) {
