@@ -5,9 +5,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once 'Conexion.php';
-require_once 'Sanitizar.php';
-require_once 'clases/Usuarios.php';
+require_once '../includes/conexion.php';
+require_once '../includes/sanitizar.php';
+require_once '../clases/Usuarios.php';
 
 // Iniciar sesión para obtener el usuario actual
 session_start();

@@ -1,7 +1,8 @@
 
 <?php
-require_once __DIR__ . '/../conexion.php';  
-require_once __DIR__ . '/../sanitizar.php'; 
+require_once __DIR__ . '/../includes/conexion.php';
+require_once __DIR__ . '/../includes/sanitizar.php';
+
 
 class Usuarios {
     private $conexion;
