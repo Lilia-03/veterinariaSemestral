@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+btnGuardarUsuariodocument.addEventListener('DOMContentLoaded', function() {
     // Elementos del DOM
 
     const formUsuario = document.getElementById('formUsuario');
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Obtener lista de usuarios
     function cargarUsuarios() {
-        fetch('../gestionUsuariosController.php', {
+        fetch('../../backend/controller/gestionUsuariosController.php', {
             method: 'POST',
             body: new URLSearchParams({ action: 'obtenerUsuarios' })
         })
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(formUsuario);
         formData.append('action', 'registrarUsuario');
         btnGuardarUsuario.disabled = true;
-        fetch('../gestionUsuariosController.php', {
+        fetch('../../backend/controller/gestionUsuariosController.php', {
             method: 'POST',
             body: formData
         })
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('action', 'eliminarUsuario');
         formData.append('usuarioId', usuarioId);
-        fetch('../gestionUsuariosController.php', {
+        fetch('../../backend/controller/gestionUsuariosController.php', {
             method: 'POST',
             body: formData
         })
