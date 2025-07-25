@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniPet - Panel de Administrador</title>
+    <link rel="icon" type="image/png" href="../assets/img/logo.png">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="admin">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <span style="color: white; font-size: 2.5rem; font-weight: 600;">🐾 Clini</span><span style="color: #fea240; font-size: 2.5rem; font-weight: 600;">Pet</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Administrador</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+            <div class="user-info" style="display: flex; align-items: center; gap: 15px; color: white;">
+                <div style="text-align: right;">
+                    <div data-user-name style="font-weight: 600;">Cargando...</div>
+                    <div data-user-role style="font-size: 0.9rem; opacity: 0.9;">Administrador</div>
+                </div>
+                <a href="#" class="login-btn" data-logout><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION PARA ADMIN -->
+    <section id="admin" class="hero admin-hero">
+        <div class="hero-content">
+            <h1>Panel de Administración</h1>
+            <p>Bienvenido, <span data-user-name>Administrador</span>. Desde aquí puedes gestionar todos los aspectos del sistema CliniPet.</p>
+        </div>
+    </section>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Estadísticas Rápidas -->
+            <section class="section">
+                <h2 class="section-subtitle"><i class="fas fa-chart-line"></i> Estadísticas del Sistema</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-paw"></i></div>
+                        <div class="stat-number" id="totalMascotas">147</div>
+                        <div class="stat-label">Mascotas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-user-friends"></i></div>
+                        <div class="stat-number" id="totalClientes">89</div>
+                        <div class="stat-label">Clientes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-user-md"></i></div>
+                        <div class="stat-number" id="totalEmpleados">12</div>
+                        <div class="stat-label">Empleados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-box-open"></i></div>
+                        <div class="stat-number" id="totalProductos">56</div>
+                        <div class="stat-label">Productos</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulos Principales -->
+            <section class="section">
+                <h2 class="section-subtitle"><i class="fas fa-th-large"></i> Módulos Principales</h2>
+                <div class="modules-grid">
+                    <!-- Gestión de Usuarios -->
+                    <a href="admin-gestion-usuarios.html" class="module-card" data-require-permission="usuarios_leer">
+                        <div class="module-icon"><i class="fas fa-users-cog"></i></div>
+                        <h3>Gestión de Usuarios</h3>
+                        <p>Administrar usuarios del sistema, roles y permisos</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Gestión de Trabajadores -->
+                    <a href="admin-gestion-trabajadores.html" class="module-card" data-require-permission="usuarios_leer">
+                        <div class="module-icon"><i class="fas fa-user-tie"></i></div>
+                        <h3>Gestión de Trabajadores</h3>
+                        <p>Registrar, actualizar o eliminar trabajadores</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Gestión de Clientes -->
+                    <a href="admin-gestion-clientes.html" class="module-card" data-require-permission="clientes_leer">
+                        <div class="module-icon"><i class="fas fa-users"></i></div>
+                        <h3>Gestión de Clientes</h3>
+                        <p>Registrar y actualizar información de clientes</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Gestión de Mascotas -->
+                    <a href="admin-gestion-mascotas.html" class="module-card" data-require-permission="mascotas_leer">
+                        <div class="module-icon"><i class="fas fa-paw"></i></div>
+                        <h3>Gestión de Mascotas</h3>
+                        <p>Registrar y actualizar información de mascotas</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Consultar Mascotas -->
+                    <a href="admin-consultar-mascotas.html" class="module-card" data-require-permission="mascotas_leer">
+                        <div class="module-icon"><i class="fas fa-search"></i></div>
+                        <h3>Consultar Mascotas</h3>
+                        <p>Buscar y ver información detallada de mascotas</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Generar QR Mascotas -->
+                    <a href="admin-generar-qr.html" class="module-card" data-require-permission="mascotas_leer">
+                        <div class="module-icon"><i class="fas fa-qrcode"></i></div>
+                        <h3>Generar QR Mascotas</h3>
+                        <p>Crear códigos QR con información de mascotas</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Gestión de Servicios -->
+                    <a href="admin-gestion-servicios.html" class="module-card" data-require-permission="inventario_actualizar">
+                        <div class="module-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <h3>Gestión de Servicios</h3>
+                        <p>Registrar y administrar servicios veterinarios</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Gestión de Inventario -->
+                    <a href="admin-gestion-inventario.html" class="module-card" data-require-permission="inventario_actualizar">
+                        <div class="module-icon"><i class="fas fa-boxes"></i></div>
+                        <h3>Gestión de Inventario</h3>
+                        <p>Administrar productos y stock disponible</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Ventas y Facturación -->
+                    <a href="mostrarFactura.html" class="module-card" data-require-permission="facturacion_ver">
+                        <div class="module-icon"><i class="fas fa-cash-register"></i></div>
+                        <h3>Ventas y Facturación</h3>
+                        <p>Registrar ventas y generar facturas</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Reportes -->
+                    <a href="admin-reportes.html" class="module-card" data-require-permission="reportes_ver">
+                        <div class="module-icon"><i class="fas fa-chart-bar"></i></div>
+                        <h3>Reportes y Estadísticas</h3>
+                        <p>Ver reportes de ventas y estadísticas del sistema</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Configuración del Sistema -->
+                    <a href="admin-configuracion.html" class="module-card" data-require-role="1">
+                        <div class="module-icon"><i class="fas fa-cogs"></i></div>
+                        <h3>Configuración</h3>
+                        <p>Configurar parámetros del sistema y respaldos</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Clinipet. Todos los derechos reservados. | Cuidando a tus mascotas con amor y profesionalismo</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/auth-middleware.js"></script>
+    <script src="../assets/js/admin.js"></script>
+</body>
+</html>
+   
