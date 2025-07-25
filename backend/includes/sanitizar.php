@@ -523,6 +523,57 @@ public static function validarDatosServicio($datos) {
         'errors' => $errores
     ];
 }
+
+public static function validarDatosUsuario($datos, $requierePassword = true) {
+    $errors = [];
+    $data = [];
+    
+    // Validar nombre de usuario
+    if (empty($datos['nombreUsuario'])) {
+        $errors[] = "Nombre de usuario requerido";
+    } else {
+        $data['nombreUsuario'] = trim($datos['nombreUsuario']);
+    }
+    
+    // Validar email
+    if (empty($datos['email']) || !filter_var($datos['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Email inválido";
+    } else {
+        $data['email'] = trim($datos['email']);
+    }
+    
+    // Validar nombre completo
+    if (empty($datos['nombreCompleto'])) {
+        $errors[] = "Nombre completo requerido";
+    } else {
+        $data['nombreCompleto'] = trim($datos['nombreCompleto']);
+    }
+    
+    // Validar rol
+    if (empty($datos['rolId']) || !is_numeric($datos['rolId'])) {
+        $errors[] = "Rol inválido";
+    } else {
+        $data['rolId'] = intval($datos['rolId']);
+    }
+    
+    // Validar contraseña si es requerida
+    if ($requierePassword && empty($datos['password'])) {
+        $errors[] = "Contraseña requerida";
+    } elseif ($requierePassword) {
+        $data['password'] = $datos['password'];
+    }
+    
+    // Validar cédula si es rol cliente
+    if (isset($datos['cedulaCliente'])) {
+        $data['cedulaCliente'] = trim($datos['cedulaCliente']);
+    }
+    
+    return [
+        'valid' => empty($errors),
+        'errors' => $errors,
+        'data' => $data
+    ];
+}
     
 }
 ?>

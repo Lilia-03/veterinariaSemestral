@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../Conexion.php';  
-require_once __DIR__ . '/../Sanitizar.php'; 
+require_once __DIR__ . '/../conexion.php';  
+require_once __DIR__ . '/../sanitizar.php'; 
 
 class Inventario {
     private $conexion;

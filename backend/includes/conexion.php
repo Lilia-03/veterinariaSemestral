@@ -1,3 +1,4 @@
+
 <?php
 class Conexion {
     private $pdo;
@@ -188,6 +189,267 @@ class Conexion {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+ ///////////////////////////////////////////////////////////////////////
+///////////////////////Gestion de Usuarios/////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+// Obtener todos los usuarios (usando ListarUsuarios con validación de permisos)
+public function obtenerUsuarios($usuarioSolicitanteId) {
+    try {
+        $sql = "EXEC ListarUsuarios ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$usuarioSolicitanteId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error obteniendo usuarios: " . $e->getMessage());
+        throw new Exception("Error al obtener usuarios: " . $e->getMessage());
+    }
+}
+
+// Obtener todos los roles
+public function obtenerRoles() {
+    try {
+        $sql = "SELECT RolID, NombreRol, Descripcion FROM Roles ORDER BY NombreRol";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error obteniendo roles: " . $e->getMessage());
+        throw new Exception("Error al obtener roles: " . $e->getMessage());
+    }
+}
+
+// Registrar usuario (usando CrearUsuario con validación de permisos)
+public function registrarUsuario($datosUsuario, $usuarioCreadorId) {
+    try {
+        // Validar campos requeridos
+        if (empty($datosUsuario['nombreUsuario']) || empty($datosUsuario['email']) || 
+            empty($datosUsuario['nombreCompleto']) || empty($datosUsuario['rolId'])) {
+            throw new Exception("Todos los campos marcados como requeridos deben ser completados");
+        }
+
+        // Validar formato de email
+        if (!filter_var($datosUsuario['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("El formato del correo electrónico no es válido");
+        }
+
+        // Si es cliente, validar cédula
+        $cedulaCliente = null;
+        if ($datosUsuario['rolId'] == 3) {
+            if (empty($datosUsuario['cedulaCliente'])) {
+                throw new Exception("Para usuarios tipo Cliente se requiere una cédula válida");
+            }
+            $cedulaCliente = $datosUsuario['cedulaCliente'];
+        }
+
+        // Hashear la contraseña
+        $passwordHash = password_hash($datosUsuario['password'], PASSWORD_DEFAULT);
+
+        // Llamar al procedimiento almacenado
+        $sql = "EXEC CrearUsuario ?, ?, ?, ?, ?, ?, ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            $datosUsuario['nombreUsuario'],
+            $datosUsuario['email'],
+            $passwordHash,
+            $datosUsuario['nombreCompleto'],
+            $datosUsuario['rolId'],
+            $cedulaCliente,
+            $usuarioCreadorId
+        ]);
+
+        return ['success' => true, 'message' => 'Usuario creado exitosamente'];
+    } catch (PDOException $e) {
+        error_log("Error registrando usuario: " . $e->getMessage());
+        
+        // Manejar errores específicos de la base de datos
+        if (strpos($e->getMessage(), 'El nombre de usuario o email ya está registrado') !== false) {
+            throw new Exception("El nombre de usuario o correo electrónico ya está en uso");
+        }
+        if (strpos($e->getMessage(), 'Se requiere cédula válida') !== false) {
+            throw new Exception("La cédula proporcionada no existe en la base de clientes");
+        }
+        
+        throw new Exception("Error al registrar usuario: " . $e->getMessage());
+    }
+}
+
+// Actualizar usuario (usando ActualizarUsuario con validación de permisos)
+public function actualizarUsuario($idUsuario, $datosUsuario, $usuarioEditorId) {
+    try {
+        // Validar campos requeridos
+        if (empty($datosUsuario['email']) || empty($datosUsuario['nombreCompleto'])) {
+            throw new Exception("Todos los campos marcados como requeridos deben ser completados");
+        }
+
+        // Validar formato de email
+        if (!filter_var($datosUsuario['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("El formato del correo electrónico no es válido");
+        }
+
+        // Si es cliente, validar cédula
+        $cedulaCliente = null;
+        if (isset($datosUsuario['rolId']) && $datosUsuario['rolId'] == 3) {
+            if (empty($datosUsuario['cedulaCliente'])) {
+                throw new Exception("Para usuarios tipo Cliente se requiere una cédula válida");
+            }
+            $cedulaCliente = $datosUsuario['cedulaCliente'];
+        }
+
+        // Llamar al procedimiento almacenado
+        $sql = "EXEC ActualizarUsuario ?, ?, ?, ?, ?, ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            $idUsuario,
+            $datosUsuario['nombreCompleto'],
+            $datosUsuario['email'],
+            $cedulaCliente,
+            $datosUsuario['activo'],
+            $usuarioEditorId
+        ]);
+
+        // Si se proporcionó nueva contraseña, actualizarla
+        if (!empty($datosUsuario['password'])) {
+            $this->cambiarContrasena($idUsuario, $datosUsuario['password']);
+        }
+
+        return ['success' => true, 'message' => 'Usuario actualizado exitosamente'];
+    } catch (PDOException $e) {
+        error_log("Error actualizando usuario: " . $e->getMessage());
+        
+        // Manejar errores específicos de la base de datos
+        if (strpos($e->getMessage(), 'No tienes permisos') !== false) {
+            throw new Exception("No tienes permisos para realizar esta acción");
+        }
+        
+        throw new Exception("Error al actualizar usuario: " . $e->getMessage());
+    }
+}
+
+// Cambiar estado de usuario (activo/inactivo)
+public function cambiarEstadoUsuario($idUsuario, $nuevoEstado, $usuarioEditorId) {
+    try {
+        $sql = "EXEC CambiarEstadoUsuario ?, ?, ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idUsuario, $nuevoEstado, $usuarioEditorId]);
+        
+        return ['success' => true, 'message' => 'Estado del usuario actualizado'];
+    } catch (PDOException $e) {
+        error_log("Error cambiando estado de usuario: " . $e->getMessage());
+        
+        if (strpos($e->getMessage(), 'No tienes permisos') !== false) {
+            throw new Exception("No tienes permisos para realizar esta acción");
+        }
+        
+        throw new Exception("Error al cambiar estado del usuario: " . $e->getMessage());
+    }
+}
+
+// Obtener información detallada de un usuario
+public function obtenerUsuarioPorId($idUsuario) {
+    try {
+        $sql = "EXEC ObtenerInfoCompletaUsuario ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idUsuario]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error obteniendo usuario por ID: " . $e->getMessage());
+        throw new Exception("Error al obtener información del usuario: " . $e->getMessage());
+    }
+}
+
+// Cambiar contraseña de usuario
+public function cambiarContrasena($idUsuario, $nuevaContrasena) {
+    try {
+        $passwordHash = password_hash($nuevaContrasena, PASSWORD_DEFAULT);
+        
+        $sql = "UPDATE Usuarios SET PasswordHash = ? WHERE UsuarioID = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$passwordHash, $idUsuario]);
+        
+        return ['success' => true, 'message' => 'Contraseña actualizada exitosamente'];
+    } catch (PDOException $e) {
+        error_log("Error cambiando contraseña: " . $e->getMessage());
+        throw new Exception("Error al cambiar contraseña: " . $e->getMessage());
+    }
+}
+
+// Obtener permisos de un rol específico
+public function obtenerPermisosPorRol($rolId) {
+    try {
+        $sql = "SELECT p.PermisoID, p.NombrePermiso, p.Modulo 
+                FROM RolesPermisos rp
+                JOIN Permisos p ON rp.PermisoID = p.PermisoID
+                WHERE rp.RolID = ?
+                ORDER BY p.Modulo, p.NombrePermiso";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$rolId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error obteniendo permisos por rol: " . $e->getMessage());
+        throw new Exception("Error al obtener permisos: " . $e->getMessage());
+    }
+}
+
+// Obtener todos los permisos disponibles
+public function obtenerTodosPermisos() {
+    try {
+        $sql = "SELECT PermisoID, NombrePermiso, Modulo FROM Permisos ORDER BY Modulo, NombrePermiso";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error obteniendo todos los permisos: " . $e->getMessage());
+        throw new Exception("Error al obtener permisos: " . $e->getMessage());
+    }
+}
+
+// Actualizar permisos de un rol
+public function actualizarPermisosRol($rolId, $permisos) {
+    try {
+        // Iniciar transacción
+        $this->pdo->beginTransaction();
+        
+        // Eliminar permisos actuales
+        $sqlDelete = "DELETE FROM RolesPermisos WHERE RolID = ?";
+        $stmtDelete = $this->pdo->prepare($sqlDelete);
+        $stmtDelete->execute([$rolId]);
+        
+        // Insertar nuevos permisos
+        $sqlInsert = "INSERT INTO RolesPermisos (RolID, PermisoID) VALUES (?, ?)";
+        $stmtInsert = $this->pdo->prepare($sqlInsert);
+        
+        foreach ($permisos as $permisoId) {
+            $stmtInsert->execute([$rolId, $permisoId]);
+        }
+        
+        // Confirmar transacción
+        $this->pdo->commit();
+        
+        return ['success' => true, 'message' => 'Permisos actualizados exitosamente'];
+    } catch (PDOException $e) {
+        // Revertir transacción en caso de error
+        $this->pdo->rollBack();
+        error_log("Error actualizando permisos: " . $e->getMessage());
+        throw new Exception("Error al actualizar permisos: " . $e->getMessage());
+    }
+}
+
+    // Eliminar usuario (solo admin)
+    public function eliminarUsuario($usuarioId, $usuarioSolicitanteId) {
+        try {
+            $sql = "EXEC EliminarUsuario ?, ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$usuarioId, $usuarioSolicitanteId]);
+            return ['success' => true, 'message' => 'Usuario eliminado correctamente'];
+        } catch (PDOException $e) {
+            error_log("Error eliminando usuario: " . $e->getMessage());
+            throw new Exception("Error al eliminar usuario: " . $e->getMessage());
+        }
+    }
+    
 
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////Gestion de Inventario///////////////////////////

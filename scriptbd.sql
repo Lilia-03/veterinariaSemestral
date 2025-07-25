@@ -1542,6 +1542,48 @@ BEGIN
 END;
 
 
+------------------------------------------------------------------
+
+CREATE PROCEDURE EliminarUsuario
+    @UsuarioID INT,           -- ID del usuario a eliminar
+    @UsuarioSolicitanteID INT -- ID del usuario que solicita la eliminación
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Validar que el solicitante sea administrador
+    DECLARE @RolSolicitante INT;
+    SELECT @RolSolicitante = RolID FROM Usuarios WHERE UsuarioID = @UsuarioSolicitanteID;
+
+    IF @RolSolicitante IS NULL OR @RolSolicitante <> 1
+    BEGIN
+        RAISERROR('Solo un administrador puede eliminar usuarios.', 16, 1);
+        RETURN;
+    END
+
+    -- No permitir eliminar administradores ni clientes
+    DECLARE @RolUsuario INT;
+    SELECT @RolUsuario = RolID FROM Usuarios WHERE UsuarioID = @UsuarioID;
+
+    IF @RolUsuario IS NULL
+    BEGIN
+        RAISERROR('El usuario a eliminar no existe.', 16, 1);
+        RETURN;
+    END
+
+    IF @RolUsuario = 1 OR @RolUsuario = 3
+    BEGIN
+        RAISERROR('No se puede eliminar un administrador ni un cliente.', 16, 1);
+        RETURN;
+    END
+
+    -- Eliminar el usuario
+    DELETE FROM Usuarios WHERE UsuarioID = @UsuarioID;
+END;
+
+
+
+
 
 ----------------------------------------
 --DATOS QUE SE PUEDEN USAR PARA VERIFICAR QUE TODO FUNCIONE
