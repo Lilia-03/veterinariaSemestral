@@ -10,7 +10,6 @@
     --shadow-hover: rgba(0, 0, 0, 0.15);
 }
 
-
 html {
     width: 100%;
     height: 100%;
@@ -51,7 +50,7 @@ body {
     align-items: center;
 }
 
-/* Hero Section */
+/* Hero Section Cliente */
 .hero {
     background-color: var(--clinipet-blue);
     color: white;
@@ -62,7 +61,7 @@ body {
     margin-top: 30px;
 }
 
-.admin-hero {
+.cliente-hero {
     background: linear-gradient(rgba(3, 94, 141, 0.8), rgba(3, 94, 141, 0.9)), 
 }
 
@@ -74,20 +73,38 @@ body {
     padding: 0 2rem;
 }
 
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+.cliente-bienvenida h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
     animation: fadeInUp 1s ease;
 }
 
-.hero p {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
+.cliente-bienvenida p {
+    font-size: 1.2rem;
     opacity: 0.9;
-    animation: fadeInUp 1s ease 0.2s both;
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: center;
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.btn-qr {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--clinipet-orange);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-qr:hover {
+    background: white;
+    color: var(--clinipet-orange);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 @keyframes fadeInUp {
@@ -101,7 +118,12 @@ body {
     }
 }
 
-/* Resto de los estilos (se mantienen igual que en la versión anterior) */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Resto de los estilos */
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -115,11 +137,12 @@ body {
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0;
     font-size: 1.8rem;
     font-weight: bold;
     color: white;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .nav-links {
@@ -148,29 +171,6 @@ body {
     background: rgba(255,255,255,0.1);
 }
 
-/* Reemplaza el estilo actual del login-btn por esto: */
-.login-btn {
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: white;
-    color: var(--clinipet-blue);
-}
-
-.login-btn:hover {
-    background: var(--clinipet-orange);
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
 .login-btn {
     padding: 0.8rem 1.5rem;
     border-radius: 50px;
@@ -193,7 +193,6 @@ body {
     transform: translateY(-3px);
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
-
 
 .mobile-menu {
     display: none;
@@ -253,28 +252,6 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-}
-
-.highlight {
-    color: var(--clinipet-orange);
-    font-weight: bold;
-}
-
-/* Tarjetas de Contenido */
-.content-card {
-    background-color: rgba(230, 226, 214, 0.85);
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    margin-bottom: 2rem;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-}
-
-.content-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
 }
 
 /* Estadísticas */
@@ -384,11 +361,98 @@ body {
     color: var(--clinipet-orange);
 }
 
+/* Citas */
+.citas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cita-card {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1.5rem;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.cita-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.cita-icon {
+    font-size: 1.8rem;
+    color: var(--clinipet-orange);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(254, 162, 64, 0.1);
+    border-radius: 50%;
+}
+
+.cita-info {
+    flex: 1;
+}
+
+.cita-info h4 {
+    color: var(--clinipet-blue);
+    margin-bottom: 0.5rem;
+}
+
+.cita-info p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.btn-cita {
+    padding: 0.5rem 1.5rem;
+    background: var(--clinipet-blue);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-cita:hover {
+    background: var(--clinipet-orange);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+
 
 /* Responsive */
 @media (max-width: 992px) {
     .nav-links {
         gap: 1rem;
+    }
+    
+    .hero-content {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .cliente-bienvenida h1,
+    .cliente-bienvenida p {
+        text-align: center;
+    }
+    
+    .cliente-mascota {
+        margin: 0 auto;
     }
 }
 
@@ -418,12 +482,22 @@ body {
         display: none;
     }
     
-    .hero h1 {
-        font-size: 2.5rem;
+    .cliente-bienvenida h1 {
+        font-size: 2rem;
     }
     
-    .hero p {
-        font-size: 1.1rem;
+    .cliente-bienvenida p {
+        font-size: 1rem;
+    }
+    
+    .cita-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .cita-info p {
+        justify-content: center;
     }
 }
 
@@ -431,10 +505,6 @@ body {
     .stats-grid,
     .modules-grid {
         grid-template-columns: 1fr;
-    }
-    
-    .content-card {
-        padding: 1.5rem;
     }
     
     .section {
@@ -446,17 +516,15 @@ body {
     }
     
     .hero {
-        padding: 120px 0 80px;
+        padding: 120px 0 60px;
     }
     
-    .hero h1 {
-        font-size: 2rem;
+    .cliente-hero {
+        padding: 140px 0 60px;
     }
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0;  /* Elimina espacio entre elementos */
-    white-space: nowrap; /* Evita saltos de línea */
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }

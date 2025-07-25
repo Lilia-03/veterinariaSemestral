@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CliniPet - Panel de Trabajador</title>
     <link rel="icon" type="image/png" href="../imagenes/logo.png">
-    <link rel="stylesheet" href="../css/trabajador.css">
+    <link rel="stylesheet" href="../assets/css/trabajador.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="trabajador">
@@ -17,7 +18,7 @@
             </div>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="#" class="active"><i class="fas fa-user-nurse"></i> Trabajador</a></li>
+                    <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Trabajador</a></li>
                 </ul>
                 <div class="mobile-menu">
                     <span></span>
@@ -25,7 +26,13 @@
                     <span></span>
                 </div>
             </nav>
-            <a href="../html/login.html" class="login-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            <div class="user-info" style="display: flex; align-items: center; gap: 15px; color: white;">
+                <div style="text-align: right;">
+                    <div data-user-name style="font-weight: 600;">Cargando...</div>
+                    <div data-user-role style="font-size: 0.9rem; opacity: 0.9;">Trabajador</div>
+                </div>
+                <a href="#" class="login-btn" data-logout><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
         </div>
     </header>
 
@@ -40,32 +47,6 @@
     <!-- Contenido Principal -->
     <main class="main-content">
         <div class="container">
-            <!-- Estadísticas Rápidas -->
-            <section class="section">
-                <h2 class="section-subtitle"><i class="fas fa-chart-line"></i> Resumen del Día</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
-                        <div class="stat-number">5</div>
-                        <div class="stat-label">Nuevos Clientes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-paw"></i></div>
-                        <div class="stat-number">8</div>
-                        <div class="stat-label">Mascotas Atendidas</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-syringe"></i></div>
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Servicios Realizados</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-cash-register"></i></div>
-                        <div class="stat-number">15</div>
-                        <div class="stat-label">Ventas Hoy</div>
-                    </div>
-                </div>
-            </section>
 
             <!-- Módulos Principales -->
             <section class="section">
@@ -140,10 +121,11 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Clinipet. Todos los derechos reservados. | Cuidando a tus mascotas con amor y profesionalismo</p>
-        </div>
-    </footer>
+    <div id="footer"></div>
+    <script src="../assets/js/includeSesiones.js"></script>
+
+        <!-- Scripts -->
+    <script src="../assets/js/auth-middleware.js"></script>
+    <script src="../assets/js/trabajador.js"></script>
 </body>
 </html>
