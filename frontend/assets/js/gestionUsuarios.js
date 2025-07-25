@@ -1,4 +1,4 @@
-btnGuardarUsuariodocument.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Elementos del DOM
 
     const formUsuario = document.getElementById('formUsuario');
