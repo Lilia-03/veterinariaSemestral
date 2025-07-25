@@ -2,10 +2,6 @@
         initAuth().then(auth => {
             console.log('Usuario en localStorage:', AuthUtils.getUsuario());
             
-            
-            // Cargar estadísticas del dashboard
-            cargarEstadisticasAdmin();
-            
             // Configurar eventos de los módulos
             configurarModulos();
         });

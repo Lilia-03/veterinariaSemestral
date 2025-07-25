@@ -3,8 +3,6 @@
             console.log('Usuario en localStorage:', AuthUtils.getUsuario());
             
             
-            // Cargar estadísticas del dashboard
-            cargarEstadisticasAdmin();
             
             // Configurar eventos de los módulos
             configurarModulos();
@@ -44,3 +42,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(mostrarInfoUsuario, 1000);
         });
+
+
+        // ...existing code...
+// Supón que el usuario está guardado en localStorage bajo la clave 'usuario'
+const usuario = JSON.parse(localStorage.getItem('usuario'));
+if (usuario && usuario.nombreCompleto) {
+    // Busca todos los elementos con el atributo data-user-name y actualízalos
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+        el.textContent = usuario.nombreCompleto;
+    });
+}
+// ...existing code...
