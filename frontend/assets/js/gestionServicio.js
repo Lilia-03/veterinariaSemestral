@@ -19,11 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const servicesTableBody = document.getElementById('servicesTableBody');
     const exportBtn = document.getElementById('exportBtn');
     
-    // Modal
+    // Modal - actualizado para Bootstrap
     const confirmModal = document.getElementById('confirmModal');
     const modalConfirm = document.getElementById('modalConfirm');
     const modalCancel = document.getElementById('modalCancel');
-    const closeModal = document.querySelector('.close');
 
     // Variables globales
     let deleteServiceId = null;
@@ -46,86 +45,77 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', filtrarServicios);
     exportBtn.addEventListener('click', exportarExcel);
 
-    // Event listeners para modal
-    closeModal.addEventListener('click', cerrarModalConfirmacion);
-    modalCancel.addEventListener('click', cerrarModalConfirmacion);
+    // Event listeners para modal - actualizado para Bootstrap
     modalConfirm.addEventListener('click', confirmarEliminacion);
-
-    // Cerrar modal al hacer clic fuera
-    window.addEventListener('click', function(event) {
-        if (event.target === confirmModal) {
-            cerrarModalConfirmacion();
-        }
-    });
 
     // Inicializar validación de código en tiempo real
     inicializarValidacionCodigo();
 
     // Funciones principales
     function cargarServicios() {
-    mostrarCarga(true);
-    
-    fetch('../ServiciosController.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'action=obtenerServicios'
-    })
-    .then(response => {
-        console.log('Status:', response.status);
-        console.log('Content-Type:', response.headers.get('content-type'));
+        mostrarCarga(true);
         
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(text => {
-        console.log('=== RESPUESTA COMPLETA DEL SERVIDOR ===');
-        console.log('Longitud:', text.length);
-        console.log('Primeros 500 caracteres:', text.substring(0, 500));
-        console.log('Últimos 100 caracteres:', text.substring(text.length - 100));
-        console.log('=====================================');
-        
-        // Buscar dónde empieza el JSON
-        const jsonStart = text.indexOf('{');
-        const jsonEnd = text.lastIndexOf('}');
-        
-        if (jsonStart !== -1 && jsonEnd !== -1) {
-            const jsonPart = text.substring(jsonStart, jsonEnd + 1);
-            console.log('JSON extraído:', jsonPart);
+        fetch('../ServiciosController.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'action=obtenerServicios'
+        })
+        .then(response => {
+            console.log('Status:', response.status);
+            console.log('Content-Type:', response.headers.get('content-type'));
             
-            try {
-                const data = JSON.parse(jsonPart);
-                console.log('JSON parseado exitosamente:', data);
-                
-                mostrarCarga(false);
-                
-                if (data.success) {
-                    serviciosData = data.data;
-                    llenarSelectServicios(data.data);
-                    cargarTablaServicios();
-                } else {
-                    mostrarAlerta('Error al cargar servicios: ' + data.message, 'error');
-                }
-            } catch (e) {
-                console.error('Error parsing JSON extraído:', e);
-                mostrarAlerta('Error: Respuesta JSON inválida', 'error');
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
             }
-        } else {
-            console.error('No se encontró JSON válido en la respuesta');
-            mostrarAlerta('Error: No se encontró respuesta JSON válida', 'error');
-        }
-        
-        mostrarCarga(false);
-    })
-    .catch(error => {
-        mostrarCarga(false);
-        console.error('Error completo:', error);
-        mostrarAlerta('Error de conexión: ' + error.message, 'error');
-    });
-}
+            return response.text();
+        })
+        .then(text => {
+            console.log('=== RESPUESTA COMPLETA DEL SERVIDOR ===');
+            console.log('Longitud:', text.length);
+            console.log('Primeros 500 caracteres:', text.substring(0, 500));
+            console.log('Últimos 100 caracteres:', text.substring(text.length - 100));
+            console.log('=====================================');
+            
+            // Buscar dónde empieza el JSON
+            const jsonStart = text.indexOf('{');
+            const jsonEnd = text.lastIndexOf('}');
+            
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+                const jsonPart = text.substring(jsonStart, jsonEnd + 1);
+                console.log('JSON extraído:', jsonPart);
+                
+                try {
+                    const data = JSON.parse(jsonPart);
+                    console.log('JSON parseado exitosamente:', data);
+                    
+                    mostrarCarga(false);
+                    
+                    if (data.success) {
+                        serviciosData = data.data;
+                        llenarSelectServicios(data.data);
+                        cargarTablaServicios();
+                    } else {
+                        mostrarAlerta('Error al cargar servicios: ' + data.message, 'error');
+                    }
+                } catch (e) {
+                    console.error('Error parsing JSON extraído:', e);
+                    mostrarAlerta('Error: Respuesta JSON inválida', 'error');
+                }
+            } else {
+                console.error('No se encontró JSON válido en la respuesta');
+                mostrarAlerta('Error: No se encontró respuesta JSON válida', 'error');
+            }
+            
+            mostrarCarga(false);
+        })
+        .catch(error => {
+            mostrarCarga(false);
+            console.error('Error completo:', error);
+            mostrarAlerta('Error de conexión: ' + error.message, 'error');
+        });
+    }
 
     function llenarSelectServicios(servicios) {
         deleteServiceSelect.innerHTML = '<option value="">-- Seleccione un servicio --</option>';
@@ -155,12 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('deleteServicePrice').textContent = `$${parseFloat(servicio.PrecioITEM || 0).toFixed(2)}`;
 
         deleteServiceInfo.style.display = 'block';
+        deleteServiceInfo.classList.add('fade-in');
     }
 
     function ocultarInfoServicioEliminar() {
         deleteServiceInfo.style.display = 'none';
         deleteServiceSelect.value = '';
         deleteServiceId = null;
+        deleteServiceInfo.classList.remove('fade-in');
     }
 
     function agregarServicio(e) {
@@ -230,8 +222,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 mostrarAlerta('Servicio agregado correctamente', 'success');
                 limpiarFormularioAgregar();
                 cargarServicios(); // Recargar lista de servicios
-                // Cambiar a la pestaña de lista de servicios
-                openTab({currentTarget: document.querySelector('[onclick*="listTab"]')}, 'listTab');
+                // Cambiar a la pestaña de lista de servicios usando Bootstrap
+                mostrarPestana('listTab');
             } else {
                 // Mensajes más específicos
                 let mensajeError = data.message || 'Error desconocido';
@@ -253,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Restablecer estilo del input de código
         const codigoInput = document.getElementById('newServiceCode');
         if (codigoInput) {
-            codigoInput.style.borderColor = '#e1e5e9';
+            codigoInput.classList.remove('is-valid', 'is-invalid');
         }
     }
 
@@ -267,11 +259,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('modalMessage').textContent = 
             `¿Está seguro de que desea eliminar el servicio "${servicio.NombreServicio}"? Esta acción no se puede deshacer.`;
         
-        confirmModal.style.display = 'block';
+        // Usar Bootstrap modal
+        const modal = new bootstrap.Modal(confirmModal, {
+            backdrop: true,
+            keyboard: true
+        });
+        modal.show();
     }
 
     function cerrarModalConfirmacion() {
-        confirmModal.style.display = 'none';
+        const modal = bootstrap.Modal.getInstance(confirmModal);
+        if (modal) {
+            modal.hide();
+        }
     }
 
     function confirmarEliminacion() {
@@ -312,8 +312,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 mostrarAlerta('Servicio eliminado correctamente', 'success');
                 ocultarInfoServicioEliminar();
                 cargarServicios(); // Recargar lista de servicios
-                // Cambiar a la pestaña de lista de servicios
-                openTab({currentTarget: document.querySelector('[onclick*="listTab"]')}, 'listTab');
+                // Cambiar a la pestaña de lista de servicios usando Bootstrap
+                mostrarPestana('listTab');
             } else {
                 // Mensajes más específicos
                 let mensajeError = data.message || 'Error desconocido';
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${servicio.NombreServicio}</td>
                 <td>$${precio.toFixed(2)}</td>
                 <td>
-                    <button class="btn btn-danger btn-sm" onclick="eliminarServicioDirecto('${servicio.IDITEM}')">
+                    <button class="btn btn-gradient-danger btn-sm" onclick="eliminarServicioDirecto('${servicio.IDITEM}')">
                         🗑️ Eliminar
                     </button>
                 </td>
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${servicio.NombreServicio}</td>
                 <td>$${precio.toFixed(2)}</td>
                 <td>
-                    <button class="btn btn-danger btn-sm" onclick="eliminarServicioDirecto('${servicio.IDITEM}')">
+                    <button class="btn btn-gradient-danger btn-sm" onclick="eliminarServicioDirecto('${servicio.IDITEM}')">
                         🗑️ Eliminar
                     </button>
                 </td>
@@ -405,26 +405,23 @@ document.addEventListener('DOMContentLoaded', function() {
         mostrarModalConfirmacion();
     };
 
-    // Función para cambiar de pestaña (debe estar en el scope global)
+    // Función para cambiar de pestaña usando Bootstrap
+    function mostrarPestana(tabName) {
+        const tabButton = document.querySelector(`[data-bs-target="#${tabName}"]`);
+        if (tabButton) {
+            const tab = new bootstrap.Tab(tabButton);
+            tab.show();
+            
+            // Recargar datos específicos según la pestaña
+            if (tabName === 'listTab') {
+                cargarTablaServicios();
+            }
+        }
+    }
+
+    // Función global para compatibilidad con versión anterior
     window.openTab = function(evt, tabName) {
-        const tabContents = document.getElementsByClassName('tab-content');
-        const tabs = document.getElementsByClassName('tab');
-
-        for (let i = 0; i < tabContents.length; i++) {
-            tabContents[i].classList.remove('active');
-        }
-
-        for (let i = 0; i < tabs.length; i++) {
-            tabs[i].classList.remove('active');
-        }
-
-        document.getElementById(tabName).classList.add('active');
-        evt.currentTarget.classList.add('active');
-
-        // Recargar datos específicos según la pestaña
-        if (tabName === 'listTab') {
-            cargarTablaServicios();
-        }
+        mostrarPestana(tabName);
     };
 
     function exportarExcel() {
@@ -494,13 +491,13 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTimeout(timeoutId);
             const codigo = this.value.trim();
             
-            // Restablecer estilo por defecto
-            this.style.borderColor = '#e1e5e9';
+            // Restablecer estilos
+            this.classList.remove('is-valid', 'is-invalid');
             
             if (codigo.length >= 3) {
                 timeoutId = setTimeout(() => {
                     verificarCodigo(codigo);
-                }, 500); // Esperar 500ms después de que deje de escribir
+                }, 500);
             }
         });
     }
@@ -520,12 +517,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const codigoInput = document.getElementById('newServiceCode');
             
             if (data.success && data.existe) {
-                codigoInput.style.borderColor = '#dc3545';
-                codigoInput.style.borderWidth = '2px';
+                codigoInput.classList.remove('is-valid');
+                codigoInput.classList.add('is-invalid');
                 mostrarAlerta('⚠️ Este código ya existe, elija otro', 'warning');
             } else if (data.success && !data.existe) {
-                codigoInput.style.borderColor = '#28a745';
-                codigoInput.style.borderWidth = '2px';
+                codigoInput.classList.remove('is-invalid');
+                codigoInput.classList.add('is-valid');
             }
         })
         .catch(error => {
@@ -539,22 +536,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function mostrarAlerta(mensaje, tipo) {
         alertContainer.innerHTML = '';
-
+        
+        const alertClass = tipo === 'error' ? 'danger' : (tipo === 'warning' ? 'warning' : 'success');
+        
         const alert = document.createElement('div');
-        alert.className = `alert alert-${tipo === 'error' ? 'error' : tipo === 'warning' ? 'warning' : 'success'}`;
-        alert.textContent = mensaje;
-        alert.style.display = 'block';
+        alert.className = `alert alert-${alertClass} alert-dismissible fade show fade-in`;
+        alert.innerHTML = `
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
         
         alertContainer.appendChild(alert);
-
+        
+        // Auto-hide after 5 seconds
         setTimeout(() => {
             if (alert.parentNode) {
-                alert.style.opacity = '0';
-                setTimeout(() => {
-                    if (alert.parentNode) {
-                        alert.parentNode.removeChild(alert);
-                    }
-                }, 300);
+                const alertInstance = bootstrap.Alert.getOrCreateInstance(alert);
+                alertInstance.close();
             }
         }, 5000);
     }
