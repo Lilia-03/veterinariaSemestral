@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
-require_once 'Conexion.php';
-require_once 'Sanitizar.php';
-require_once 'clases/ProductoServicio.php';
+require_once '../includes/conexion.php';
+require_once '../includes/sanitizar.php';
+require_once '../clases/ProductoServicioUsuario.php';
 
 class ProductoServicioController {
     private $modelo;
