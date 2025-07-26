@@ -1612,24 +1612,35 @@ EXEC CambiarEstadoUsuario 1, 0, 2;
 -- PROCEDIMIENTOS ALMACENADOS PARA GESTIÓN DE INVENTARIO
 -- ====================================================
 -----------------
--- Procedimiento actualizado para incluir el precio
-CREATE PROCEDURE ObtenerProductosInventario
+-- PROCEDIMIENTO CORREGIDO PARA OBTENER PRODUCTOS SIN DUPLICADOS
+-- ================================================================
+ALTER PROCEDURE ObtenerProductosInventario
 AS
 BEGIN
-    SELECT DISTINCT 
-        sp.IDITEM, 
-        sp.NombreProducto, 
-        sp.PrecioITEM, 
-        ISNULL(i.CantidadDisponible, 0) AS CantidadDisponible
+    SET NOCOUNT ON;
+    
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.PrecioITEM,
+        sp.Tipo,
+        ISNULL(inv_ultimo.CantidadDisponible, 0) as CantidadDisponible,
+        ISNULL(inv_ultimo.EntradaInventario, 0) as EntradaInventario,
+        ISNULL(inv_ultimo.SalidaInventario, 0) as SalidaInventario
     FROM Servicio_Producto sp
     LEFT JOIN (
-        SELECT IDITEM, CantidadDisponible,
-               ROW_NUMBER() OVER (PARTITION BY IDITEM ORDER BY IDInventario DESC) AS rn
+        SELECT 
+            IDITEM, 
+            CantidadDisponible,
+            EntradaInventario,
+            SalidaInventario,
+            ROW_NUMBER() OVER (PARTITION BY IDITEM ORDER BY IDInventario DESC) AS rn
         FROM Inventario
-    ) i ON sp.IDITEM = i.IDITEM AND i.rn = 1
+    ) inv_ultimo ON sp.IDITEM = inv_ultimo.IDITEM AND inv_ultimo.rn = 1
     WHERE sp.Tipo = 'Producto'
-    ORDER BY sp.NombreProducto
-END
+    ORDER BY sp.NombreProducto;
+END;
+
 ------------------------------------
 CREATE PROCEDURE ObtenerDetalleProductoServicio
     @IDITEM INT
@@ -1777,27 +1788,6 @@ BEGIN
 END;
 GO
 ----------------------------------------------------------------------------
---PROCEDIMIENTO MEJORADO PARA OBTENER PRODUCTOS DE INVENTARIO
--- ============================================================
-ALTER PROCEDURE ObtenerProductosInventario
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    SELECT 
-        sp.IDITEM,
-        sp.NombreProducto,
-        sp.PrecioITEM,
-        sp.Tipo,
-        ISNULL(i.CantidadDisponible, 0) as CantidadDisponible,
-        ISNULL(i.EntradaInventario, 0) as EntradaInventario,
-        ISNULL(i.SalidaInventario, 0) as SalidaInventario
-    FROM Servicio_Producto sp
-    LEFT JOIN Inventario i ON sp.IDITEM = i.IDITEM
-    WHERE sp.Tipo = 'Producto'
-    ORDER BY sp.NombreProducto;
-END;
-GO
 -------------------------------------------------------------------
 --PROCEDIMIENTO PARA BUSCAR PRODUCTOS
 -- =====================================
@@ -1843,55 +1833,6 @@ BEGIN
     WHERE sp.IDITEM = @IDITEM;
 END;
 GO
------------------------------------------------------------------
---PROCEDIMIENTO MEJORADO PARA ACTUALIZAR INVENTARIO
--- ==================================================
-ALTER PROCEDURE ActualizarInventario
-    @IDITEM INT,
-    @CantidadAgregada INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    BEGIN TRY
-        BEGIN TRANSACTION;
-        
-        -- Verificar si el producto existe
-        IF NOT EXISTS (SELECT 1 FROM Servicio_Producto WHERE IDITEM = @IDITEM)
-        BEGIN
-            RAISERROR('El producto no existe', 16, 1);
-            RETURN;
-        END
-        
-        -- Verificar si existe registro en inventario
-        IF EXISTS (SELECT 1 FROM Inventario WHERE IDITEM = @IDITEM)
-        BEGIN
-            -- Actualizar inventario existente
-            UPDATE Inventario 
-            SET 
-                EntradaInventario = EntradaInventario + @CantidadAgregada,
-                CantidadDisponible = CantidadDisponible + @CantidadAgregada
-            WHERE IDITEM = @IDITEM;
-        END
-        ELSE
-        BEGIN
-            -- Crear nuevo registro en inventario
-            INSERT INTO Inventario (IDITEM, EntradaInventario, SalidaInventario, CantidadDisponible)
-            VALUES (@IDITEM, @CantidadAgregada, 0, @CantidadAgregada);
-        END
-        
-        COMMIT TRANSACTION;
-        
-        SELECT 'Inventario actualizado exitosamente' as Mensaje;
-        
-    END TRY
-    BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH
-END;
-GO
----------------------------------------------------------------
 -------------------------------------------------------------------
 -- PROCEDIMIENTOS ALMACENADOS PARA GESTIÓN DE SERVICIOS
 -- ====================================================
