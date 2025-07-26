@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniPet - Mi Cuenta</title>
+    <link rel="icon" type="image/png" href="../imagenes/logo.png">
+    <link rel="stylesheet" href="../assets/css/cliente.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="cliente">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <span style="color: white; font-size: 2.5rem; font-weight: 600;">🐾 Clini</span><span style="color: #fea240; font-size: 2.5rem; font-weight: 600;">Pet</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="active"><i class="fas fa-user-circle"></i> Mi Cuenta</a></li>
+                    <li><a href="cliente-notificaciones.html"><i class="fas fa-bell"></i> Notificaciones</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+            <a href="../html/login.html" class="login-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION PARA CLIENTE -->
+    <section id="cliente" class="hero cliente-hero">
+        <div class="hero-content">
+            <div class="cliente-bienvenida">
+                <h1>¡Bienvenido, <span data-user-name>[Nombre del Cliente]</span>!</h1>
+                <p>Gestiona la información de tus mascotas y tus servicios con CliniPet</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Módulos Principales -->
+            <section class="section">
+                <h2 class="section-subtitle"><i class="fas fa-th-large"></i> Mis Opciones</h2>
+                <div class="modules-grid">
+                    <!-- Mi Información -->
+                    <a href="cliente-mi-informacion.html" class="module-card">
+                        <div class="module-icon"><i class="fas fa-user-edit"></i></div>
+                        <h3>Mi Información</h3>
+                        <p>Actualiza tus datos personales y de contacto</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Mis Mascotas -->
+                    <a href="cliente-mis-mascotas.html" class="module-card">
+                        <div class="module-icon"><i class="fas fa-paw"></i></div>
+                        <h3>Mis Mascotas</h3>
+                        <p>Visualiza la información de tus mascotas</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- QR Mascotas -->
+                    <a href="cliente-qr-mascotas.html" class="module-card">
+                        <div class="module-icon"><i class="fas fa-qrcode"></i></div>
+                        <h3>QR de Mascotas</h3>
+                        <p>Accede a los códigos QR de identificación</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Tienda -->
+                    <a href="cliente-tienda.html" class="module-card">
+                        <div class="module-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <h3>Tienda</h3>
+                        <p>Compra productos para tus mascotas</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Servicios -->
+                    <a href="cliente-servicios.html" class="module-card">
+                        <div class="module-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <h3>Servicios</h3>
+                        <p>Contrata servicios para tus mascotas</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                    
+                    <!-- Mis Facturas -->
+                    <a href="cliente-facturas.html" class="module-card">
+                        <div class="module-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <h3>Mis Facturas</h3>
+                        <p>Consulta tu historial de compras y servicios</p>
+                        <div class="module-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Próximas citas -->
+            <section class="section">
+                <h2 class="section-subtitle"><i class="fas fa-calendar-alt"></i> Próximas Citas</h2>
+                <div class="citas-container">
+                    <div class="cita-card">
+                        <div class="cita-icon"><i class="fas fa-syringe"></i></div>
+                        <div class="cita-info">
+                            <h4>Vacunación anual</h4>
+                            <p><i class="far fa-calendar"></i> 15 Nov 2023 - 10:30 AM</p>
+                            <p><i class="fas fa-paw"></i> Max (Golden Retriever)</p>
+                        </div>
+                        <a href="#" class="btn-cita">Ver detalles</a>
+                    </div>
+                    <div class="cita-card">
+                        <div class="cita-icon"><i class="fas fa-stethoscope"></i></div>
+                        <div class="cita-info">
+                            <h4>Consulta de control</h4>
+                            <p><i class="far fa-calendar"></i> 22 Nov 2023 - 4:15 PM</p>
+                            <p><i class="fas fa-paw"></i> Luna (Gato Siames)</p>
+                        </div>
+                        <a href="#" class="btn-cita">Ver detalles</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer"></div>
+    <script src="../assets/js/includeSesiones.js"></script>
+
+        <!-- Scripts -->
+    <script src="../assets/js/auth-middleware.js"></script>
+    <script src="../assets/js/cliente.js"></script>
+</body>
+</html>
