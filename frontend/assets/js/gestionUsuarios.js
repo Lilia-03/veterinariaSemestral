@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+<<<<<<< HEAD
     // Guardar cambios del usuario
 document.getElementById('saveUserChangesBtn').addEventListener('click', function() {
     const formData = new FormData();
@@ -13,6 +14,29 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', function
     const nuevaPassword = document.getElementById('editPassword').value;
     if (nuevaPassword) {
         formData.append('password', nuevaPassword);
+=======
+    // Elementos del DOM
+
+    const formUsuario = document.getElementById('formUsuario');
+    const tablaUsuariosBody = document.querySelector('usersTableContainer');
+    const alertContainer = document.getElementById('alertContainer');
+    const rolUsuario = document.getElementById('rolUsuario');
+    const btnGuardarUsuario = document.getElementById('btnGuardarUsuario');
+    let usuariosData = [];
+    let usuarioEditando = null;
+
+    // Logs para verificar existencia de elementos
+    console.log('formUsuario:', formUsuario);
+    console.log('tablaUsuariosBody:', tablaUsuariosBody);
+    console.log('alertContainer:', alertContainer);
+    console.log('rolUsuario:', rolUsuario);
+    console.log('btnGuardarUsuario:', btnGuardarUsuario);
+
+    cargarUsuarios();
+
+    if (formUsuario) {
+        formUsuario.addEventListener('submit', guardarUsuario);
+>>>>>>> 7f174563027cf10f77fcc0e284c8144dc22bcbf0
     }
 
     mostrarCarga(true);
@@ -533,8 +557,22 @@ function guardarRol() {
         });
     }
 
+<<<<<<< HEAD
     function mostrarCarga(mostrar) {
         if (loading) loading.style.display = mostrar ? 'block' : 'none';
+=======
+    // Utilidad para mostrar alertas
+    function mostrarAlerta(mensaje, tipo) {
+        console.log('Buscando alertContainer:', alertContainer); // <-- Log para debug
+        alertContainer.innerHTML = '';
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${tipo === 'error' ? 'danger' : (tipo === 'warning' ? 'warning' : 'success')} fade-in`;
+        alert.innerHTML = mensaje;
+        alertContainer.appendChild(alert);
+        setTimeout(() => {
+            if (alert.parentNode) alert.parentNode.removeChild(alert);
+        }, 4000);
+>>>>>>> 7f174563027cf10f77fcc0e284c8144dc22bcbf0
     }
 
     function mostrarAlerta(mensaje, tipo) {

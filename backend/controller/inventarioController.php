@@ -1,8 +1,10 @@
 <?php
 
 // Habilitar errores para debug
-error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 require_once '../includes/conexion.php';
 require_once '../includes/sanitizar.php';
@@ -126,7 +128,23 @@ case 'agregarProducto':
             
             echo json_encode(['success' => true, 'data' => $producto]);
             break;
-        
+        case 'verificarCodigoProducto':
+            header('Content-Type: application/json; charset=utf-8');
+            
+            if (!isset($_POST['codigo']) || empty($_POST['codigo'])) {
+                throw new Exception('Código es requerido');
+            }
+
+            $codigo = $_POST['codigo'];
+            
+            $inventario = new Inventario();
+            $existe = $inventario->existeCodigoProducto($codigo);
+            
+            echo json_encode([
+                'success' => true, 
+                'existe' => $existe
+            ]);
+            break;
 
         case 'exportarExcel':
             // NO establecemos header JSON para exportación

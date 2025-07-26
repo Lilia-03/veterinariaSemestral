@@ -1,7 +1,13 @@
 
 <?php
+<<<<<<< HEAD
 require_once __DIR__ . '/../includes/conexion.php';  
 require_once __DIR__ . '/../includes/sanitizar.php'; 
+=======
+require_once __DIR__ . '/../includes/conexion.php';
+require_once __DIR__ . '/../includes/sanitizar.php';
+
+>>>>>>> 7f174563027cf10f77fcc0e284c8144dc22bcbf0
 
 class Usuarios {
     private $conexion;
