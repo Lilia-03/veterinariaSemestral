@@ -214,10 +214,18 @@ public function obtenerRoles() {
         $sql = "SELECT RolID, NombreRol, Descripcion FROM Roles ORDER BY NombreRol";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($roles)) {
+            error_log("No se encontraron roles en la base de datos");
+            return []; // Devuelve array vacío en lugar de lanzar excepción
+        }
+        
+        return $roles;
     } catch (PDOException $e) {
-        error_log("Error obteniendo roles: " . $e->getMessage());
-        throw new Exception("Error al obtener roles: " . $e->getMessage());
+        error_log("Error en obtenerRoles(): " . $e->getMessage());
+        throw new Exception("Error al obtener roles de la base de datos");
     }
 }
 

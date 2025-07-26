@@ -4,8 +4,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once '../includes/Conexion.php';
-require_once '../includes/Sanitizar.php';
+require_once '../includes/conexion.php';
+require_once '../includes/sanitizar.php';
 require_once '../clases/Inventario.php';
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';

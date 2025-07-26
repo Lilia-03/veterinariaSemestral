@@ -1,13 +1,14 @@
-
 <?php
+error_log("Acción recibida: " . $_POST['action'] ?? $_GET['action'] ?? 'N/A');
+error_log("Usuario ID: " . ($_SESSION['usuario_id'] ?? 'No autenticado'));
 
 // Habilitar errores para debug
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once 'Conexion.php';
-require_once 'Sanitizar.php';
-require_once 'clases/Usuarios.php';
+require_once '../includes/conexion.php';
+require_once '../includes/sanitizar.php';
+require_once '../clases/Usuarios.php';
 
 // Iniciar sesión para obtener el usuario actual
 session_start();
@@ -34,58 +35,65 @@ try {
             echo json_encode(['success' => true, 'data' => $listaUsuarios]);
             break;
 
-        case 'registrarUsuario':
-            header('Content-Type: application/json; charset=utf-8');
-            
-            $datosRequeridos = ['nombreUsuario', 'email', 'nombreCompleto', 'rolId', 'password'];
-            foreach ($datosRequeridos as $campo) {
-                if (!isset($_POST[$campo]) || empty($_POST[$campo])) {
-                    throw new Exception("El campo $campo es requerido");
-                }
-            }
+case 'registrarUsuario':
+    header('Content-Type: application/json; charset=utf-8');
+    
+    // Verificar que todos los campos requeridos estén presentes
+    $required = ['nombreUsuario', 'email', 'nombreCompleto', 'password', 'rolId'];
+    foreach ($required as $field) {
+        if (empty($_POST[$field])) {
+            echo json_encode(['success' => false, 'message' => "El campo $field es requerido"]);
+            exit;
+        }
+    }
 
-            $datos = [
-                'nombreUsuario' => $_POST['nombreUsuario'],
-                'email' => $_POST['email'],
-                'nombreCompleto' => $_POST['nombreCompleto'],
-                'rolId' => $_POST['rolId'],
-                'password' => $_POST['password'],
-                'cedulaCliente' => $_POST['cedulaCliente'] ?? null
-            ];
+    $datos = [
+        'nombreUsuario' => trim($_POST['nombreUsuario']),
+        'email' => trim($_POST['email']),
+        'nombreCompleto' => trim($_POST['nombreCompleto']),
+        'password' => $_POST['password'],
+        'rolId' => $_POST['rolId'],
+        'cedulaCliente' => $_POST['cedulaCliente'] ?? null
+    ];
 
-            $usuarios = new Usuarios();
-            $resultado = $usuarios->registrarUsuario($datos, $usuarioActualId);
+    try {
+        $usuarios = new Usuarios();
+        $resultado = $usuarios->registrarUsuario($datos, $usuarioActualId);
+        echo json_encode($resultado);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+    break;
 
-            echo json_encode([
-                'success' => $resultado['success'],
-                'message' => $resultado['message']
-            ]);
-            break;
+       case 'actualizarUsuario':
+    header('Content-Type: application/json; charset=utf-8');
+    
+    // Verificar campos requeridos
+    $required = ['idUsuario', 'email', 'nombreCompleto'];
+    foreach ($required as $field) {
+        if (empty($_POST[$field])) {
+            echo json_encode(['success' => false, 'message' => "El campo $field es requerido"]);
+            exit;
+        }
+    }
 
-        case 'actualizarUsuario':
-            header('Content-Type: application/json; charset=utf-8');
-            
-            if (!isset($_POST['idUsuario']) || empty($_POST['idUsuario'])) {
-                throw new Exception('ID de usuario es requerido');
-            }
+    $datos = [
+        'email' => trim($_POST['email']),
+        'nombreCompleto' => trim($_POST['nombreCompleto']),
+        'rolId' => $_POST['rolId'] ?? null,
+        'cedulaCliente' => $_POST['cedulaCliente'] ?? null,
+        'activo' => isset($_POST['activo']) ? (int)$_POST['activo'] : 1,
+        'password' => $_POST['password'] ?? ''
+    ];
 
-            $datos = [
-                'email' => $_POST['email'] ?? '',
-                'nombreCompleto' => $_POST['nombreCompleto'] ?? '',
-                'rolId' => $_POST['rolId'] ?? '',
-                'cedulaCliente' => $_POST['cedulaCliente'] ?? null,
-                'activo' => isset($_POST['activo']) ? (bool)$_POST['activo'] : true,
-                'password' => $_POST['password'] ?? ''
-            ];
-
-            $usuarios = new Usuarios();
-            $resultado = $usuarios->actualizarUsuario($_POST['idUsuario'], $datos, $usuarioActualId);
-
-            echo json_encode([
-                'success' => $resultado['success'],
-                'message' => $resultado['message']
-            ]);
-            break;
+    try {
+        $usuarios = new Usuarios();
+        $resultado = $usuarios->actualizarUsuario($_POST['idUsuario'], $datos, $usuarioActualId);
+        echo json_encode($resultado);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+    break;
 
 
                 case 'eliminarUsuario':
@@ -140,14 +148,30 @@ try {
             echo json_encode(['success' => true, 'data' => $usuario]);
             break;
 
-        case 'obtenerRoles':
-            header('Content-Type: application/json; charset=utf-8');
-            
-            $usuarios = new Usuarios();
-            $roles = $usuarios->obtenerRoles();
-            
+case 'obtenerRoles':
+    header('Content-Type: application/json; charset=utf-8');
+    try {
+        $usuarios = new Usuarios();
+        $roles = $usuarios->obtenerRoles();
+        
+        // Verificar si la conexión fue exitosa
+        if ($roles === false) {
+            throw new Exception("Error de conexión con la base de datos");
+        }
+        
+        if (empty($roles)) {
+            echo json_encode(['success' => true, 'data' => []]);
+        } else {
             echo json_encode(['success' => true, 'data' => $roles]);
-            break;
+        }
+    } catch (Exception $e) {
+        error_log("Error en obtenerRoles: " . $e->getMessage());
+        echo json_encode([
+            'success' => false,
+            'message' => 'Error al obtener roles: ' . $e->getMessage()
+        ]);
+    }
+    break;
 
         case 'obtenerPermisosRol':
             header('Content-Type: application/json; charset=utf-8');
