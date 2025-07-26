@@ -2,12 +2,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Elementos del DOM
 
     const formUsuario = document.getElementById('formUsuario');
-    const tablaUsuariosBody = document.querySelector('#tablaUsuarios tbody');
+    const tablaUsuariosBody = document.querySelector('usersTableContainer');
     const alertContainer = document.getElementById('alertContainer');
     const rolUsuario = document.getElementById('rolUsuario');
     const btnGuardarUsuario = document.getElementById('btnGuardarUsuario');
     let usuariosData = [];
     let usuarioEditando = null;
+
+    // Logs para verificar existencia de elementos
+    console.log('formUsuario:', formUsuario);
+    console.log('tablaUsuariosBody:', tablaUsuariosBody);
+    console.log('alertContainer:', alertContainer);
+    console.log('rolUsuario:', rolUsuario);
+    console.log('btnGuardarUsuario:', btnGuardarUsuario);
 
     cargarUsuarios();
 
@@ -17,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Obtener lista de usuarios
     function cargarUsuarios() {
-        fetch('../gestionUsuariosController.php', {
+        fetch('../../backend/controller/gestionUsuariosController.php', {
             method: 'POST',
             body: new URLSearchParams({ action: 'obtenerUsuarios' })
         })
@@ -56,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(formUsuario);
         formData.append('action', 'registrarUsuario');
         btnGuardarUsuario.disabled = true;
-        fetch('../gestionUsuariosController.php', {
+        fetch('../../backend/controller/gestionUsuariosController.php', {
             method: 'POST',
             body: formData
         })
@@ -85,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('action', 'eliminarUsuario');
         formData.append('usuarioId', usuarioId);
-        fetch('../gestionUsuariosController.php', {
+        fetch('../../backend/controller/gestionUsuariosController.php', {
             method: 'POST',
             body: formData
         })
@@ -103,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Utilidad para mostrar alertas
     function mostrarAlerta(mensaje, tipo) {
+        console.log('Buscando alertContainer:', alertContainer); // <-- Log para debug
         alertContainer.innerHTML = '';
         const alert = document.createElement('div');
         alert.className = `alert alert-${tipo === 'error' ? 'danger' : (tipo === 'warning' ? 'warning' : 'success')} fade-in`;
