@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('🔄 Cargando datos desde ProductoServicioController.php');
             
             // Cargar todos los items de una vez
-            const response = await fetch('../ProductoServicioController.php?accion=obtener');
+            const response = await fetch('../../backend/controller/ProductoServicioController.php?accion=obtener');
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function cargarEstadisticas() {
         try {
-            const response = await fetch('../ProductoServicioController.php?accion=estadisticas');
+            const response = await fetch('../../backend/controller/ProductoServicioController.php?accion=estadisticas');
             
             if (response.ok) {
                 const data = await response.json();
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Intentar obtener detalles actualizados del servidor
-            const response = await fetch(`../ProductoServicioController.php?accion=detalle&id=${encodeURIComponent(item.id)}`);
+            const response = await fetch(`../../backend/controller/ProductoServicioController.php?accion=detalle&id=${encodeURIComponent(item.id)}`);
             
             if (response.ok) {
                 const result = await response.json();
