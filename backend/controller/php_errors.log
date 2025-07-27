@@ -1,0 +1,49 @@
+[27-Jul-2025 09:52:06 Europe/Berlin] PHP Warning:  Undefined variable $datosLimpios in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 93
+[27-Jul-2025 09:52:06 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 09:52:53 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:01:54 Europe/Berlin] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 17
+[27-Jul-2025 10:01:54 Europe/Berlin] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\veterinariaSemestral\backend\includes\conexion.php:1) in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 19
+[27-Jul-2025 10:01:54 Europe/Berlin] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 17
+[27-Jul-2025 10:01:54 Europe/Berlin] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\veterinariaSemestral\backend\includes\conexion.php:1) in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 19
+[27-Jul-2025 10:01:54 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 10:01:54 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 10:03:20 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:04:12 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:04:35 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:35:59 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:36:11 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:36:53 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:37:17 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:37:25 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:55:04 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 10:55:35 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 11:07:37 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 11:17:08 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 11:17:26 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 17:42:54 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 17:43:10 Europe/Berlin] PHP Warning:  Undefined variable $datosUsuario in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:43:10 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:43:10 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 17:43:31 Europe/Berlin] PHP Warning:  Undefined variable $datosUsuario in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:43:31 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:43:31 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 17:44:06 Europe/Berlin] PHP Warning:  Undefined variable $datosUsuario in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:44:06 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:44:06 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 17:57:37 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 17:57:40 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 17:58:00 Europe/Berlin] PHP Warning:  Undefined variable $datosUsuario in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:58:00 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 146
+[27-Jul-2025 17:58:00 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 18:15:09 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 18:30:53 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 18:31:32 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 18:33:45 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 18:33:45 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 18:33:48 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 18:33:49 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 18:33:58 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 18:33:58 Europe/Berlin] Error en UsuariosController.php: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 18:36:07 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 18:36:11 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 18:36:46 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found

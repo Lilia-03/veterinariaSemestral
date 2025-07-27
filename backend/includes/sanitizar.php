@@ -523,6 +523,82 @@ public static function validarDatosServicio($datos) {
         'errors' => $errores
     ];
 }
+
+public static function validarDatosUsuario($datos, $requierePassword = true) {
+        $errors = [];
+        $datosLimpios = [];
+        
+        // Validar nombre de usuario
+        if (empty($datos['nombreUsuario'])) {
+            $errors[] = 'Nombre de usuario es requerido';
+        } else {
+            $datosLimpios['nombreUsuario'] = trim($datos['nombreUsuario']);
+        }
+        
+        // Validar email
+        if (empty($datos['email'])) {
+            $errors[] = 'Email es requerido';
+        } elseif (!filter_var($datos['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Email inválido';
+        } else {
+            $datosLimpios['email'] = trim($datos['email']);
+        }
+        
+        // Validar nombre completo
+        if (empty($datos['nombreCompleto'])) {
+            $errors[] = 'Nombre completo es requerido';
+        } else {
+            $datosLimpios['nombreCompleto'] = trim($datos['nombreCompleto']);
+        }
+        
+        // Validar contraseña si es requerida
+        if ($requierePassword) {
+            if (empty($datos['password'])) {
+                $errors[] = 'Contraseña es requerida';
+            } elseif (strlen($datos['password']) < 6) {
+                $errors[] = 'Contraseña debe tener al menos 6 caracteres';
+            } else {
+                $datosLimpios['password'] = $datos['password'];
+            }
+        } elseif (!empty($datos['password'])) {
+            // Contraseña opcional pero si se proporciona debe ser válida
+            if (strlen($datos['password']) < 6) {
+                $errors[] = 'Contraseña debe tener al menos 6 caracteres';
+            } else {
+                $datosLimpios['password'] = $datos['password'];
+            }
+        }
+        
+        // Validar rol
+        if (empty($datos['rolId'])) {
+            $errors[] = 'Rol es requerido';
+        } else {
+            $datosLimpios['rolId'] = (int)$datos['rolId'];
+        }
+        
+        // Campos opcionales
+        if (!empty($datos['cedulaCliente'])) {
+            $datosLimpios['cedulaCliente'] = trim($datos['cedulaCliente']);
+        }
+        
+        if (isset($datos['activo'])) {
+            $datosLimpios['activo'] = (int)$datos['activo'];
+        }
+        
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors,
+            'data' => $datosLimpios
+        ];
+    }
+
+    /**
+     * Sanitiza teléfono
+     */
+    public static function sanitizarTelefono($telefono) {
+        // Eliminar todo excepto números y guiones
+        return preg_replace('/[^0-9\-]/', '', trim($telefono));
+    }
     
 public static function validarParametrosBusquedaUsuario($parametros) {
     $errores = [];
@@ -745,4 +821,5 @@ public static function validarMetodoHTTPUsuario($metodoRequerido = 'GET') {
     ];
 }    
 }
+
 ?>
