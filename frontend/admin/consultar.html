@@ -13,45 +13,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-  <nav class="navbar navbar-dark navbar-custom px-3">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <button
-          class="navbar-toggler me-2"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarToggleExternalContent"
-          aria-controls="navbarToggleExternalContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <h1 class="mb-0 text-white">Clini<span style="color: #ffa500;">Pet</span></h1>
-      </div>
-      <div class="header-icons i">
-        <div class="d-flex align-items-center">
-          <a href="javascript:void(0);" onclick="window.history.back();"><i class="fa-solid fa-arrow-left"></i></a>
-          <a href="PaginaPrincipal.html"><i class="fas fa-home"></i></a>
+  <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <span style="color: white; font-size: 2.5rem; font-weight: 600;">🐾 Clini</span><span style="color: #fea240; font-size: 2.5rem; font-weight: 600;">Pet</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Administrador</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+            <div class="user-info" style="display: flex; align-items: center; gap: 15px; color: white;">
+                <div style="text-align: right;">
+                    <div data-user-name style="font-weight: 600;">Cargando...</div>
+                    <div data-user-role style="font-size: 0.9rem; opacity: 0.9;">Administrador</div>
+                </div>
+                <a href="#" class="login-btn" data-logout><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
         </div>
-      </div>
-    </div>
-  </nav>
+    </header>
 
-  <div class="collapse" id="navbarToggleExternalContent">
-    <div class="navbar-menu p-4">
-      <h4 class="text-white">Menú</h4>
-      <ul class="list-unstyled">
-        <li><a href="RegistrarInventario.html" class="text-white">Registrar Inventario</a></li>
-        <li><a href="RegistroCliente.html" class="text-white">Registrar Cliente</a></li>
-        <li><a href="RegistroMascotas.html" class="text-white">Registrar Mascota</a></li>
-        <li><a href="actualizarCliente.html" class="text-white">Actualizar Cliente</a></li>
-        <li><a href="actualizarMascota.html" class="text-white">Actualizar Mascota</a></li>
-        <li><a href="ConsultarMascotaCliente.html" class="text-white">Consultar Mascota y Cliente</a></li>
-        <li><a href="informacion.html" class="text-white">Información</a></li>
-      </ul>
-    </div>
-  </div>
+    <!-- HERO SECTION PARA ADMIN -->
+    <section id="admin" class="hero admin-hero">
+        <div class="hero-content">
+            <h1>Panel de Administración</h1>
+            <p>Bienvenido, <span data-user-name>Administrador</span>. Desde aquí puedes gestionar todos los aspectos del sistema CliniPet.</p>
+        </div>
+    </section>
 
   <!-- MAIN para mantener el footer al fondo -->
   <main class="main-content container my-4">
@@ -93,10 +87,10 @@
 
     <!-- FOOTER -->
     <div id="footer"></div>
-    <script src="../js/includeSesiones.js"></script>
+    <script src="/frontend/assets/js/includeSesiones.js"></script>
         
     <!-- JavaScript personalizado -->
-    <script src="../js/consultar.js"></script>
+    <script src="/frontend/assets/js/consultar.js"></script>
 
     <!-- Bootstrap JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
