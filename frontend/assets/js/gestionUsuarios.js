@@ -149,13 +149,7 @@ function renderizarTablaUsuarios() {
         const estadoActual = usuario.Activo == 1 || usuario.Activo === true;
         const badgeClass = estadoActual ? 'bg-success' : 'bg-danger';
         const estadoTexto = estadoActual ? 'Activo' : 'Inactivo';
-        const botonEstado = `
-            <button class="btn btn-sm ${estadoActual ? 'btn-outline-danger' : 'btn-outline-success'}" 
-                    onclick="cambiarEstadoUsuarioDirecto(${usuario.UsuarioID}, ${estadoActual})"
-                    title="${estadoActual ? 'Desactivar usuario' : 'Activar usuario'}">
-                <i class="bi bi-${estadoActual ? 'toggle-on' : 'toggle-off'}"></i>
-            </button>
-        `;
+        
         
         tr.innerHTML = `
             <td>${usuario.UsuarioID}</td>
@@ -164,7 +158,6 @@ function renderizarTablaUsuarios() {
             <td>${usuario.NombreRol}</td>
             <td>
                 <span class="badge ${badgeClass}">${estadoTexto}</span>
-                ${botonEstado}
             </td>
             <td>${usuario.UltimoAcceso || 'Nunca'}</td>
             <td>

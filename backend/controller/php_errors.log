@@ -47,3 +47,6 @@
 [27-Jul-2025 18:36:07 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
 [27-Jul-2025 18:36:11 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
 [27-Jul-2025 18:36:46 Europe/Berlin] Error fatal en UsuariosController.php: Class "Sanitizar" not found
+[27-Jul-2025 21:26:51 Europe/Berlin] Error en UsuariosController.php: Acción no válida: actualizarPermisosRol
+[27-Jul-2025 21:27:33 Europe/Berlin] Error en UsuariosController.php: Acción no válida: actualizarPermisosRol
+[27-Jul-2025 21:27:41 Europe/Berlin] Error en UsuariosController.php: Acción no válida: actualizarPermisosRol
