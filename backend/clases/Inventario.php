@@ -62,7 +62,7 @@ class Inventario {
     public function agregarProducto($datos) {
         try {
             // Validar datos usando la clase Sanitizar
-            $validacion = Sanitizar::validarDatosProducto($datos);
+            $validacion = SanitizarEntrada::validarDatosProducto($datos);
             
             if (!$validacion['valid']) {
                 throw new Exception("Datos inválidos: " . implode(', ', $validacion['errors']));
@@ -114,7 +114,7 @@ class Inventario {
                 return $this->obtenerProductos();
             }
 
-            $termino = Sanitizar::sanitizarBusqueda($termino);
+            $termino = SanitizarEntrada::sanitizarBusqueda($termino);
             return $this->conexion->buscarProductos($termino);
             
         } catch (Exception $e) {

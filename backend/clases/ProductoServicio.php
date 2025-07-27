@@ -10,10 +10,6 @@ class ProductoServicio {
         $this->conexion = new Conexion();
     }
 
-    /**
-     * Obtiene todos los productos y servicios con su disponibilidad
-     * @return array Lista de productos y servicios
-     */
     public function obtenerTodos() {
         try {
             return $this->conexion->obtenerProductosServiciosUsuario();
@@ -23,17 +19,11 @@ class ProductoServicio {
         }
     }
 
-    /**
-     * Busca productos y servicios por término y tipo
-     * @param string $termino Término de búsqueda
-     * @param string $tipo Tipo de item (Producto, Servicio, o vacío para todos)
-     * @return array Lista filtrada de productos y servicios
-     */
     public function buscar($termino = '', $tipo = '') {
         try {
             // Sanitizar parámetros
-            $termino = Sanitizar::sanitizarBusqueda($termino);
-            $tipo = Sanitizar::sanitizarTexto($tipo);
+            $termino = SanitizarEntrada::sanitizarBusqueda($termino);
+            $tipo = SanitizarEntrada::sanitizarTexto($tipo);
 
             // Validar tipo si se proporciona
             if (!empty($tipo) && !in_array($tipo, ['Producto', 'Servicio'])) {
@@ -47,14 +37,9 @@ class ProductoServicio {
         }
     }
 
-    /**
-     * Obtiene el detalle de un producto o servicio específico
-     * @param int $idItem ID del item
-     * @return array|null Datos del item o null si no existe
-     */
     public function obtenerDetalle($idItem) {
         try {
-            $idItem = Sanitizar::validarEnteroPositivo($idItem, 'ID del item');
+            $idItem = SanitizarEntrada::validarEnteroPositivo($idItem, 'ID del item');
             return $this->conexion->obtenerDetalleProductoServicioUsuario($idItem);
         } catch (Exception $e) {
             error_log("Error en obtenerDetalle: " . $e->getMessage());
@@ -62,10 +47,6 @@ class ProductoServicio {
         }
     }
 
-    /**
-     * Obtiene solo productos con su disponibilidad
-     * @return array Lista de productos
-     */
     public function obtenerSoloProductos() {
         try {
             return $this->conexion->buscarProductosServiciosUsuario('', 'Producto');
@@ -75,10 +56,6 @@ class ProductoServicio {
         }
     }
 
-    /**
-     * Obtiene solo servicios
-     * @return array Lista de servicios
-     */
     public function obtenerSoloServicios() {
         try {
             return $this->conexion->buscarProductosServiciosUsuario('', 'Servicio');
@@ -88,11 +65,6 @@ class ProductoServicio {
         }
     }
 
-    /**
-     * Formatea los datos para presentación al usuario
-     * @param array $items Lista de items
-     * @return array Items formateados
-     */
     public function formatearParaPresentacion($items) {
         $itemsFormateados = [];
         
@@ -115,11 +87,6 @@ class ProductoServicio {
         return $itemsFormateados;
     }
 
-    /**
-     * Formatea la cantidad para mostrar al usuario
-     * @param array $item Datos del item
-     * @return string Texto de cantidad formateado
-     */
     private function formatearCantidad($item) {
         if ($item['Tipo'] === 'Servicio') {
             return 'Siempre disponible';
@@ -136,11 +103,6 @@ class ProductoServicio {
         }
     }
 
-    /**
-     * Obtiene la clase CSS según la disponibilidad
-     * @param array $item Datos del item
-     * @return string Clase CSS
-     */
     private function obtenerClaseDisponibilidad($item) {
         if ($item['Tipo'] === 'Servicio') {
             return 'disponible';
@@ -157,10 +119,6 @@ class ProductoServicio {
         }
     }
 
-    /**
-     * Obtiene estadísticas básicas
-     * @return array Estadísticas
-     */
     public function obtenerEstadisticas() {
         try {
             $todos = $this->obtenerTodos();

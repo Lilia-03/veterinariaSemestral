@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 require_once '../includes/conexion.php';
 require_once '../includes/sanitizar.php';
-require_once '../clases/ProductoServicioUsuario.php';
+require_once '../clases/ProductoServicio.php';
 
 class ProductoServicioController {
     private $modelo;
@@ -21,13 +21,10 @@ class ProductoServicioController {
         $this->modelo = new ProductoServicio();
     }
 
-    /**
-     * Maneja las peticiones según la acción solicitada
-     */
     public function manejarPeticion() {
         try {
             $accion = $_GET['accion'] ?? '';
-            $accion = Sanitizar::sanitizarTexto($accion);
+            $accion = SanitizarEntrada::sanitizarTexto($accion);
 
             switch ($accion) {
                 case 'obtener':
@@ -57,9 +54,6 @@ class ProductoServicioController {
         }
     }
 
-    /**
-     * Obtiene todos los productos y servicios
-     */
     private function obtenerTodos() {
         try {
             $items = $this->modelo->obtenerTodos();
@@ -75,9 +69,6 @@ class ProductoServicioController {
         }
     }
 
-    /**
-     * Busca productos y servicios con filtros
-     */
     private function buscar() {
         try {
             // Obtener parámetros de búsqueda
@@ -85,8 +76,8 @@ class ProductoServicioController {
             $tipo = $_GET['tipo'] ?? '';
 
             // Validar parámetros
-            $termino = Sanitizar::sanitizarBusqueda($termino);
-            $tipo = Sanitizar::sanitizarTexto($tipo);
+            $termino = SanitizarEntrada::sanitizarBusqueda($termino);
+            $tipo = SanitizarEntrada::sanitizarTexto($tipo);
 
             // Validar tipo si se proporciona
             if (!empty($tipo) && !in_array($tipo, ['Producto', 'Servicio'])) {
@@ -112,15 +103,12 @@ class ProductoServicioController {
         }
     }
 
-    /**
-     * Obtiene el detalle de un item específico
-     */
     private function obtenerDetalle() {
         try {
             $idItem = $_GET['id'] ?? '';
             
             // Validar ID
-            $validacionId = Sanitizar::validarID($idItem);
+            $validacionId = SanitizarEntrada::validarID($idItem);
             if (!$validacionId['valid']) {
                 $this->respuestaError(implode(', ', $validacionId['errors']), 400);
                 return;
@@ -143,10 +131,6 @@ class ProductoServicioController {
             $this->respuestaError('Error al obtener detalle del item');
         }
     }
-
-    /**
-     * Obtiene solo productos
-     */
     private function obtenerSoloProductos() {
         try {
             $productos = $this->modelo->obtenerSoloProductos();
@@ -162,9 +146,6 @@ class ProductoServicioController {
         }
     }
 
-    /**
-     * Obtiene solo servicios
-     */
     private function obtenerSoloServicios() {
         try {
             $servicios = $this->modelo->obtenerSoloServicios();
@@ -179,10 +160,6 @@ class ProductoServicioController {
             $this->respuestaError('Error al obtener servicios');
         }
     }
-
-    /**
-     * Obtiene estadísticas básicas
-     */
     private function obtenerEstadisticas() {
         try {
             $estadisticas = $this->modelo->obtenerEstadisticas();
@@ -195,10 +172,6 @@ class ProductoServicioController {
             $this->respuestaError('Error al obtener estadísticas');
         }
     }
-
-    /**
-     * Envía respuesta de éxito
-     */
     private function respuestaExito($datos = [], $mensaje = 'Operación exitosa') {
         http_response_code(200);
         echo json_encode([
@@ -209,10 +182,6 @@ class ProductoServicioController {
         ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         exit;
     }
-
-    /**
-     * Envía respuesta de error
-     */
     private function respuestaError($mensaje = 'Error interno', $codigo = 500) {
         http_response_code($codigo);
         echo json_encode([
@@ -238,4 +207,5 @@ try {
         'timestamp' => date('Y-m-d H:i:s')
     ], JSON_UNESCAPED_UNICODE);
 }
+
 ?>

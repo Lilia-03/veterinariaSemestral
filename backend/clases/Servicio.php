@@ -4,6 +4,9 @@ require_once __DIR__ . '/../includes/Conexion.php';
 require_once __DIR__ . '/../includes/Sanitizar.php'; 
 
 class Servicio {
+    
+    // SOLUCIÓN: Declarar la propiedad explícitamente
+    private $conexion;
 
     public function __construct() {
         $this->conexion = new Conexion();
@@ -21,7 +24,7 @@ class Servicio {
     public function agregarServicio($datos) {
         try {
             // Validar datos usando la clase Sanitizar
-            $validacion = Sanitizar::validarDatosServicio($datos);
+            $validacion = SanitizarEntrada::validarDatosServicio($datos);
             
             if (!$validacion['valid']) {
                 throw new Exception("Datos inválidos: " . implode(', ', $validacion['errors']));
@@ -46,7 +49,6 @@ class Servicio {
             throw new Exception($e->getMessage());
         }
     }
-
 
     public function eliminarServicio($idServicio) {
         try {
@@ -77,7 +79,7 @@ class Servicio {
                 return $this->obtenerServicios();
             }
 
-            $termino = Sanitizar::sanitizarBusqueda($termino);
+            $termino = SanitizarEntrada::sanitizarBusqueda($termino);
             return $this->conexion->buscarServicios($termino);
             
         } catch (Exception $e) {
