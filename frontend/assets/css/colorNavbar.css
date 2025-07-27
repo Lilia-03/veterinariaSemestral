@@ -1,0 +1,255 @@
+/* COLORES PRINCIPALES */
+:root {
+    --clinipet-blue: #035E8D;
+    --clinipet-orange: #fea240;
+    --clinipet-white: #ffffff;
+}
+
+/* ESTRUCTURA DEL NAVBAR */
+.header {
+    background-color: var(--clinipet-blue);
+    color: white;
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
+    padding: 0 2rem;
+    width: 100%;
+    position: relative;
+}
+
+
+
+/* LOGO */
+.logo {
+    position: relative;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.logo-clini {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.logo-pet {
+    color: var(--clinipet-orange);
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+/* NAVEGACIÓN PRINCIPAL */
+.nav-links {
+    position: relative;
+    justify-content: center;
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--clinipet-orange);
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+}
+
+/* BOTÓN DE LOGIN */
+.login-btn {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid white;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    font-size: 1rem;
+    margin:0;
+    width: 120px; 
+    flex-shrink: 0;
+    justify-content: center;
+    text-align: center; 
+}
+
+.login-btn:hover {
+    background: var(--clinipet-orange);
+    border-color: var(--clinipet-orange);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+
+/* MENÚ MÓVIL */
+.mobile-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+    padding: 0.5rem;
+    margin-left: 1rem;
+    flex-shrink: 0; /* Evita que se comprima */
+}
+
+.mobile-menu span {
+    width: 25px;
+    height: 3px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+/* MENÚ DESPLEGABLE MÓVIL */
+.navbar-menu {
+    background-color: var(--clinipet-blue);
+    width: 100%;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    z-index: 1050;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    padding: 1rem 2rem;
+    box-sizing: border-box;
+    display: none;
+}
+
+.navbar-menu ul {
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.navbar-menu ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    display: block;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.navbar-menu ul li a:hover {
+    color: var(--clinipet-orange);
+    background: rgba(255,255,255,0.1);
+}
+
+.mobile-login-btn {
+    display: none;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid white;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.mobile-login-btn:hover {
+    background: var(--clinipet-orange);
+    border-color: var(--clinipet-orange);
+}
+
+/* ESTADOS DEL MENÚ MÓVIL */
+.navbar-menu.active {
+    display: block;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .nav-links {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .login-btn {
+        display: none;
+    }
+    
+    .mobile-menu {
+        display: flex;
+    }
+    
+    .mobile-login-btn {
+        display: block;
+    }
+    
+    /* Mantener el centrado visual en móvil cuando no hay botón de login */
+    .hide-login .nav-container {
+        justify-content: flex-start;
+    }
+    
+    .hide-login .mobile-menu {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        height: 70px;
+    }
+    
+    .navbar-menu {
+        top: 70px;
+    }
+    
+    .logo-clini,
+    .logo-pet {
+        font-size: 2rem;
+    }
+    
+    .mobile-menu span {
+        width: 22px;
+    }
+}
+
+

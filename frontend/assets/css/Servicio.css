@@ -1,0 +1,683 @@
+/* COLORES PRINCIPALES - CliniPet */
+:root {
+    --clinipet-blue: #035E8D;
+    --clinipet-orange: #fea240;
+    --clinipet-light: #E6E2D6;
+    --clinipet-white: #ffffff;
+}
+
+/* ESTRUCTURA BASE - FONDO PRINCIPAL */
+html {
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/fondoPatitas.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: transparent !important;
+}
+
+/* CONTENEDOR PRINCIPAL DEL SISTEMA DE SERVICIOS */
+.main-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+    margin: 20px auto;
+    max-width: 1200px;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* HEADER DEL SISTEMA DE SERVICIOS */
+.header-section {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 0%, rgba(254, 162, 64, 0.1) 50%, transparent 100%);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.header-section h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.header-section p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+}
+
+/* PESTAÑAS PERSONALIZADAS CON ESTILO CLINIPET */
+.custom-nav-tabs {
+    border-bottom: 3px solid var(--clinipet-light);
+    background: rgba(230, 226, 214, 0.3);
+    border-radius: 15px 15px 0 0;
+    padding: 10px 10px 0;
+}
+
+.custom-nav-tabs .nav-link {
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--clinipet-blue);
+    font-weight: 600;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    margin-right: 8px;
+    transition: all 0.4s ease;
+    border: 2px solid transparent;
+    padding: 15px 25px;
+    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-nav-tabs .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(254, 162, 64, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.custom-nav-tabs .nav-link:hover::before {
+    left: 100%;
+}
+
+.custom-nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    color: white;
+    border-color: var(--clinipet-orange);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(3, 94, 141, 0.4);
+    border-bottom-color: transparent;
+}
+
+.custom-nav-tabs .nav-link:hover:not(.active) {
+    background: rgba(254, 162, 64, 0.1);
+    color: var(--clinipet-blue);
+    transform: translateY(-2px);
+    border-color: var(--clinipet-orange);
+}
+
+/* SECCIONES DE FORMULARIO CON ESTILO CLINIPET */
+.form-section {
+    background: rgba(230, 226, 214, 0.6);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    background: rgba(230, 226, 214, 0.8);
+}
+
+.form-section h3 {
+    color: var(--clinipet-blue);
+    font-weight: 700;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    text-shadow: 0 2px 4px rgba(255,255,255,0.8);
+    position: relative;
+}
+
+.form-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, var(--clinipet-blue), var(--clinipet-orange));
+    border-radius: 2px;
+}
+
+/* BOTONES CON GRADIENTES CLINIPET */
+.btn-gradient-primary {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(3, 94, 141, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-gradient-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-gradient-primary:hover::before {
+    left: 100%;
+}
+
+.btn-gradient-success {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.btn-gradient-danger {
+    background: linear-gradient(135deg, var(--clinipet-orange) 0%, #f59e0b 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(254, 162, 64, 0.3);
+}
+
+.btn-gradient-secondary {
+    background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+}
+
+/* EFECTOS HOVER PARA BOTONES */
+.btn-gradient-primary:hover,
+.btn-gradient-success:hover,
+.btn-gradient-danger:hover,
+.btn-gradient-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    color: white;
+}
+
+.btn-gradient-primary:hover {
+    background: linear-gradient(135deg, #0284c7 0%, var(--clinipet-orange) 100%);
+}
+
+.btn-gradient-primary:focus,
+.btn-gradient-success:focus,
+.btn-gradient-danger:focus,
+.btn-gradient-secondary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(3, 94, 141, 0.25);
+    color: white;
+}
+
+/* INFORMACIÓN DEL SERVICIO CON ESTILO CLINIPET */
+.service-info {
+    background: linear-gradient(135deg, rgba(227, 242, 253, 0.9) 0%, rgba(254, 162, 64, 0.1) 100%);
+    padding: 25px;
+    border-radius: 15px;
+    margin: 25px 0;
+    display: none;
+    animation: slideInDown 0.5s ease;
+    border: 2px solid rgba(3, 94, 141, 0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.delete-info {
+    background: linear-gradient(135deg, rgba(254, 162, 64, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%) !important;
+    border-color: rgba(254, 162, 64, 0.4) !important;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(3, 94, 141, 0.1);
+}
+
+.info-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    background: rgba(255, 255, 255, 1);
+}
+
+.info-item .label {
+    font-size: 14px;
+    color: var(--clinipet-blue);
+    margin-bottom: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item .value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* TABLA PERSONALIZADA CLINIPET */
+.table-custom {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    background: white;
+    border: none;
+}
+
+.table-custom thead th {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    color: white;
+    border: none;
+    font-weight: 700;
+    padding: 20px 15px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+.table-custom thead th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--clinipet-orange);
+}
+
+.table-custom tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(3, 94, 141, 0.1);
+}
+
+.table-custom tbody tr:hover {
+    background: linear-gradient(135deg, rgba(230, 226, 214, 0.3) 0%, rgba(254, 162, 64, 0.1) 100%);
+    transform: scale(1.01);
+}
+
+.table-custom td {
+    padding: 18px 15px;
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+/* SECCIÓN DE EXPORTACIÓN */
+.export-section {
+    text-align: center;
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+    box-shadow: 0 10px 30px rgba(3, 94, 141, 0.4);
+    border: 2px solid var(--clinipet-orange);
+    position: relative;
+    overflow: hidden;
+}
+
+.export-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 0%, rgba(254, 162, 64, 0.1) 50%, transparent 100%);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+.export-section h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.export-section p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 25px;
+    font-size: 16px;
+    position: relative;
+    z-index: 2;
+}
+
+/* SPINNER PERSONALIZADO */
+.spinner-custom {
+    border: 4px solid rgba(3, 94, 141, 0.2);
+    border-top: 4px solid var(--clinipet-blue);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* MODAL CLINIPET */
+.modal {
+    display: none !important;
+    backdrop-filter: blur(10px);
+}
+
+.modal.show {
+    display: block !important;
+}
+
+.modal-backdrop {
+    background-color: rgba(3, 94, 141, 0.4);
+}
+
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    padding: 25px;
+}
+
+.modal-title {
+    color: white;
+    font-weight: 700;
+    margin: 0;
+}
+
+.btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.modal-footer {
+    background: rgba(230, 226, 214, 0.3);
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    padding: 20px 30px;
+}
+
+/* INPUTS Y FORM CONTROLS MEJORADOS */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--clinipet-orange);
+    box-shadow: 0 0 0 0.2rem rgba(254, 162, 64, 0.25);
+}
+
+.form-control,
+.form-select {
+    border: 2px solid rgba(3, 94, 141, 0.2);
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-control:hover,
+.form-select:hover {
+    border-color: var(--clinipet-blue);
+    background: rgba(255, 255, 255, 1);
+}
+
+.form-label {
+    color: var(--clinipet-blue);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* ALERTAS PERSONALIZADAS */
+.alert {
+    border-radius: 12px;
+    border: none;
+    font-weight: 500;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+    color: #059669;
+    border-left: 4px solid #10b981;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(254, 162, 64, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+    color: #d97706;
+    border-left: 4px solid var(--clinipet-orange);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(254, 162, 64, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+    color: #d97706;
+    border-left: 4px solid var(--clinipet-orange);
+}
+
+/* ANIMACIONES */
+.fade-in {
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* VALIDACIÓN DE INPUTS */
+.form-control.is-valid {
+    border-color: #10b981;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.form-control.is-invalid {
+    border-color: var(--clinipet-orange);
+    box-shadow: 0 0 0 0.2rem rgba(254, 162, 64, 0.25);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .main-container {
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    .header-section h1 {
+        font-size: 2.2rem;
+    }
+    
+    .header-section {
+        padding: 25px 20px;
+    }
+
+    .custom-nav-tabs .nav-link {
+        padding: 12px 18px;
+        font-size: 14px;
+        margin-right: 4px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .info-item {
+        padding: 15px;
+    }
+
+    .info-item .value {
+        font-size: 18px;
+    }
+
+    .table-custom {
+        font-size: 14px;
+    }
+
+    .table-custom th,
+    .table-custom td {
+        padding: 12px 8px;
+    }
+
+    .btn-gradient-primary,
+    .btn-gradient-success,
+    .btn-gradient-danger,
+    .btn-gradient-secondary {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .d-flex.gap-2 .btn {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .header-section h1 {
+        font-size: 1.8rem;
+    }
+    
+    .custom-nav-tabs .nav-link {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    .form-section h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ESTILOS ADICIONALES PARA MEJORAR LA EXPERIENCIA */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.table-responsive {
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+/* EFECTOS DE HOVER MEJORADOS */
+.custom-nav-tabs .nav-link,
+.btn-gradient-primary,
+.btn-gradient-success,
+.btn-gradient-danger,
+.btn-gradient-secondary,
+.info-item {
+    position: relative;
+    overflow: hidden;
+}
+
+/* GARANTIZAR TRANSPARENCIA DEL FONDO */
+.container-fluid,
+.tab-content,
+.tab-pane {
+    background: transparent !important;
+}
