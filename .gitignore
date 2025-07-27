@@ -1,5 +1,5 @@
 #ignorar archivo de conexión
-backend/include/conexion.php
+#backend/include/conexion.php
 
 #ignorar librerias creadas por composer (para el tema de los pdf)
 vendor/
