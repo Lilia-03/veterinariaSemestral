@@ -1,0 +1,136 @@
+=== INICIO DEBUG ===
+Timestamp: 2025-07-27 20:06:47
+POST data: Array
+(
+    [action] => test
+)
+
+Acción: test
+Usuario ID: 1
+Probando conexión PDO...
+Conexión PDO exitosa
+Ejecutando test
+=== FIN DEBUG ===
+
+=== INICIO DEBUG ===
+Timestamp: 2025-07-27 20:06:52
+POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+Acción: obtenerRoles
+Usuario ID: 1
+Probando conexión PDO...
+Conexión PDO exitosa
+Obteniendo roles...
+Roles obtenidos: 3
+=== FIN DEBUG ===
+
+=== INICIO DEBUG ===
+Timestamp: 2025-07-27 20:06:59
+POST data: Array
+(
+    [action] => registrarUsuario
+    [nombreUsuario] => testuser1753639619834
+    [email] => test1753639619834@test.com
+    [nombreCompleto] => Usuario de Prueba
+    [password] => 123456
+    [rolId] => 2
+)
+
+Acción: registrarUsuario
+Usuario ID: 1
+Probando conexión PDO...
+Conexión PDO exitosa
+=== REGISTRAR USUARIO ===
+Datos preparados: Array
+(
+    [nombreUsuario] => testuser1753639619834
+    [email] => test1753639619834@test.com
+    [nombreCompleto] => Usuario de Prueba
+    [password] => 123456
+    [rolId] => 2
+    [cedulaCliente] => 
+)
+
+Password hasheado
+SQL preparado
+Parámetros: Array
+(
+    [0] => testuser1753639619834
+    [1] => test1753639619834@test.com
+    [2] => $2y$10$Nh3.Yy8HWY6QJ/Yn/W9oaO27hDJpvFHEVEBEDhH8nnuSQNb2Ysd8.
+    [3] => Usuario de Prueba
+    [4] => 2
+    [5] => 
+    [6] => 1
+    [7] => 
+    [8] => 
+)
+
+Execute resultado: true
+=== FIN DEBUG ===
+
+=== INICIO DEBUG ===
+Timestamp: 2025-07-27 20:07:10
+POST data: Array
+(
+    [action] => registrarUsuario
+    [nombreUsuario] => cliente1753639630299
+    [email] => cliente1753639630299@test.com
+    [nombreCompleto] => Cliente de Prueba
+    [password] => 123456
+    [rolId] => 3
+    [cedulaCliente] => 8-999-659
+    [telefono] => 555-1234
+    [direccion] => Calle de Prueba 123
+)
+
+Acción: registrarUsuario
+Usuario ID: 1
+Probando conexión PDO...
+Conexión PDO exitosa
+=== REGISTRAR USUARIO ===
+Usuario es cliente, validando campos adicionales...
+Datos preparados: Array
+(
+    [nombreUsuario] => cliente1753639630299
+    [email] => cliente1753639630299@test.com
+    [nombreCompleto] => Cliente de Prueba
+    [password] => 123456
+    [rolId] => 3
+    [cedulaCliente] => 8-999-659
+    [telefono] => 555-1234
+    [direccion] => Calle de Prueba 123
+)
+
+Password hasheado
+SQL preparado
+Parámetros: Array
+(
+    [0] => cliente1753639630299
+    [1] => cliente1753639630299@test.com
+    [2] => $2y$10$klZPmNaTHqNJWupmgQ17HuwAldr.xuH78YHkIkNyZNK2oRcZ2qsVu
+    [3] => Cliente de Prueba
+    [4] => 3
+    [5] => 8-999-659
+    [6] => 1
+    [7] => 555-1234
+    [8] => Calle de Prueba 123
+)
+
+Execute resultado: true
+=== FIN DEBUG ===
+
+=== INICIO DEBUG ===
+Timestamp: 2025-07-27 20:16:34
+POST data: Array
+(
+)
+
+Acción: 
+Exception: No se especificó una acción
+Stack: #0 {main}
+=== FIN DEBUG ===
+
