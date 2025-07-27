@@ -1,43 +1,160 @@
-:root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #ffa500;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
+/* COLORES PRINCIPALES - CliniPet */
+    :root {
+        --clinipet-blue: #035E8D;
+        --clinipet-orange: #fea240;
+        --clinipet-light: #E6E2D6;
+        --clinipet-white: #ffffff;
+        --accent-color: #fea240;
+        --primary-color: #035E8D;
+        --secondary-color: #0284c7;
+    }
+
+        html {
+            width: 100%;
+            height: 100%;
+            background-image: url('../img/fondoPatitas.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: transparent !important;
+            display: flex;
+            flex-direction: column;
         }
 
         .navbar-custom {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 1rem 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 3px solid var(--clinipet-orange);
+            box-shadow: 0 4px 20px rgba(3, 94, 141, 0.3);
+            padding: 15px 0;
         }
 
+        .navbar-custom h2 {
+            font-weight: 700;
+            font-size: 2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .navbar-custom .btn-outline-light {
+            border: 2px solid var(--clinipet-orange);
+            color: var(--clinipet-orange);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 25px;
+            padding: 8px 20px;
+        }
+
+        .navbar-custom .btn-outline-light:hover {
+            background: var(--clinipet-orange);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(254, 162, 64, 0.4);
+        }
+
+        /* CONTENEDOR PRINCIPAL */
         .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin: 20px auto;
+            max-width: 1200px;
+            width: 95%;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+        }
+        /* TÍTULO PRINCIPAL */
+        .display-5 {
+            color: var(--clinipet-blue) !important;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(3, 94, 141, 0.1);
+            margin-bottom: 20px;
+            position: relative;
         }
 
+        .display-5::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--clinipet-blue), var(--clinipet-orange));
+            border-radius: 2px;
+        }
+
+        .lead {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+        
+        /* TARJETAS DE SECCIÓN */
         .card {
             border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
             overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
         }
 
         .card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+            border-bottom: 3px solid var(--clinipet-orange);
+            padding: 25px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 0%, rgba(254, 162, 64, 0.1) 50%, transparent 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .card-header h4 {
             color: white;
-            border: none;
-            padding: 1.5rem;
+            margin: 0;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card-body {
+            padding: 30px;
+            background: rgba(230, 226, 214, 0.3);
         }
 
         .step-indicator {
@@ -70,103 +187,365 @@
             color: #6c757d;
         }
 
-        .btn-custom {
-            border-radius: 25px;
-            padding: 0.7rem 2rem;
-            font-weight: 600;
+        /* BOTONES CLINIPET */
+        .btn-primary-custom,
+        .btn-success-custom {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
             border: none;
-            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(3, 94, 141, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .btn-success-custom {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-primary-custom::before,
+        .btn-success-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary-custom:hover::before,
+        .btn-success-custom:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary-custom:hover,
+        .btn-success-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             color: white;
         }
 
         .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #0284c7 0%, var(--clinipet-orange) 100%);
         }
 
-        .btn-success-custom {
-            background: linear-gradient(135deg, var(--success-color), #20c997);
-            color: white;
-        }
-
-        .btn-warning-custom {
-            background: linear-gradient(135deg, var(--warning-color), #fd7e14);
-            color: white;
-        }
-
-        .invoice-preview {
-            background: white;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-
-        .invoice-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 1rem;
-        }
-
-        .invoice-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .invoice-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 2rem;
-        }
-
-        .invoice-table th,
-        .invoice-table td {
-            border: 1px solid #dee2e6;
-            padding: 0.75rem;
-            text-align: left;
-        }
-
-        .invoice-table th {
-            background: var(--primary-color);
-            color: white;
+        .btn-custom {
+            min-width: 180px;
             font-weight: 600;
         }
 
-        .invoice-totals {
-            float: right;
-            width: 300px;
-            margin-top: 1rem;
+        /* BOTONES OUTLINE */
+        .btn-outline-primary {
+            border: 2px solid var(--clinipet-blue);
+            color: var(--clinipet-blue);
+            font-weight: 600;
+            border-radius: 25px;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
         }
 
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #dee2e6;
+        .btn-outline-primary:hover {
+            background: var(--clinipet-blue);
+            border-color: var(--clinipet-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(3, 94, 141, 0.3);
         }
 
-        .total-row.final {
-            border-bottom: 2px solid var(--primary-color);
-            font-weight: bold;
-            font-size: 1.2rem;
+        .btn-outline-success {
+            border: 2px solid #059669;
+            color: #059669;
+            font-weight: 600;
+            border-radius: 25px;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
         }
 
-        .product-item {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .btn-outline-success:hover {
+            background: #059669;
+            border-color: #059669;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+        }
+
+        /* INPUTS Y FORM CONTROLS */
+        .form-control,
+        .form-select {
+            border: 2px solid rgba(3, 94, 141, 0.2);
+            border-radius: 12px;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--clinipet-orange);
+            box-shadow: 0 0 0 0.2rem rgba(254, 162, 64, 0.25);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .form-control:hover,
+        .form-select:hover {
+            border-color: var(--clinipet-blue);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .form-label {
+            color: var(--clinipet-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* ALERTAS PERSONALIZADAS */
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+            font-weight: 500;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(3, 94, 141, 0.1) 0%, rgba(2, 132, 199, 0.1) 100%);
+            color: var(--clinipet-blue);
+            border-left: 4px solid var(--clinipet-blue);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            color: #059669;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert h5 {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+
+        /* ============================================= */
+        /* ESTILOS ESPECÍFICOS PARA LA FACTURA GENERADA */
+        /* ============================================= */
+
+        /* FACTURA PREVIEW - CONTENEDOR PRINCIPAL */
+        .invoice-preview {
+            background: white !important;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 2px solid rgba(3, 94, 141, 0.1);
+            margin: 20px 0;
+        }
+
+        /* HEADER DE LA FACTURA */
+        .invoice-preview .card-header {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+            color: white !important;
+            text-align: center;
+            border-radius: 15px 15px 0 0 !important;
+            border-bottom: 3px solid var(--clinipet-orange) !important;
+            padding: 30px !important;
+            margin: -30px -30px 20px -30px;
+        }
+
+        /* TÍTULOS EN EL HEADER DE LA FACTURA */
+        .invoice-preview .card-header h3,
+        .invoice-preview .card-header h4 {
+            color: white !important;
+            margin: 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .invoice-preview .card-header h3 {
+            font-size: 2.5rem !important;
+            margin-bottom: 10px;
+        }
+
+        .invoice-preview .card-header h4 {
+            font-size: 2rem !important;
+            margin-bottom: 5px;
+        }
+
+        .invoice-preview .card-header p {
+            color: rgba(255, 255, 255, 0.9) !important;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* SECCIONES DE LA FACTURA */
+        .invoice-preview h5 {
+            color: var(--clinipet-blue) !important;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .invoice-preview .border-bottom {
+            border-color: var(--clinipet-blue) !important;
+            border-width: 2px !important;
+            padding-bottom: 8px !important;
+        }
+
+        .invoice-preview .border-primary {
+            border-color: var(--clinipet-blue) !important;
+        }
+
+        /* TABLA DE LA FACTURA */
+        .invoice-preview .table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
+
+        .invoice-preview .table-primary {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+            color: white !important;
+        }
+
+        .invoice-preview .table-primary th {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 700;
+            padding: 15px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .invoice-preview .table td {
+            padding: 12px 15px;
+            border-color: rgba(3, 94, 141, 0.1) !important;
+            vertical-align: middle;
+        }
+
+        .invoice-preview .table tbody tr:hover {
+            background: rgba(230, 226, 214, 0.3);
+        }
+
+        /* TABLA DE TOTALES */
+        .invoice-preview .table-sm {
+            margin-bottom: 0;
+        }
+
+        .invoice-preview .table-sm td {
+            padding: 10px 15px;
+            border-color: rgba(3, 94, 141, 0.2) !important;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* FILA DEL TOTAL FINAL */
+        .invoice-preview .table-primary td {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            font-size: 18px !important;
+        }
+
+        /* TEXTOS ESPECÍFICOS */
+        .invoice-preview .text-primary {
+            color: var(--clinipet-blue) !important;
+        }
+
+        .invoice-preview .text-muted {
+            color: #6c757d !important;
+        }
+
+        .invoice-preview .text-end {
+            text-align: right !important;
+        }
+
+        .invoice-preview strong {
+            font-weight: 700;
+        }
+
+        /* BOTONES DE ACCIÓN EN FACTURA */
+        .invoice-preview .btn {
+            margin: 5px;
+            min-width: 150px;
+            border-radius: 25px;
+            font-weight: 600;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--clinipet-orange) 0%, #f59e0b 100%) !important;
+            border: none;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(254, 162, 64, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(254, 162, 64, 0.4);
+            color: white !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+            border: none;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(3, 94, 141, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0284c7 0%, var(--clinipet-orange) 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(3, 94, 141, 0.4);
+            color: white !important;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            border: none;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+            color: white !important;
+        }
+
+        /* BADGE DE ESTADO */
+        .badge {
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .bg-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            color: white !important;
+        }
+
+        /* FOOTER DE LA FACTURA */
+        .invoice-preview .border-top {
+            border-color: rgba(3, 94, 141, 0.2) !important;
+            border-width: 1px !important;
+            padding-top: 20px !important;
+            margin-top: 30px !important;
         }
 
         .loading {
@@ -179,17 +558,6 @@
             color: var(--primary-color);
         }
 
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-        .alert-custom {
-            border: none;
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
-        }
-
         .fade-in {
             animation: fadeIn 0.5s ease-in;
         }
@@ -199,21 +567,254 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 768px) {
+        /* CONTENEDOR DE ALERTAS */
+    #alertContainer .alert {
+        border-radius: 12px;
+        border: none;
+        font-weight: 500;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 15px;
+    }
+
+    #alertContainer .alert-success {
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+        color: #059669;
+        border-left: 4px solid #10b981;
+    }
+
+    #alertContainer .alert-danger {
+        background: linear-gradient(135deg, rgba(254, 162, 64, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+        color: #d97706;
+        border-left: 4px solid var(--clinipet-orange);
+    }
+
+    #alertContainer .alert-warning {
+        background: linear-gradient(135deg, rgba(254, 162, 64, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+        color: #d97706;
+        border-left: 4px solid var(--clinipet-orange);
+    }
+
+    #alertContainer .alert-info {
+        background: linear-gradient(135deg, rgba(3, 94, 141, 0.1) 0%, rgba(2, 132, 199, 0.1) 100%);
+        color: var(--clinipet-blue);
+        border-left: 4px solid var(--clinipet-blue);
+    }
+
+        /* RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+        .main-container {
+            margin: 10px;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .display-5 {
+            font-size: 2rem;
+        }
+        
+        .step-indicator {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .step {
+            margin: 5px 0;
+            min-width: auto;
+            width: 100%;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .navbar-custom h2 {
+            font-size: 1.5rem;
+        }
+        
+        .btn-custom {
+            min-width: auto;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .col-md-6 .mb-3:last-child {
+            margin-bottom: 20px !important;
+        }
+
+        /* RESPONSIVE FACTURA */
+        .invoice-preview {
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .invoice-preview .card-header {
+            margin: -20px -20px 15px -20px;
+            padding: 20px !important;
+        }
+
+        .invoice-preview .card-header h3 {
+            font-size: 1.8rem !important;
+        }
+
+        .invoice-preview .card-header h4 {
+            font-size: 1.5rem !important;
+        }
+
+        .invoice-preview .btn {
+            min-width: auto;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .invoice-preview .table-responsive {
+            font-size: 12px;
+        }
+
+        .invoice-preview .table th,
+        .invoice-preview .table td {
+            padding: 8px 6px;
+        }
+    }
+        /*Responsive design*/
+        @media (max-width: 576px) {
             .main-container {
-                padding: 1rem;
+                margin: 5px;
+                padding: 15px;
             }
-
-            .invoice-info {
-                grid-template-columns: 1fr;
+            
+            .display-5 {
+                font-size: 1.8rem;
             }
-
-            .step-indicator {
-                flex-direction: column;
-                align-items: center;
-            }
-
+            
             .step {
-                margin: 0.25rem 0;
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .step i {
+                font-size: 1rem;
+            }
+            
+            .card-header {
+                padding: 20px 15px;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .form-control,
+            .form-select {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .btn-primary-custom,
+            .btn-success-custom,
+            .btn-outline-primary,
+            .btn-outline-success {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            /* RESPONSIVE EXTRA PEQUEÑO FACTURA */
+            .invoice-preview .card-header h3 {
+                font-size: 1.5rem !important;
+            }
+
+            .invoice-preview .card-header h4 {
+                font-size: 1.3rem !important;
             }
         }
+
+        /* GARANTIZAR TRANSPARENCIA DEL FONDO */
+        .container-fluid,
+        .row,
+        .col-md-6 {
+            background: transparent !important;
+        }
+
+        /* FORZAR ESTILOS EN LA FACTURA - MUY IMPORTANTE */
+        #facturaPreview {
+            background: white !important;
+        }
+
+        #facturaPreview .card {
+            background: white !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        #facturaPreview .card-header {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+        }
+
+        #facturaPreview .table-primary {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+        }
+
+        #facturaPreview .table-primary td {
+            background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%) !important;
+            color: white !important;
+        }
+
+         /* ESTILOS DEL FOOTER */
+        .footer {
+            background-color: #035E8D;
+            color: white;
+            padding: 1rem 0;
+            margin-top: auto;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        /* FORZAR POSICIÓN DEL FOOTER */
+        #footer {
+            margin-top: auto;
+        }
+
+        /* FORZAR CENTRADO DE TODO EL CONTENIDO DEL FOOTER */
+        .footer * {
+            text-align: center !important;
+        }
+
+        #footer {
+            text-align: center !important;
+        }
+
+        #footer * {
+            text-align: center !important;
+        }
+
+        /* ASEGURAR QUE EL MAIN-CONTAINER TENGA ALTURA MÍNIMA */
+        .main-container {
+            min-height: 500px;
+        }
+
+        /* WRAPPER PARA ASEGURAR ESTRUCTURA FLEXBOX */
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        
