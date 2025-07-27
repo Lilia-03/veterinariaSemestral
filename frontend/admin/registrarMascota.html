@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrar Mascota</title>
+  <link rel="icon" type="image/png" href="../imagenes/logo.png" />
+  <link rel="stylesheet" href="../css/estilosRegistrarMascota.css" />
+  <link rel="stylesheet" href="../css/colorNavbar.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+<body>
+  
+
+  <div class="collapse" id="navbarToggleExternalContent">
+    <div class="navbar-menu p-4">
+      <h4 class="text-white">Menú</h4>
+      <ul class="list-unstyled">
+        <li><a href="RegistrarInventario.html" class="text-white">Registrar Inventario</a></li>
+        <li><a href="RegistroCliente.html" class="text-white">Registrar Cliente</a></li>
+        <li><a href="RegistroMascotas.html" class="text-white">Registrar Mascota</a></li>
+        <li><a href="actualizarCliente.html" class="text-white">Actualizar Cliente</a></li>
+        <li><a href="actualizarMascota.html" class="text-white">Actualizar Mascota</a></li>
+        <li><a href="ConsultarMascotaCliente.html" class="text-white">Consultar Mascota y Cliente</a></li>
+        <li><a href="informacion.html" class="text-white">Información</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container mt-4 formulario">
+    <h1 class="text-center mb-4">Registrar Mascota</h1>
+    
+    <!-- Spinner de carga -->
+    <div id="loadingSpinner" class="text-center" style="display: none;">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando datos...</p>
+    </div>
+
+    <!-- Formulario de registro de mascota -->
+    <form id="formRegistrarMascota" enctype="multipart/form-data" novalidate>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="nombreMascota" class="form-label">Nombre de la Mascota <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="nombreMascota" name="nombre" required maxlength="50" />
+          <div class="invalid-feedback">Por favor ingrese el nombre de la mascota.</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="especie" class="form-label">Especie <span class="text-danger">*</span></label>
+          <select id="especie" name="especie" class="form-select" required>
+            <option value="">Seleccione especie</option>
+            <option value="1" data-nombre="Perro">Perro</option>
+            <option value="2" data-nombre="Gato">Gato</option>
+          </select>
+          <div class="invalid-feedback">Por favor seleccione una especie.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="raza" class="form-label">Raza <span class="text-danger">*</span></label>
+          <select class="form-select" id="raza" name="razaID" required disabled>
+            <option value="">Seleccione una especie primero</option>
+          </select>
+          <div class="invalid-feedback">Por favor seleccione una raza.</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="genero" class="form-label">Género <span class="text-danger">*</span></label>
+          <select class="form-select" id="genero" name="genero" required>
+            <option value="">Seleccione</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
+          </select>
+          <div class="invalid-feedback">Por favor seleccione el género.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="peso" class="form-label">Peso (lb) <span class="text-danger">*</span></label>
+          <input type="number" step="0.1" min="0.1" max="300" class="form-control" id="peso" name="peso" required />
+          <div class="invalid-feedback">Por favor ingrese un peso válido (0.1 - 300 lb).</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="edad" class="form-label">Edad (años) <span class="text-danger">*</span></label>
+          <input type="number" min="1" max="30" class="form-control" id="edad" name="edad" required />
+          <div class="invalid-feedback">Por favor ingrese una edad válida (0 - 30 años).</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="cedulaCliente" class="form-label">Cédula del Cliente <span class="text-danger">*</span></label>
+        <input
+          type="text"
+          class="form-control"
+          id="cedulaCliente"
+          name="cedulaCliente"
+          placeholder="Ej: 8-123-4567, 10-1234-5678 o E-123456"
+          pattern="(^[1-9]-\d{1,4}-\d{1,4}$)|(^10-\d{1,4}-\d{1,4}$)|(^E-\d{6,}$)|(^[A-Z][0-9].*)"
+          title="Formato válido: 8-123-4567, 8-1020-102, 10-1234-5678, E-123456 o pasaporte"
+          required
+          maxlength="20"
+        />
+        <div class="invalid-feedback">Por favor ingrese una cédula válida.</div>
+        <div class="form-text">Formatos válidos: 8-123-4567, 10-1234-5678, E-123456 o pasaporte</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="foto" class="form-label">Foto de la Mascota</label>
+        <input type="file" class="form-control" id="foto" name="foto" accept="image/jpeg,image/jpg,image/png,image/gif" />
+        <div class="form-text">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Condiciones Médicas</label>
+        <div id="condicionesContainer" class="p-3 border rounded bg-light" role="group" aria-labelledby="condicionesContainer">
+          <p class="text-muted mb-0">Seleccione una especie para ver las condiciones médicas disponibles</p>
+        </div>
+      </div>
+
+      <!-- botón submit -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-lg px-5" id="btnSubmit">
+          <span id="btnText">Registrar Mascota</span>
+          <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;" role="status">
+            <span class="visually-hidden">Guardando...</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- DIV para mostrar info del cliente (añadido) -->
+      <div id="cliente-info" style="display:none; margin-bottom: 15px;"></div>
+
+      <div id="responseMessage" class="alert mt-3 text-center" style="display:none;" role="alert"></div>
+    </form>
+  </div>
+
+  <footer class="footer text-center py-3">
+    © 2024 CliniPet. Todos los derechos reservados.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+  <script src="../js/registrarMascota.js"></script>
+</body>
+</html>

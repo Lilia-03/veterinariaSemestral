@@ -1,0 +1,150 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding-bottom: 2em;
+    /* espacio para el footer */
+    background-image: url('../imagenes/fondo\ de\ pantalla\ para\ formularios.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #E6E2D6;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título centrado */
+.container h1 {
+    color: #393939;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Estilos del formulario */
+form {
+    background-color: #E6E2D6;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+form .mb-3 {
+    margin-bottom: 15px;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #fdfdfd;
+}
+
+form input:focus,
+form select:focus {
+    border-color: #035E8D;
+    outline: none;
+    box-shadow: 0 0 5px rgba(3, 94, 141, 0.5);
+}
+
+/* Botón */
+form button {
+    background-color: #fbc68d;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #fea240;
+}
+
+.alert {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        margin: 20px;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    form input,
+    form select {
+        font-size: 14px;
+    }
+
+    form button {
+        font-size: 14px;
+    }
+
+    .alert {
+        font-size: 14px;
+    }
+}
+
+/* Footer */
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 1em 0;
+    width: 100%;
+    height: 60px;
+    background-color: #035E8D;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Íconos del header */
+.header-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-icons i {
+    font-size: 25px;
+    color: #fff;
+    margin-right: 30px;
+}
