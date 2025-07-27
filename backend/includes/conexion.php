@@ -214,10 +214,18 @@ public function obtenerRoles() {
         $sql = "SELECT RolID, NombreRol, Descripcion FROM Roles ORDER BY NombreRol";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($roles)) {
+            error_log("No se encontraron roles en la base de datos");
+            return []; // Devuelve array vacío en lugar de lanzar excepción
+        }
+        
+        return $roles;
     } catch (PDOException $e) {
-        error_log("Error obteniendo roles: " . $e->getMessage());
-        throw new Exception("Error al obtener roles: " . $e->getMessage());
+        error_log("Error en obtenerRoles(): " . $e->getMessage());
+        throw new Exception("Error al obtener roles de la base de datos");
     }
 }
 
@@ -664,5 +672,53 @@ public function actualizarPermisosRol($rolId, $permisos) {
             throw new Exception("Error al obtener reporte: " . $e->getMessage());
         }
     }
+    ////////////////////////////////////////////////////////////////////////////////////////
+public function obtenerProductosServiciosUsuario() {
+    try {
+        $sql = "EXEC ObtenerProductosServiciosUsuario";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error en obtenerProductosServiciosUsuario: " . $e->getMessage());
+        throw new Exception("Error al obtener productos y servicios: " . $e->getMessage());
+    }
+}
+public function buscarProductosServiciosUsuario($termino = '', $tipo = '') {
+    try {
+        $sql = "EXEC BuscarProductosServiciosUsuario @Termino = ?, @Tipo = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$termino, $tipo]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error en buscarProductosServiciosUsuario: " . $e->getMessage());
+        throw new Exception("Error al buscar productos y servicios: " . $e->getMessage());
+    }
+}
+
+public function obtenerDetalleProductoServicioUsuario($idItem) {
+    try {
+        $sql = "EXEC ObtenerDetalleProductoServicioUsuario @IDITEM = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idItem]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error en obtenerDetalleProductoServicioUsuario: " . $e->getMessage());
+        throw new Exception("Error al obtener detalle del item: " . $e->getMessage());
+    }
+}
+
+public function existeProductoServicio($idItem) {
+    try {
+        $sql = "SELECT COUNT(*) as total FROM Servicio_Producto WHERE IDITEM = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idItem]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] > 0;
+    } catch (PDOException $e) {
+        error_log("Error en existeProductoServicio: " . $e->getMessage());
+        throw new Exception("Error al verificar existencia del item: " . $e->getMessage());
+    }
+}
 }
 ?>
