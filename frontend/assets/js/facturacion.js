@@ -275,6 +275,239 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // ========== NUEVAS FUNCIONES PARA OPENSSL ==========
+    
+    // Nueva función para verificar claves del usuario
+    async function verificarClavesUsuario() {
+        try {
+            const response = await fetch('../../backend/controller/facturacionController.php?accion=verificarClaves');
+            const result = await response.json();
+            
+            if (result.estado === 'ok') {
+                return result.tieneClaves;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error verificando claves:', error);
+            return false;
+        }
+    }
+
+    // Nueva función para gestionar claves digitales
+    window.gestionarClaves = async function() {
+        try {
+            mostrarLoading(true);
+            
+            const response = await fetch('../../backend/controller/facturacionController.php?accion=verificarClaves');
+            const result = await response.json();
+            
+            if (result.estado === 'ok') {
+                const tieneClaves = result.tieneClaves;
+                const usuario = result.usuario;
+                
+                let contenidoModal = '';
+                let botones = [];
+                
+                if (tieneClaves) {
+                    contenidoModal = `
+                        <div class="text-center mb-3">
+                            <i class="fas fa-key fa-3x text-success"></i>
+                        </div>
+                        <div class="alert alert-success">
+                            <h5 class="alert-heading">✓ Claves Digitales OpenSSL Configuradas</h5>
+                            <hr>
+                            <p class="mb-1"><strong>Usuario:</strong> ${usuario}</p>
+                            <p class="mb-1"><strong>Estado:</strong> Claves RSA-2048 activas</p>
+                            <p class="mb-1"><strong>Algoritmo:</strong> RSA-SHA256</p>
+                            <p class="mb-0"><strong>Capacidades:</strong> Firma y verificación criptográfica</p>
+                        </div>
+                    `;
+                    
+                    botones = [
+                        { texto: 'Cerrar', clase: 'btn-secondary', valor: 'cerrar' },
+                        { texto: 'Regenerar Claves', clase: 'btn-warning', valor: 'regenerar' }
+                    ];
+                } else {
+                    contenidoModal = `
+                        <div class="text-center mb-3">
+                            <i class="fas fa-key fa-3x text-warning"></i>
+                        </div>
+                        <div class="alert alert-warning">
+                            <h5 class="alert-heading">⚠ Sin Claves Digitales</h5>
+                            <hr>
+                            <p class="mb-1"><strong>Usuario:</strong> ${usuario}</p>
+                            <p class="mb-0">Las claves RSA se generarán automáticamente al crear su primera factura.</p>
+                        </div>
+                    `;
+                    
+                    botones = [
+                        { texto: 'Cerrar', clase: 'btn-secondary', valor: 'cerrar' }
+                    ];
+                }
+                
+                mostrarModalPersonalizado(
+                    'Gestión de Claves Digitales OpenSSL',
+                    contenidoModal,
+                    botones,
+                    async (resultado) => {
+                        if (resultado === 'regenerar') {
+                            await regenerarClaves();
+                        }
+                    }
+                );
+            }
+            
+        } catch (error) {
+            console.error('Error gestionando claves:', error);
+            mostrarMensaje('Error de conexión al gestionar claves', 'danger');
+        } finally {
+            mostrarLoading(false);
+        }
+    };
+
+    // Función para regenerar claves
+    async function regenerarClaves() {
+        const botones = [
+            { texto: 'Cancelar', clase: 'btn-secondary', valor: 'cancelar' },
+            { texto: 'Sí, Regenerar', clase: 'btn-danger', valor: 'confirmar' }
+        ];
+        
+        mostrarModalPersonalizado(
+            'Confirmar Regeneración de Claves',
+            `
+            <div class="alert alert-danger">
+                <h6 class="alert-heading">⚠ Acción Irreversible</h6>
+                <p>Se regenerarán completamente sus claves digitales RSA-2048.</p>
+                <p class="mb-0">¿Está seguro de que desea continuar?</p>
+            </div>
+            `,
+            botones,
+            async (resultado) => {
+                if (resultado === 'confirmar') {
+                    await ejecutarRegeneracionClaves();
+                }
+            }
+        );
+    }
+
+    // Ejecutar regeneración de claves
+    async function ejecutarRegeneracionClaves() {
+        try {
+            mostrarLoading(true);
+            
+            const response = await fetch('../../backend/controller/facturacionController.php?accion=regenerarClaves', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
+            
+            const result = await response.json();
+            
+            if (result.estado === 'ok') {
+                mostrarMensaje('Claves digitales regeneradas exitosamente', 'success');
+            } else {
+                mostrarMensaje('Error al regenerar claves: ' + result.mensaje, 'danger');
+            }
+            
+        } catch (error) {
+            console.error('Error regenerando claves:', error);
+            mostrarMensaje('Error de conexión al regenerar claves', 'danger');
+        } finally {
+            mostrarLoading(false);
+        }
+    }
+
+    // Nueva función para verificar firma digital OpenSSL
+    window.verificarFirmaDigital = async function() {
+        if (!facturaActual.id) {
+            mostrarMensaje('Error: No hay factura generada', 'danger');
+            return;
+        }
+
+        try {
+            mostrarLoading(true);
+            
+            const response = await fetch(`../../backend/controller/facturacionController.php?accion=verificarFirma&id=${facturaActual.id}`);
+            const result = await response.json();
+            
+            if (result.estado === 'ok') {
+                const estadoFirma = result.firmaValida ? 'válida' : 'inválida';
+                const iconoEstado = result.firmaValida ? '✓' : '✗';
+                const colorEstado = result.firmaValida ? 'success' : 'danger';
+                
+                const fechaFormateada = new Date(result.fechaFirma).toLocaleString('es-PA');
+                const tipoFirma = result.tipoFirma || 'Básica';
+                const algoritmo = result.algoritmo || 'SHA-256';
+                
+                let contenidoDetallado = '';
+                
+                // Información específica para firmas OpenSSL
+                if (result.infoFirma && result.infoFirma.tipo_firma === 'OpenSSL RSA-SHA256') {
+                    contenidoDetallado = `
+                        <div class="alert alert-info mt-3">
+                            <h6 class="alert-heading">🔐 Detalles Criptográficos OpenSSL</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Algoritmo:</strong> ${result.infoFirma.algoritmo}</p>
+                                    <p class="mb-1"><strong>Versión:</strong> ${result.infoFirma.version}</p>
+                                    <p class="mb-1"><strong>Fingerprint:</strong> ${result.infoFirma.fingerprint || 'No disponible'}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Timestamp:</strong> ${new Date(result.infoFirma.timestamp * 1000).toLocaleString()}</p>
+                                    <p class="mb-1"><strong>IP Origen:</strong> ${result.infoFirma.ip_address}</p>
+                                    <p class="mb-1"><strong>Usuario ID:</strong> ${result.infoFirma.usuario_id}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Firma criptográfica verificada con openssl_verify() usando clave pública RSA.
+                            </small>
+                        </div>
+                    `;
+                }
+                
+                const modalContent = `
+                    <div class="text-center mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-${colorEstado}"></i>
+                    </div>
+                    <div class="alert alert-${colorEstado}">
+                        <h5 class="alert-heading">${iconoEstado} Firma Digital ${estadoFirma.charAt(0).toUpperCase() + estadoFirma.slice(1)}</h5>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Firmante:</strong> ${result.firmante}</p>
+                                <p class="mb-1"><strong>Tipo de Firma:</strong> ${tipoFirma}</p>
+                                <p class="mb-1"><strong>Algoritmo:</strong> ${algoritmo}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Fecha de Firma:</strong> ${fechaFormateada}</p>
+                                <p class="mb-1"><strong>ID Factura:</strong> ${facturaActual.id}</p>
+                                <p class="mb-1"><strong>Estado:</strong> <span class="badge bg-${colorEstado}">${estadoFirma}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    ${contenidoDetallado}
+                `;
+                
+                const botones = [
+                    { texto: 'Cerrar', clase: 'btn-secondary', valor: 'cerrar' }
+                ];
+                
+                mostrarModalPersonalizado('Verificación de Firma Digital OpenSSL', modalContent, botones, null);
+                
+            } else {
+                mostrarMensaje('Error al verificar firma: ' + result.mensaje, 'danger');
+            }
+            
+        } catch (error) {
+            console.error('Error verificando firma:', error);
+            mostrarMensaje('Error de conexión al verificar firma', 'danger');
+        } finally {
+            mostrarLoading(false);
+        }
+    };
+
     // ========== FUNCIONES EXISTENTES CON MEJORAS ==========
 
     // Cargar productos desde la base de datos
@@ -706,6 +939,57 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Verificar estado de claves antes de generar
+        const tieneClaves = await verificarClavesUsuario();
+        const usuarioActual = JSON.parse(localStorage.getItem('usuario') || '{}');
+        const firmante = usuarioActual.nombreCompleto || usuarioActual.nombreUsuario || 'Usuario del Sistema';
+        
+        let mensajeClaves = '';
+        if (!tieneClaves) {
+            mensajeClaves = `
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">🔑 Primera Factura</h6>
+                    <p class="mb-0">Se generarán automáticamente sus claves digitales RSA-2048.</p>
+                    <small>Este proceso solo ocurre una vez y toma unos segundos.</small>
+                </div>
+            `;
+        }
+        
+        const botones = [
+            { texto: 'Cancelar', clase: 'btn-secondary', valor: 'cancelar' },
+            { texto: 'Generar y Firmar con OpenSSL', clase: 'btn-success', valor: 'confirmar' }
+        ];
+        
+        mostrarModalPersonalizado(
+            'Confirmar Generación de Factura',
+            `
+            <p>Se generará la factura con los siguientes datos:</p>
+            <ul>
+                <li><strong>Cliente:</strong> ${facturaActual.cliente.nombre}</li>
+                <li><strong>Mascota:</strong> ${facturaActual.mascota ? facturaActual.mascota.nombre : 'Sin mascota específica'}</li>
+                <li><strong>Items:</strong> ${facturaActual.items.length}</li>
+                <li><strong>Total:</strong> $${facturaActual.total.toFixed(2)}</li>
+            </ul>
+            ${mensajeClaves}
+            <div class="alert alert-info mt-3">
+                <h6 class="alert-heading">🔐 Firma Digital OpenSSL</h6>
+                <p class="mb-1">La factura será firmada digitalmente por: <strong>${firmante}</strong></p>
+                <p class="mb-1"><strong>Algoritmo:</strong> RSA-SHA256 con openssl_sign()</p>
+                <p class="mb-1"><strong>Seguridad:</strong> Criptografía asimétrica (clave pública/privada)</p>
+                <small class="text-muted">Esta acción no se puede deshacer. La firma garantiza autenticidad e integridad.</small>
+            </div>
+            `,
+            botones,
+            async (resultado) => {
+                if (resultado === 'confirmar') {
+                    await procesarGeneracionFactura();
+                }
+            }
+        );
+    };
+
+    // Función separada para procesar la generación (NUEVA)
+    async function procesarGeneracionFactura() {
         mostrarLoading(true);
 
         try {
@@ -730,6 +1014,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             facturaActual.id = result.idFactura;
+            console.log("✅ Factura generada con ID:", facturaActual.id);
+            console.log("👤 Firmada por:", result.firmante);
 
             // Agregar items a la factura
             for (const item of facturaActual.items) {
@@ -746,9 +1032,12 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("🏁 Completando factura...");
             await completarFactura();
 
-            // Mostrar resultado
-            console.log("🎉 Mostrando factura completa...");
+            // Mostrar resultado con información de firma
+            console.log("🎉 Mostrando factura completa con firma OpenSSL...");
             mostrarFacturaCompleta();
+            
+            // Mostrar mensaje de éxito con información de firma
+            mostrarMensaje(`¡Factura generada exitosamente y firmada digitalmente con OpenSSL por ${result.firmante}!`, 'success');
             
         } catch (error) {
             console.error('Error:', error);
@@ -756,7 +1045,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } finally {
             mostrarLoading(false);
         }
-    };
+    }
 
     // Funciones auxiliares para agregar items
     async function agregarProductoFactura(producto) {

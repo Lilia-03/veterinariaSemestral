@@ -15,6 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
+// INICIAR SESIÓN AL PRINCIPIO
+session_start();
+
 $accion = $_GET['accion'] ?? '';
 $factura = new Factura();
 
@@ -66,7 +69,90 @@ try {
                 }
 
                 $detalles = $factura->obtenerDetalles($idFactura);
+                
+                // Preparar información adicional para el frontend
+                if (isset($detalles['factura']['FirmaDigital']) && $detalles['factura']['FirmaDigital']) {
+                    $detalles['factura']['TieneFirmaDigital'] = true;
+                    $detalles['factura']['EstadoFirma'] = $detalles['factura']['FirmaValida'] ? 'válida' : 'inválida';
+                    
+                    // No enviar la firma binaria al frontend por seguridad
+                    unset($detalles['factura']['FirmaDigital']);
+                } else {
+                    $detalles['factura']['TieneFirmaDigital'] = false;
+                }
+                
                 echo json_encode(["estado" => "ok", "detalles" => $detalles]);
+                
+            } elseif ($accion === 'verificarFirma') {
+                $idFactura = $_GET['id'] ?? '';
+                
+                if (empty($idFactura)) {
+                    echo json_encode(["estado" => "error", "mensaje" => "ID de factura requerido"]);
+                    exit;
+                }
+
+                $detalles = $factura->obtenerDetalles($idFactura);
+                
+                if (isset($detalles['factura']['FirmaDigital']) && $detalles['factura']['FirmaDigital']) {
+                    $firmaValida = $factura->verificarFirmaDigital($detalles['factura']['FirmaDigital']);
+                    $infoFirma = $factura->obtenerInfoFirma($detalles['factura']['FirmaDigital']);
+                    
+                    $tipoFirma = 'Básica';
+                    $algoritmo = 'SHA-256';
+                    
+                    if ($infoFirma && isset($infoFirma['tipo_firma'])) {
+                        $tipoFirma = $infoFirma['tipo_firma'];
+                        $algoritmo = $infoFirma['algoritmo'] ?? 'RSA-SHA256';
+                    }
+                    
+                    echo json_encode([
+                        "estado" => "ok", 
+                        "firmaValida" => $firmaValida,
+                        "infoFirma" => $infoFirma,
+                        "fechaFirma" => $detalles['factura']['FechaFirma'],
+                        "firmante" => $detalles['factura']['NombreFirmante'],
+                        "tipoFirma" => $tipoFirma,
+                        "algoritmo" => $algoritmo
+                    ]);
+                } else {
+                    echo json_encode(["estado" => "error", "mensaje" => "La factura no tiene firma digital"]);
+                }
+                
+            } elseif ($accion === 'verificarClaves') {
+                // USAR LOS NOMBRES CORRECTOS DEL AUTHCONTROLLER
+                if (!isset($_SESSION['usuario_id'])) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
+                    exit;
+                }
+                
+                $tieneClaves = $factura->usuarioTieneClavesDigitales($_SESSION['usuario_id']);
+                
+                echo json_encode([
+                    "estado" => "ok",
+                    "tieneClaves" => $tieneClaves,
+                    "usuario" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario']
+                ]);
+                
+            } elseif ($accion === 'regenerarClaves') {
+                if (!isset($_SESSION['usuario_id'])) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
+                    exit;
+                }
+                
+                $resultado = $factura->regenerarClavesUsuario($_SESSION['usuario_id']);
+                
+                if ($resultado) {
+                    echo json_encode([
+                        "estado" => "ok",
+                        "mensaje" => "Claves digitales regeneradas exitosamente",
+                        "usuario" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario']
+                    ]);
+                } else {
+                    echo json_encode([
+                        "estado" => "error",
+                        "mensaje" => "Error al regenerar claves digitales"
+                    ]);
+                }
                 
             } else {
                 http_response_code(400);
@@ -82,28 +168,33 @@ try {
             }
 
             if ($accion === 'generarFactura') {
-                session_start(); // Iniciar sesión
-
                 $cedulaCliente = $input['cedulaCliente'] ?? '';
                 $idMascota = $input['idMascota'] ?? null;
+                $firmaPersonalizada = $input['firmaDigital'] ?? null;
                 
                 if (empty($cedulaCliente)) {
                     echo json_encode(["estado" => "error", "mensaje" => "Cédula del cliente requerida"]);
                     exit;
                 }
-                // Verificar autenticación
+                
+                // VERIFICAR AUTENTICACIÓN CON NOMBRES CORRECTOS
                 if (!isset($_SESSION['usuario_id'])) {
                     echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
                     exit;
                 }
 
                 $factura->setDatos($cedulaCliente, $idMascota);
-                $idFactura = $factura->generar($_SESSION['usuario_id']);
+                
+                // Generar factura con firma digital
+                $idFactura = $factura->generar($_SESSION['usuario_id'], $firmaPersonalizada);
                 
                 echo json_encode([
                     "estado" => "ok", 
-                    "mensaje" => "Factura generada exitosamente",
-                    "idFactura" => $idFactura
+                    "mensaje" => "Factura generada exitosamente con firma digital OpenSSL",
+                    "idFactura" => $idFactura,
+                    "firmante" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario'],
+                    "fechaFirma" => date('Y-m-d H:i:s'),
+                    "algoritmo" => "RSA-SHA256"
                 ]);
                 
             } elseif ($accion === 'agregarProducto') {
@@ -161,7 +252,22 @@ try {
                 $resultado = $factura->completar();
                 
                 if ($resultado) {
-                    echo json_encode(["estado" => "ok", "mensaje" => "Factura completada exitosamente"]);
+                    try {
+                        $detalles = $factura->obtenerDetalles($idFactura);
+                        
+                        echo json_encode([
+                            "estado" => "ok", 
+                            "mensaje" => "Factura completada exitosamente",
+                            "firmaValida" => $detalles['factura']['FirmaValida'] ?? false,
+                            "firmante" => $detalles['factura']['NombreFirmante'] ?? 'No disponible',
+                            "tipoFirma" => "OpenSSL RSA-SHA256"
+                        ]);
+                    } catch (Exception $e) {
+                        echo json_encode([
+                            "estado" => "ok", 
+                            "mensaje" => "Factura completada exitosamente"
+                        ]);
+                    }
                 } else {
                     echo json_encode(["estado" => "error", "mensaje" => "Error al completar factura"]);
                 }
@@ -192,6 +298,7 @@ try {
     }
 
     echo json_encode(["estado" => "error", "mensaje" => $mensajeLimpio]);
+    
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["estado" => "error", "mensaje" => $e->getMessage()]);
