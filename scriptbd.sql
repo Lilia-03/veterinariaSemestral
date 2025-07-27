@@ -2054,3 +2054,121 @@ BEGIN
     WHERE Tipo = 'Servicio';
 END;
 GO
+--------------------------------------------------------------
+
+--------------------------------------------------------
+----------------------------------------------------------
+-- Procedimiento para obtener todos los productos y servicios con disponibilidad
+CREATE PROCEDURE ObtenerProductosServiciosUsuario
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- CTE para obtener la cantidad disponible más reciente de cada producto
+    WITH UltimoInventario AS (
+        SELECT 
+            i.IDITEM,
+            i.CantidadDisponible,
+            ROW_NUMBER() OVER (PARTITION BY i.IDITEM ORDER BY i.IDInventario DESC) as rn
+        FROM Inventario i
+    )
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.Tipo,
+        sp.PrecioITEM,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN ISNULL(ui.CantidadDisponible, 0)
+            ELSE NULL -- Los servicios no tienen cantidad limitada
+        END AS CantidadDisponible,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN 
+                CASE 
+                    WHEN ISNULL(ui.CantidadDisponible, 0) > 0 THEN 'Disponible'
+                    ELSE 'Agotado'
+                END
+            ELSE 'Disponible' -- Los servicios siempre están disponibles
+        END AS EstadoDisponibilidad
+    FROM Servicio_Producto sp
+    LEFT JOIN UltimoInventario ui ON sp.IDITEM = ui.IDITEM AND ui.rn = 1
+    ORDER BY sp.Tipo, sp.NombreProducto;
+END;
+
+-- Procedimiento para buscar productos y servicios con filtros
+CREATE PROCEDURE BuscarProductosServiciosUsuario
+    @Termino NVARCHAR(100) = '',
+    @Tipo NVARCHAR(50) = ''
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- CTE para obtener la cantidad disponible más reciente de cada producto
+    WITH UltimoInventario AS (
+        SELECT 
+            i.IDITEM,
+            i.CantidadDisponible,
+            ROW_NUMBER() OVER (PARTITION BY i.IDITEM ORDER BY i.IDInventario DESC) as rn
+        FROM Inventario i
+    )
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.Tipo,
+        sp.PrecioITEM,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN ISNULL(ui.CantidadDisponible, 0)
+            ELSE NULL
+        END AS CantidadDisponible,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN 
+                CASE 
+                    WHEN ISNULL(ui.CantidadDisponible, 0) > 0 THEN 'Disponible'
+                    ELSE 'Agotado'
+                END
+            ELSE 'Disponible'
+        END AS EstadoDisponibilidad
+    FROM Servicio_Producto sp
+    LEFT JOIN UltimoInventario ui ON sp.IDITEM = ui.IDITEM AND ui.rn = 1
+    WHERE 
+        (@Termino = '' OR sp.NombreProducto LIKE '%' + @Termino + '%')
+        AND (@Tipo = '' OR sp.Tipo = @Tipo)
+    ORDER BY sp.Tipo, sp.NombreProducto;
+END;
+
+-- Procedimiento para obtener detalles de un producto o servicio específico
+CREATE PROCEDURE ObtenerDetalleProductoServicioUsuario
+    @IDITEM INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- CTE para obtener la cantidad disponible más reciente del producto específico
+    WITH UltimoInventario AS (
+        SELECT 
+            i.IDITEM,
+            i.CantidadDisponible,
+            ROW_NUMBER() OVER (PARTITION BY i.IDITEM ORDER BY i.IDInventario DESC) as rn
+        FROM Inventario i
+        WHERE i.IDITEM = @IDITEM
+    )
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.Tipo,
+        sp.PrecioITEM,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN ISNULL(ui.CantidadDisponible, 0)
+            ELSE NULL
+        END AS CantidadDisponible,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN 
+                CASE 
+                    WHEN ISNULL(ui.CantidadDisponible, 0) > 0 THEN 'Disponible'
+                    ELSE 'Agotado'
+                END
+            ELSE 'Disponible'
+        END AS EstadoDisponibilidad
+    FROM Servicio_Producto sp
+    LEFT JOIN UltimoInventario ui ON sp.IDITEM = ui.IDITEM AND ui.rn = 1
+    WHERE sp.IDITEM = @IDITEM;
+END;

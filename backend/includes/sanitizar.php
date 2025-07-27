@@ -523,57 +523,100 @@ public static function validarDatosServicio($datos) {
         'errors' => $errores
     ];
 }
-
-public static function validarDatosUsuario($datos, $requierePassword = true) {
-    $errors = [];
-    $data = [];
     
-    // Validar nombre de usuario
-    if (empty($datos['nombreUsuario'])) {
-        $errors[] = "Nombre de usuario requerido";
-    } else {
-        $data['nombreUsuario'] = trim($datos['nombreUsuario']);
+    if (!is_numeric($precio)) {
+        $errores[] = 'El precio debe ser numérico';
+        return ['valid' => false, 'errors' => $errores, 'value' => null];
     }
     
-    // Validar email
-    if (empty($datos['email']) || !filter_var($datos['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Email inválido";
-    } else {
-        $data['email'] = trim($datos['email']);
-    }
+    $precio = floatval($precio);
     
-    // Validar nombre completo
-    if (empty($datos['nombreCompleto'])) {
-        $errors[] = "Nombre completo requerido";
-    } else {
-        $data['nombreCompleto'] = trim($datos['nombreCompleto']);
-    }
-    
-    // Validar rol
-    if (empty($datos['rolId']) || !is_numeric($datos['rolId'])) {
-        $errors[] = "Rol inválido";
-    } else {
-        $data['rolId'] = intval($datos['rolId']);
-    }
-    
-    // Validar contraseña si es requerida
-    if ($requierePassword && empty($datos['password'])) {
-        $errors[] = "Contraseña requerida";
-    } elseif ($requierePassword) {
-        $data['password'] = $datos['password'];
-    }
-    
-    // Validar cédula si es rol cliente
-    if (isset($datos['cedulaCliente'])) {
-        $data['cedulaCliente'] = trim($datos['cedulaCliente']);
+    if ($precio < 0) {
+        $errores[] = 'El precio no puede ser negativo';
     }
     
     return [
-        'valid' => empty($errors),
-        'errors' => $errors,
-        'data' => $data
+        'valid' => empty($errores),
+        'errors' => $errores,
+        'value' => number_format($precio, 2, '.', '')
     ];
 }
+public static function validarCantidadPresentacion($cantidad, $tipo) {
+    $errores = [];
+    $valorLimpio = null;
     
+    if ($tipo === 'Servicio') {
+        // Los servicios no manejan cantidad
+        $valorLimpio = null;
+    } else {
+        // Para productos, validar cantidad
+        if (!is_numeric($cantidad) && $cantidad !== null) {
+            $errores[] = 'La cantidad debe ser numérica';
+        } else {
+            $valorLimpio = $cantidad === null ? 0 : intval($cantidad);
+            if ($valorLimpio < 0) {
+                $errores[] = 'La cantidad no puede ser negativa';
+                $valorLimpio = 0;
+            }
+        }
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'errors' => $errores,
+        'value' => $valorLimpio
+    ];
+}
+
+public static function limpiarItemParaPresentacion($item) {
+    $itemLimpio = [];
+    $errores = [];
+    
+    // ID
+    $itemLimpio['id'] = isset($item['IDITEM']) ? intval($item['IDITEM']) : 0;
+    
+    // Nombre
+    $itemLimpio['nombre'] = isset($item['NombreProducto']) ? 
+        self::sanitizarTexto($item['NombreProducto']) : '';
+    
+    // Tipo
+    $itemLimpio['tipo'] = isset($item['Tipo']) ? 
+        self::sanitizarTexto($item['Tipo']) : '';
+    
+    // Precio
+    $validacionPrecio = self::validarPrecioPresentacion($item['PrecioITEM'] ?? 0);
+    $itemLimpio['precio'] = $validacionPrecio['valid'] ? $validacionPrecio['value'] : '0.00';
+    
+    // Cantidad y disponibilidad
+    $validacionCantidad = self::validarCantidadPresentacion(
+        $item['CantidadDisponible'] ?? null, 
+        $itemLimpio['tipo']
+    );
+    $itemLimpio['cantidad'] = $validacionCantidad['value'];
+    
+    // Estado de disponibilidad
+    $itemLimpio['disponibilidad'] = isset($item['EstadoDisponibilidad']) ? 
+        self::sanitizarTexto($item['EstadoDisponibilidad']) : 'Desconocido';
+    
+    return [
+        'item' => $itemLimpio,
+        'errors' => $errores
+    ];
+}
+
+public static function validarMetodoHTTPUsuario($metodoRequerido = 'GET') {
+    $errores = [];
+    $metodoActual = $_SERVER['REQUEST_METHOD'] ?? '';
+    
+    if ($metodoActual !== $metodoRequerido) {
+        $errores[] = "Método HTTP no permitido. Se requiere $metodoRequerido";
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'errors' => $errores,
+        'method' => $metodoActual
+    ];
+}    
 }
 ?>
