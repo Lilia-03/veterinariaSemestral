@@ -524,6 +524,131 @@ public static function validarDatosServicio($datos) {
     ];
 }
     
+public static function validarParametrosBusquedaUsuario($parametros) {
+    $errores = [];
+    $datosLimpios = [];
+    
+    // Validar término de búsqueda (opcional)
+    if (isset($parametros['termino'])) {
+        $termino = self::sanitizarBusqueda($parametros['termino']);
+        if (strlen($termino) > 100) {
+            $errores[] = 'El término de búsqueda no puede exceder 100 caracteres';
+        }
+        $datosLimpios['termino'] = $termino;
+    } else {
+        $datosLimpios['termino'] = '';
+    }
+    
+    // Validar tipo (opcional)
+    if (isset($parametros['tipo'])) {
+        $tipo = self::sanitizarTexto($parametros['tipo']);
+        if (!empty($tipo) && !in_array($tipo, ['Producto', 'Servicio'])) {
+            $errores[] = 'Tipo no válido. Debe ser "Producto" o "Servicio"';
+        }
+        $datosLimpios['tipo'] = $tipo;
+    } else {
+        $datosLimpios['tipo'] = '';
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'data' => $datosLimpios,
+        'errors' => $errores
+    ];
+}
+
+public static function validarIDConsultaUsuario($id) {
+    $errores = [];
+    
+    if (empty($id)) {
+        $errores[] = 'El ID del producto o servicio es requerido';
+        return ['valid' => false, 'errors' => $errores, 'value' => null];
+    }
+    
+    $id = filter_var($id, FILTER_VALIDATE_INT);
+    
+    if ($id === false || $id <= 0) {
+        $errores[] = 'El ID debe ser un número entero positivo válido';
+        return ['valid' => false, 'errors' => $errores, 'value' => null];
+    }
+    
+    return [
+        'valid' => true,
+        'errors' => [],
+        'value' => $id
+    ];
+}
+
+public static function validarParametrosURL($parametrosGET) {
+    $errores = [];
+    $datosLimpios = [];
+    
+    // Validar acción
+    $accion = $parametrosGET['accion'] ?? '';
+    $accion = self::sanitizarTexto($accion);
+    
+    $accionesPermitidas = ['obtener', 'buscar', 'detalle', 'productos', 'servicios', 'estadisticas'];
+    
+    if (empty($accion)) {
+        $errores[] = 'La acción es requerida';
+    } elseif (!in_array($accion, $accionesPermitidas)) {
+        $errores[] = 'Acción no válida';
+    } else {
+        $datosLimpios['accion'] = $accion;
+    }
+    
+    // Validaciones específicas por acción
+    switch ($accion) {
+        case 'buscar':
+            $validacionBusqueda = self::validarParametrosBusquedaUsuario($parametrosGET);
+            if (!$validacionBusqueda['valid']) {
+                $errores = array_merge($errores, $validacionBusqueda['errors']);
+            } else {
+                $datosLimpios = array_merge($datosLimpios, $validacionBusqueda['data']);
+            }
+            break;
+            
+        case 'detalle':
+            $validacionId = self::validarIDConsultaUsuario($parametrosGET['id'] ?? '');
+            if (!$validacionId['valid']) {
+                $errores = array_merge($errores, $validacionId['errors']);
+            } else {
+                $datosLimpios['id'] = $validacionId['value'];
+            }
+            break;
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'data' => $datosLimpios,
+        'errors' => $errores
+    ];
+}
+
+public static function prepararRespuestaJSON($datos) {
+    if (is_array($datos)) {
+        $datosLimpios = [];
+        foreach ($datos as $clave => $valor) {
+            if (is_string($valor)) {
+                // Escapar HTML pero mantener caracteres UTF-8
+                $datosLimpios[$clave] = htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
+            } elseif (is_array($valor)) {
+                $datosLimpios[$clave] = self::prepararRespuestaJSON($valor);
+            } else {
+                $datosLimpios[$clave] = $valor;
+            }
+        }
+        return $datosLimpios;
+    } elseif (is_string($datos)) {
+        return htmlspecialchars($datos, ENT_QUOTES, 'UTF-8');
+    }
+    
+    return $datos;
+}
+
+public static function validarPrecioPresentacion($precio) {
+    $errores = [];
+    
     if (!is_numeric($precio)) {
         $errores[] = 'El precio debe ser numérico';
         return ['valid' => false, 'errors' => $errores, 'value' => null];
@@ -541,6 +666,7 @@ public static function validarDatosServicio($datos) {
         'value' => number_format($precio, 2, '.', '')
     ];
 }
+
 public static function validarCantidadPresentacion($cantidad, $tipo) {
     $errores = [];
     $valorLimpio = null;
