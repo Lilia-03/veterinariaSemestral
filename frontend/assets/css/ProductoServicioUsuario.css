@@ -1,0 +1,640 @@
+/* COLORES PRINCIPALES - CliniPet */
+:root {
+    --clinipet-blue: #035E8D;
+    --clinipet-orange: #fea240;
+    --clinipet-light: #E6E2D6;
+    --clinipet-white: #ffffff;
+}
+
+/* ESTRUCTURA BASE - FONDO PRINCIPAL */
+html {
+    width: 100%;
+    height: 100%;
+    background-image: url('../imagenes/fondo de pantalla para formularios.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: transparent !important;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* HEADER CLINIPET */
+.header {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 0%, rgba(254, 162, 64, 0.1) 50%, transparent 100%);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+}
+
+.logo-text {
+    color: white;
+}
+
+.logo-accent {
+    color: var(--clinipet-orange);
+}
+
+/* SECCIÓN DE BÚSQUEDA */
+.search-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-controls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-group {
+    flex: 1;
+    min-width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid rgba(3, 94, 141, 0.2);
+    border-radius: 15px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--clinipet-orange);
+    box-shadow: 0 0 0 0.2rem rgba(254, 162, 64, 0.25);
+    background: white;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 15px 25px;
+    border: 2px solid var(--clinipet-blue);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--clinipet-blue);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    font-weight: 600;
+    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(254, 162, 64, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.filter-btn:hover::before {
+    left: 100%;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(3, 94, 141, 0.4);
+}
+
+.filter-btn.active {
+    border-color: var(--clinipet-orange);
+}
+
+/* SECCIÓN DE ESTADÍSTICAS */
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    background: rgba(255, 255, 255, 1);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--clinipet-blue);
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(3, 94, 141, 0.1);
+}
+
+.stat-label {
+    color: #666;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* SECCIÓN DE ITEMS */
+.items-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid var(--clinipet-light);
+}
+
+.section-title {
+    font-size: 2rem;
+    color: var(--clinipet-blue);
+    margin: 0;
+    font-weight: 700;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, var(--clinipet-blue), var(--clinipet-orange));
+    border-radius: 2px;
+}
+
+.btn-outline-primary {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(3, 94, 141, 0.4);
+    background: linear-gradient(135deg, #0284c7 0%, var(--clinipet-orange) 100%);
+    color: white;
+}
+
+/* LÍNEAS DE ITEMS MEJORADAS */
+.item-row {
+    display: flex;
+    align-items: center;
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 2px solid rgba(3, 94, 141, 0.1);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.item-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(254, 162, 64, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.item-row:hover::before {
+    left: 100%;
+}
+
+.item-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    background: rgba(255, 255, 255, 1);
+    border-color: var(--clinipet-orange);
+}
+
+.service-row {
+    border-left: 5px solid var(--clinipet-orange);
+}
+
+.product-row {
+    border-left: 5px solid var(--clinipet-blue);
+}
+
+.availability-badge {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+}
+
+.availability-badge.available {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #059669;
+    border: 1px solid #10b981;
+}
+
+.availability-badge.limited {
+    background: linear-gradient(135deg, #fef3cd 0%, #fde68a 100%);
+    color: #d97706;
+    border: 1px solid var(--clinipet-orange);
+}
+
+.availability-badge.unavailable {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #dc2626;
+    border: 1px solid #ef4444;
+}
+
+.item-icon {
+    font-size: 3rem;
+    margin-right: 25px;
+    opacity: 0.8;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.item-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--clinipet-blue);
+    margin-bottom: 10px;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+
+.item-category {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.item-stock {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stock-available {
+    color: #059669;
+}
+
+.stock-limited {
+    color: var(--clinipet-orange);
+}
+
+.stock-unavailable {
+    color: #dc2626;
+}
+
+.item-price {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--clinipet-orange);
+    margin-left: 25px;
+    text-shadow: 0 2px 4px rgba(254, 162, 64, 0.2);
+}
+
+/* ESTADOS DE CARGA Y ERROR */
+.loading {
+    text-align: center;
+    padding: 60px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+}
+
+.loading i {
+    font-size: 3rem;
+    color: var(--clinipet-blue);
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.no-results {
+    text-align: center;
+    padding: 60px;
+    color: #666;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+}
+
+.no-results i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: #ccc;
+}
+
+.error-message {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #dc2626;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border: 2px solid #ef4444;
+    font-weight: 500;
+}
+
+/* MODAL CLINIPET */
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    padding: 25px;
+}
+
+.modal-title {
+    color: white;
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.modal-footer {
+    background: rgba(230, 226, 214, 0.3);
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    padding: 20px 30px;
+}
+
+.modal-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--clinipet-orange);
+    text-shadow: 0 2px 4px rgba(254, 162, 64, 0.2);
+}
+
+.modal-stock-info {
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+
+.btn-secondary:hover,
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    color: white;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 2.2rem;
+    }
+
+    .header {
+        padding: 25px 20px;
+    }
+
+    .search-controls {
+        flex-direction: column;
+    }
+
+    .search-group {
+        min-width: 100%;
+    }
+
+    .filter-buttons {
+        justify-content: center;
+    }
+
+    .filter-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .item-row {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .item-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .item-info {
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+
+    .availability-badge {
+        position: static;
+        margin-bottom: 15px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .search-section,
+    .items-section {
+        padding: 20px 15px;
+    }
+
+    .item-row {
+        padding: 15px;
+    }
+
+    .stat-card {
+        padding: 20px 15px;
+    }
+
+    .stats-section {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+
+/* GARANTIZAR TRANSPARENCIA DEL FONDO */
+.container-fluid,
+.tab-content,
+.tab-pane {
+    background: transparent !important;
+}
+/* PERSONALIZAR ALERT-INFO CON COLORES CLINIPET */
+.modal-body .alert-info {
+    background: linear-gradient(135deg, rgba(3, 94, 141, 0.1) 0%, rgba(254, 162, 64, 0.1) 100%);
+    border: 2px solid var(--clinipet-orange);
+    border-left: 4px solid var(--clinipet-blue);
+    color: var(--clinipet-blue);
+}
+
+.modal-body .alert-info strong {
+    color: var(--clinipet-blue);
+}

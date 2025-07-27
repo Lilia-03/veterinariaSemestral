@@ -35,8 +35,8 @@ try {
                 throw new Exception('Datos insuficientes para actualizar inventario');
             }
 
-            $idItem = Sanitizar::sanitizarEntero($_POST['idItem']);
-            $cantidad = Sanitizar::sanitizarEntero($_POST['cantidad']);
+            $idItem = SanitizarEntrada::sanitizarEntero($_POST['idItem']);
+            $cantidad = SanitizarEntrada::sanitizarEntero($_POST['cantidad']);
 
             if (!$idItem || !$cantidad) {
                 throw new Exception('Datos inválidos');

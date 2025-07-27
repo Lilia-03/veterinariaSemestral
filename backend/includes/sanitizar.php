@@ -600,6 +600,226 @@ public static function validarDatosUsuario($datos, $requierePassword = true) {
         return preg_replace('/[^0-9\-]/', '', trim($telefono));
     }
     
+public static function validarParametrosBusquedaUsuario($parametros) {
+    $errores = [];
+    $datosLimpios = [];
+    
+    // Validar término de búsqueda (opcional)
+    if (isset($parametros['termino'])) {
+        $termino = self::sanitizarBusqueda($parametros['termino']);
+        if (strlen($termino) > 100) {
+            $errores[] = 'El término de búsqueda no puede exceder 100 caracteres';
+        }
+        $datosLimpios['termino'] = $termino;
+    } else {
+        $datosLimpios['termino'] = '';
+    }
+    
+    // Validar tipo (opcional)
+    if (isset($parametros['tipo'])) {
+        $tipo = self::sanitizarTexto($parametros['tipo']);
+        if (!empty($tipo) && !in_array($tipo, ['Producto', 'Servicio'])) {
+            $errores[] = 'Tipo no válido. Debe ser "Producto" o "Servicio"';
+        }
+        $datosLimpios['tipo'] = $tipo;
+    } else {
+        $datosLimpios['tipo'] = '';
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'data' => $datosLimpios,
+        'errors' => $errores
+    ];
+}
+
+public static function validarIDConsultaUsuario($id) {
+    $errores = [];
+    
+    if (empty($id)) {
+        $errores[] = 'El ID del producto o servicio es requerido';
+        return ['valid' => false, 'errors' => $errores, 'value' => null];
+    }
+    
+    $id = filter_var($id, FILTER_VALIDATE_INT);
+    
+    if ($id === false || $id <= 0) {
+        $errores[] = 'El ID debe ser un número entero positivo válido';
+        return ['valid' => false, 'errors' => $errores, 'value' => null];
+    }
+    
+    return [
+        'valid' => true,
+        'errors' => [],
+        'value' => $id
+    ];
+}
+
+public static function validarParametrosURL($parametrosGET) {
+    $errores = [];
+    $datosLimpios = [];
+    
+    // Validar acción
+    $accion = $parametrosGET['accion'] ?? '';
+    $accion = self::sanitizarTexto($accion);
+    
+    $accionesPermitidas = ['obtener', 'buscar', 'detalle', 'productos', 'servicios', 'estadisticas'];
+    
+    if (empty($accion)) {
+        $errores[] = 'La acción es requerida';
+    } elseif (!in_array($accion, $accionesPermitidas)) {
+        $errores[] = 'Acción no válida';
+    } else {
+        $datosLimpios['accion'] = $accion;
+    }
+    
+    // Validaciones específicas por acción
+    switch ($accion) {
+        case 'buscar':
+            $validacionBusqueda = self::validarParametrosBusquedaUsuario($parametrosGET);
+            if (!$validacionBusqueda['valid']) {
+                $errores = array_merge($errores, $validacionBusqueda['errors']);
+            } else {
+                $datosLimpios = array_merge($datosLimpios, $validacionBusqueda['data']);
+            }
+            break;
+            
+        case 'detalle':
+            $validacionId = self::validarIDConsultaUsuario($parametrosGET['id'] ?? '');
+            if (!$validacionId['valid']) {
+                $errores = array_merge($errores, $validacionId['errors']);
+            } else {
+                $datosLimpios['id'] = $validacionId['value'];
+            }
+            break;
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'data' => $datosLimpios,
+        'errors' => $errores
+    ];
+}
+
+public static function prepararRespuestaJSON($datos) {
+    if (is_array($datos)) {
+        $datosLimpios = [];
+        foreach ($datos as $clave => $valor) {
+            if (is_string($valor)) {
+                // Escapar HTML pero mantener caracteres UTF-8
+                $datosLimpios[$clave] = htmlspecialchars($valor, ENT_QUOTES, 'UTF-8');
+            } elseif (is_array($valor)) {
+                $datosLimpios[$clave] = self::prepararRespuestaJSON($valor);
+            } else {
+                $datosLimpios[$clave] = $valor;
+            }
+        }
+        return $datosLimpios;
+    } elseif (is_string($datos)) {
+        return htmlspecialchars($datos, ENT_QUOTES, 'UTF-8');
+    }
+    
+    return $datos;
+}
+
+public static function validarPrecioPresentacion($precio) {
+    $errores = [];
+    
+    if (!is_numeric($precio)) {
+        $errores[] = 'El precio debe ser numérico';
+        return ['valid' => false, 'errors' => $errores, 'value' => null];
+    }
+    
+    $precio = floatval($precio);
+    
+    if ($precio < 0) {
+        $errores[] = 'El precio no puede ser negativo';
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'errors' => $errores,
+        'value' => number_format($precio, 2, '.', '')
+    ];
+}
+
+public static function validarCantidadPresentacion($cantidad, $tipo) {
+    $errores = [];
+    $valorLimpio = null;
+    
+    if ($tipo === 'Servicio') {
+        // Los servicios no manejan cantidad
+        $valorLimpio = null;
+    } else {
+        // Para productos, validar cantidad
+        if (!is_numeric($cantidad) && $cantidad !== null) {
+            $errores[] = 'La cantidad debe ser numérica';
+        } else {
+            $valorLimpio = $cantidad === null ? 0 : intval($cantidad);
+            if ($valorLimpio < 0) {
+                $errores[] = 'La cantidad no puede ser negativa';
+                $valorLimpio = 0;
+            }
+        }
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'errors' => $errores,
+        'value' => $valorLimpio
+    ];
+}
+
+public static function limpiarItemParaPresentacion($item) {
+    $itemLimpio = [];
+    $errores = [];
+    
+    // ID
+    $itemLimpio['id'] = isset($item['IDITEM']) ? intval($item['IDITEM']) : 0;
+    
+    // Nombre
+    $itemLimpio['nombre'] = isset($item['NombreProducto']) ? 
+        self::sanitizarTexto($item['NombreProducto']) : '';
+    
+    // Tipo
+    $itemLimpio['tipo'] = isset($item['Tipo']) ? 
+        self::sanitizarTexto($item['Tipo']) : '';
+    
+    // Precio
+    $validacionPrecio = self::validarPrecioPresentacion($item['PrecioITEM'] ?? 0);
+    $itemLimpio['precio'] = $validacionPrecio['valid'] ? $validacionPrecio['value'] : '0.00';
+    
+    // Cantidad y disponibilidad
+    $validacionCantidad = self::validarCantidadPresentacion(
+        $item['CantidadDisponible'] ?? null, 
+        $itemLimpio['tipo']
+    );
+    $itemLimpio['cantidad'] = $validacionCantidad['value'];
+    
+    // Estado de disponibilidad
+    $itemLimpio['disponibilidad'] = isset($item['EstadoDisponibilidad']) ? 
+        self::sanitizarTexto($item['EstadoDisponibilidad']) : 'Desconocido';
+    
+    return [
+        'item' => $itemLimpio,
+        'errors' => $errores
+    ];
+}
+
+public static function validarMetodoHTTPUsuario($metodoRequerido = 'GET') {
+    $errores = [];
+    $metodoActual = $_SERVER['REQUEST_METHOD'] ?? '';
+    
+    if ($metodoActual !== $metodoRequerido) {
+        $errores[] = "Método HTTP no permitido. Se requiere $metodoRequerido";
+    }
+    
+    return [
+        'valid' => empty($errores),
+        'errors' => $errores,
+        'method' => $metodoActual
+    ];
+}    
 }
 
 ?>
