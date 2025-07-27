@@ -1,0 +1,534 @@
+/* COLORES PRINCIPALES */
+:root {
+    --clinipet-blue: #035E8D;
+    --clinipet-orange: #fea240;
+    --clinipet-light: #E6E2D6;
+    --clinipet-white: #ffffff;
+}
+
+/* ESTRUCTURA BASE - FONDO PRINCIPAL */
+html {
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/fondoPatitas.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: transparent !important;
+}
+
+/* ELEMENTOS COMUNES */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.section {
+    padding: 80px 0;
+    background: transparent !important;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--clinipet-blue);
+    position: relative;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255,255,255,0.8), 
+                 2px 2px 4px rgba(255,255,255,0.6);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(to right, var(--clinipet-blue), var(--clinipet-orange));
+    border-radius: 2px;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: white;
+    color: var(--clinipet-blue);
+}
+
+.btn-primary:hover {
+    background: var(--clinipet-orange);
+    color: white;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.btn-secondary:hover {
+    background: var(--clinipet-orange);
+    border-color: var(--clinipet-orange);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* HERO SECTION */
+.hero {
+    color: white;
+    padding: 150px 0 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 80px;
+    background-color: var(--clinipet-blue);
+}
+
+.hero {
+    padding: 150px 0 100px;
+}
+
+.info-hero, .contact-hero, .servicios-hero {
+    padding: 70px 0 80px;
+    background-color: var(--clinipet-blue) !important; 
+}
+
+.hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    padding: 0 2rem;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: fadeInUp 1s ease;
+}
+
+.hero p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease 0.2s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    animation: fadeInUp 1s ease 0.4s both;
+}
+
+/* CONTENT CARDS */
+.content-card {
+    background-color: rgba(230, 226, 214, 0.85);
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    margin: 2rem auto;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    max-width: 800px;
+    text-align: center;
+}
+
+.content-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.info-card {
+    margin-bottom: 2rem;
+}
+
+.info-subtitle {
+    color: var(--clinipet-blue);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--clinipet-orange);
+    display: inline-block;
+}
+
+.info-text {
+    color: #444;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+/* GRIDS */
+.features-grid, .news-grid, .contact-grid, .stats-grid {
+    display: grid;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.features-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.news-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.contact-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 2rem;
+}
+
+.stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* CARDS */
+.feature-card, .news-card, .stat-card {
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+}
+
+.feature-card:hover, .news-card:hover, .stat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.feature-card:hover {
+    border-color: var(--clinipet-orange);
+    transform: translateY(-15px);
+}
+
+.news-card {
+    overflow: hidden;
+    padding: 0;
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: var(--clinipet-orange);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.feature-card h3, .news-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--clinipet-blue);
+    font-weight: bold;
+}
+
+.news-title {
+    font-size: 1.3rem;
+}
+
+.feature-card p, .news-excerpt {
+    color: #444;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.news-image {
+    height: 200px;
+    background: var(--clinipet-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+}
+
+.news-content {
+    padding: 1.5rem;
+}
+
+.news-date {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--clinipet-orange);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--clinipet-blue);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.read-more {
+    color: var(--clinipet-blue);
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.read-more:hover {
+    color: var(--clinipet-orange);
+}
+
+/* ESTILOS PARA CONTACTO */
+.contact-section, .map-section {
+    padding: 60px 0;
+}
+
+.map-section {
+    padding-bottom: 80px;
+}
+
+.contact-info, .contact-form {
+    padding: 2rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.contact-icon {
+    font-size: 1.8rem;
+    color: var(--clinipet-orange);
+    margin-top: 0.3rem;
+}
+
+.contact-details {
+    flex: 1;
+}
+
+.contact-details strong {
+    color: var(--clinipet-blue);
+    font-size: 1.1rem;
+}
+
+.contact-details p {
+    margin: 0.3rem 0 0;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.map-container {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    background: var(--clinipet-blue);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close:hover {
+    opacity: 0.7;
+}
+
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    white-space: nowrap;
+}
+
+/* RESPONSIVE */
+@media (max-width: 968px) {
+    .nav-menu {
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        gap: 1rem;
+    }
+    
+    .social-links {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0 1rem;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .section {
+        padding: 2rem 1rem;
+    }
+    
+    .content-card {
+        padding: 2rem;
+        max-width: 95%;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .features-grid, .news-grid, .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .content-card h2 {
+        font-size: 1.3rem;
+        min-width: 150px;
+    }
+    
+    .content-card p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        height: 70px;
+    }
+    
+    .main-content {
+        margin-top: 70px;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+    }
+    
+    .login-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .content-card {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .info-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* ASEGURAR QUE NO HAY FONDOS BLANCOS */
+main, .main-content, #servicios, #noticias, .features, .news {
+    background: transparent !important;
+}

@@ -1,0 +1,700 @@
+[27-Jul-2025 19:51:46 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:51:46 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:51:46 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerUsuarios
+)
+
+[27-Jul-2025 19:51:46 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+[27-Jul-2025 19:51:46 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:51:46 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:51:46 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 19:51:46 Europe/Berlin] Acción solicitada: obtenerUsuarios
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 19:51:46 Europe/Berlin] Ejecutando obtenerUsuarios...
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Instancia de Usuarios creada
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::obtenerUsuarios() - Iniciando con ID: 1
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::obtenerUsuarios() - Resultado obtenido: 2
+[27-Jul-2025 19:51:46 Europe/Berlin] obtenerUsuarios ejecutado, resultados: 2
+[27-Jul-2025 19:51:46 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 19:51:46 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 19:51:46 Europe/Berlin] Acción solicitada: obtenerRoles
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 19:51:46 Europe/Berlin] Ejecutando obtenerRoles...
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::obtenerRoles() - Iniciando...
+[27-Jul-2025 19:51:46 Europe/Berlin] Usuarios::obtenerRoles() - Resultado: Array
+(
+    [0] => Array
+        (
+            [RolID] => 1
+            [NombreRol] => Administrador
+            [Descripcion] => Control total del sistema
+        )
+
+    [1] => Array
+        (
+            [RolID] => 3
+            [NombreRol] => Cliente
+            [Descripcion] => Propietario de mascotas
+        )
+
+    [2] => Array
+        (
+            [RolID] => 2
+            [NombreRol] => Operador
+            [Descripcion] => Operaciones del día a día
+        )
+
+)
+
+[27-Jul-2025 19:51:46 Europe/Berlin] Roles obtenidos: 3
+[27-Jul-2025 19:51:46 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 19:52:21 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:52:21 Europe/Berlin] POST data: Array
+(
+    [nombreUsuario] => operador2
+    [email] => operador2@gmail.com
+    [nombreCompleto] => Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+    [telefono] => 
+    [direccion] => 
+    [action] => registrarUsuario
+)
+
+[27-Jul-2025 19:52:21 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:52:21 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 19:52:21 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 19:52:21 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 19:52:21 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 19:52:21 Europe/Berlin] Acción solicitada: registrarUsuario
+[27-Jul-2025 19:52:21 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 19:52:21 Europe/Berlin] === INICIANDO REGISTRO DE USUARIO ===
+[27-Jul-2025 19:52:21 Europe/Berlin] Campos básicos validados
+[27-Jul-2025 19:52:21 Europe/Berlin] Validaciones básicas completadas
+[27-Jul-2025 19:52:21 Europe/Berlin] Datos básicos preparados: Array
+(
+    [nombreUsuario] => operador2
+    [email] => operador2@gmail.com
+    [nombreCompleto] => Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+)
+
+[27-Jul-2025 19:52:21 Europe/Berlin] Creando instancia de Usuarios...
+[27-Jul-2025 19:52:21 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 19:52:21 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 19:52:21 Europe/Berlin] Llamando a registrarUsuario...
+[27-Jul-2025 19:52:21 Europe/Berlin] Usuarios::registrarUsuario() - Iniciando con datos: Array
+(
+    [nombreUsuario] => operador2
+    [email] => operador2@gmail.com
+    [nombreCompleto] => Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+)
+
+[27-Jul-2025 19:52:21 Europe/Berlin] Usuarios::registrarUsuario() - Usuario creador ID: 1
+[27-Jul-2025 19:52:21 Europe/Berlin] Usuarios::registrarUsuario() - Validando datos...
+[27-Jul-2025 19:52:21 Europe/Berlin] Error fatal en controller: Class "Sanitizar" not found
+[27-Jul-2025 19:52:21 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php(146): Usuarios->registrarUsuario(Array, '1')
+#1 {main}
+[27-Jul-2025 19:52:21 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 19:56:06 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:56:06 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:56:06 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+[27-Jul-2025 19:56:06 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerUsuarios
+)
+
+[27-Jul-2025 19:56:06 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:56:06 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:56:06 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 19:56:06 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 19:56:06 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 19:56:06 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 19:56:06 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 19:56:06 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 19:56:06 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 19:56:06 Europe/Berlin] Acción solicitada: obtenerUsuarios
+[27-Jul-2025 19:56:06 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 19:56:06 Europe/Berlin] Ejecutando obtenerUsuarios...
+[27-Jul-2025 19:56:06 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 19:56:07 Europe/Berlin] Instancia de Usuarios creada
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuarios::obtenerUsuarios() - Iniciando con ID: 1
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuarios::obtenerUsuarios() - Resultado obtenido: 2
+[27-Jul-2025 19:56:07 Europe/Berlin] obtenerUsuarios ejecutado, resultados: 2
+[27-Jul-2025 19:56:07 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 19:56:07 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 19:56:07 Europe/Berlin] Acción solicitada: obtenerRoles
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 19:56:07 Europe/Berlin] Ejecutando obtenerRoles...
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuarios::obtenerRoles() - Iniciando...
+[27-Jul-2025 19:56:07 Europe/Berlin] Usuarios::obtenerRoles() - Resultado: Array
+(
+    [0] => Array
+        (
+            [RolID] => 1
+            [NombreRol] => Administrador
+            [Descripcion] => Control total del sistema
+        )
+
+    [1] => Array
+        (
+            [RolID] => 3
+            [NombreRol] => Cliente
+            [Descripcion] => Propietario de mascotas
+        )
+
+    [2] => Array
+        (
+            [RolID] => 2
+            [NombreRol] => Operador
+            [Descripcion] => Operaciones del día a día
+        )
+
+)
+
+[27-Jul-2025 19:56:07 Europe/Berlin] Roles obtenidos: 3
+[27-Jul-2025 19:56:07 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 19:56:30 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:56:30 Europe/Berlin] POST data: Array
+(
+    [nombreUsuario] => operador2
+    [email] => martaSolano@gmail.com
+    [nombreCompleto] => DR. Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+    [telefono] => 
+    [direccion] => 
+    [action] => registrarUsuario
+)
+
+[27-Jul-2025 19:56:30 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:56:30 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 19:56:30 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 19:56:30 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 19:56:30 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 19:56:30 Europe/Berlin] Acción solicitada: registrarUsuario
+[27-Jul-2025 19:56:30 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 19:56:30 Europe/Berlin] === INICIANDO REGISTRO DE USUARIO ===
+[27-Jul-2025 19:56:30 Europe/Berlin] Campos básicos validados
+[27-Jul-2025 19:56:30 Europe/Berlin] Validaciones básicas completadas
+[27-Jul-2025 19:56:30 Europe/Berlin] Datos básicos preparados: Array
+(
+    [nombreUsuario] => operador2
+    [email] => martaSolano@gmail.com
+    [nombreCompleto] => DR. Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+)
+
+[27-Jul-2025 19:56:30 Europe/Berlin] Creando instancia de Usuarios...
+[27-Jul-2025 19:56:30 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 19:56:30 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 19:56:30 Europe/Berlin] Llamando a registrarUsuario...
+[27-Jul-2025 19:56:30 Europe/Berlin] Usuarios::registrarUsuario() - Iniciando con datos: Array
+(
+    [nombreUsuario] => operador2
+    [email] => martaSolano@gmail.com
+    [nombreCompleto] => DR. Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+)
+
+[27-Jul-2025 19:56:30 Europe/Berlin] Usuarios::registrarUsuario() - Usuario creador ID: 1
+[27-Jul-2025 19:56:30 Europe/Berlin] Usuarios::registrarUsuario() - Validando datos...
+[27-Jul-2025 19:56:30 Europe/Berlin] Error fatal en controller: Class "Sanitizar" not found
+[27-Jul-2025 19:56:30 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php(146): Usuarios->registrarUsuario(Array, '1')
+#1 {main}
+[27-Jul-2025 19:56:30 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 19:58:58 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:58:58 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 19:58:58 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerUsuarios
+)
+
+[27-Jul-2025 19:58:58 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:58:58 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+[27-Jul-2025 19:58:58 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 19:58:58 Europe/Berlin] PHP Warning:  require_once(../../includes/conexion.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 14
+[27-Jul-2025 19:58:58 Europe/Berlin] PHP Warning:  require_once(../../includes/conexion.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 14
+[27-Jul-2025 19:58:58 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../../includes/conexion.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php:14
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 14
+[27-Jul-2025 19:58:58 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../../includes/conexion.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php:14
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php on line 14
+[27-Jul-2025 20:00:05 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:00:05 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:00:05 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerUsuarios
+)
+
+[27-Jul-2025 20:00:05 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+[27-Jul-2025 20:00:05 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:00:05 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:00:05 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:00:05 Europe/Berlin] Acción solicitada: obtenerRoles
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:00:05 Europe/Berlin] Ejecutando obtenerRoles...
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::obtenerRoles() - Iniciando...
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::obtenerRoles() - Resultado: Array
+(
+    [0] => Array
+        (
+            [RolID] => 1
+            [NombreRol] => Administrador
+            [Descripcion] => Control total del sistema
+        )
+
+    [1] => Array
+        (
+            [RolID] => 3
+            [NombreRol] => Cliente
+            [Descripcion] => Propietario de mascotas
+        )
+
+    [2] => Array
+        (
+            [RolID] => 2
+            [NombreRol] => Operador
+            [Descripcion] => Operaciones del día a día
+        )
+
+)
+
+[27-Jul-2025 20:00:05 Europe/Berlin] Roles obtenidos: 3
+[27-Jul-2025 20:00:05 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:00:05 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:00:05 Europe/Berlin] Acción solicitada: obtenerUsuarios
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:00:05 Europe/Berlin] Ejecutando obtenerUsuarios...
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:00:05 Europe/Berlin] Instancia de Usuarios creada
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::obtenerUsuarios() - Iniciando con ID: 1
+[27-Jul-2025 20:00:05 Europe/Berlin] Usuarios::obtenerUsuarios() - Resultado obtenido: 2
+[27-Jul-2025 20:00:05 Europe/Berlin] obtenerUsuarios ejecutado, resultados: 2
+[27-Jul-2025 20:00:05 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:00:30 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:00:30 Europe/Berlin] POST data: Array
+(
+    [nombreUsuario] => operador2
+    [email] => martaSolano@gmail.com
+    [nombreCompleto] => DR. Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+    [telefono] => 
+    [direccion] => 
+    [action] => registrarUsuario
+)
+
+[27-Jul-2025 20:00:30 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:00:30 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:00:30 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:00:30 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:00:30 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:00:30 Europe/Berlin] Acción solicitada: registrarUsuario
+[27-Jul-2025 20:00:30 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:00:30 Europe/Berlin] === INICIANDO REGISTRO DE USUARIO ===
+[27-Jul-2025 20:00:30 Europe/Berlin] Campos básicos validados
+[27-Jul-2025 20:00:30 Europe/Berlin] Validaciones básicas completadas
+[27-Jul-2025 20:00:30 Europe/Berlin] Datos básicos preparados: Array
+(
+    [nombreUsuario] => operador2
+    [email] => martaSolano@gmail.com
+    [nombreCompleto] => DR. Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+)
+
+[27-Jul-2025 20:00:30 Europe/Berlin] Creando instancia de Usuarios...
+[27-Jul-2025 20:00:30 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:00:30 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:00:30 Europe/Berlin] Llamando a registrarUsuario...
+[27-Jul-2025 20:00:30 Europe/Berlin] Usuarios::registrarUsuario() - Iniciando con datos: Array
+(
+    [nombreUsuario] => operador2
+    [email] => martaSolano@gmail.com
+    [nombreCompleto] => DR. Marta Solano
+    [password] => password
+    [rolId] => 2
+    [cedulaCliente] => 
+)
+
+[27-Jul-2025 20:00:30 Europe/Berlin] Usuarios::registrarUsuario() - Usuario creador ID: 1
+[27-Jul-2025 20:00:30 Europe/Berlin] Usuarios::registrarUsuario() - Validando datos...
+[27-Jul-2025 20:00:30 Europe/Berlin] Error fatal en controller: Class "Sanitizar" not found
+[27-Jul-2025 20:00:30 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php(146): Usuarios->registrarUsuario(Array, '1')
+#1 {main}
+[27-Jul-2025 20:00:30 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:22 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:22 Europe/Berlin] POST data: Array
+(
+    [action] => actualizarUsuario
+    [idUsuario] => 2
+    [email] => trabajador@clinipet.com
+    [nombreCompleto] => Dr. Fernando García
+    [rolId] => 2
+    [cedulaCliente] => 
+    [activo] => 1
+)
+
+[27-Jul-2025 20:01:22 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:01:22 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:01:22 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:01:22 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:01:22 Europe/Berlin] Acción solicitada: actualizarUsuario
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:01:22 Europe/Berlin] === INICIANDO ACTUALIZACIÓN DE USUARIO ===
+[27-Jul-2025 20:01:22 Europe/Berlin] ID Usuario a actualizar: 2
+[27-Jul-2025 20:01:22 Europe/Berlin] Datos preparados: Array
+(
+    [email] => trabajador@clinipet.com
+    [nombreCompleto] => Dr. Fernando García
+    [rolId] => 2
+    [cedulaCliente] => 
+    [activo] => 1
+)
+
+[27-Jul-2025 20:01:22 Europe/Berlin] Creando instancia de Usuarios para actualizar...
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:01:22 Europe/Berlin] Llamando a actualizarUsuario...
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuarios::actualizarUsuario() - Iniciando con ID: 2
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuarios::actualizarUsuario() - Datos: Array
+(
+    [email] => trabajador@clinipet.com
+    [nombreCompleto] => Dr. Fernando García
+    [rolId] => 2
+    [cedulaCliente] => 
+    [activo] => 1
+)
+
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuarios::actualizarUsuario() - Editor ID: 1
+[27-Jul-2025 20:01:22 Europe/Berlin] Usuarios::actualizarUsuario() - Validando datos...
+[27-Jul-2025 20:01:22 Europe/Berlin] Error fatal en controller: Class "Sanitizar" not found
+[27-Jul-2025 20:01:22 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php(233): Usuarios->actualizarUsuario(2, Array, '1')
+#1 {main}
+[27-Jul-2025 20:01:22 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:31 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:31 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerUsuarios
+)
+
+[27-Jul-2025 20:01:31 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:01:31 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:31 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+[27-Jul-2025 20:01:31 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:01:31 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:01:31 Europe/Berlin] Acción solicitada: obtenerUsuarios
+[27-Jul-2025 20:01:31 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:01:31 Europe/Berlin] Ejecutando obtenerUsuarios...
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Instancia de Usuarios creada
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::obtenerUsuarios() - Iniciando con ID: 1
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::obtenerUsuarios() - Resultado obtenido: 2
+[27-Jul-2025 20:01:31 Europe/Berlin] obtenerUsuarios ejecutado, resultados: 2
+[27-Jul-2025 20:01:31 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:31 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:01:31 Europe/Berlin] Acción solicitada: obtenerRoles
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:01:31 Europe/Berlin] Ejecutando obtenerRoles...
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::obtenerRoles() - Iniciando...
+[27-Jul-2025 20:01:31 Europe/Berlin] Usuarios::obtenerRoles() - Resultado: Array
+(
+    [0] => Array
+        (
+            [RolID] => 1
+            [NombreRol] => Administrador
+            [Descripcion] => Control total del sistema
+        )
+
+    [1] => Array
+        (
+            [RolID] => 3
+            [NombreRol] => Cliente
+            [Descripcion] => Propietario de mascotas
+        )
+
+    [2] => Array
+        (
+            [RolID] => 2
+            [NombreRol] => Operador
+            [Descripcion] => Operaciones del día a día
+        )
+
+)
+
+[27-Jul-2025 20:01:31 Europe/Berlin] Roles obtenidos: 3
+[27-Jul-2025 20:01:31 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:41 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:01:41 Europe/Berlin] POST data: Array
+(
+    [action] => actualizarUsuario
+    [idUsuario] => 2
+    [email] => trabajador@clinipet.com
+    [nombreCompleto] => Dr. Fernando García
+    [rolId] => 2
+    [cedulaCliente] => 
+    [activo] => 1
+)
+
+[27-Jul-2025 20:01:41 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:01:41 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:01:41 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:01:41 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:01:41 Europe/Berlin] Acción solicitada: actualizarUsuario
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:01:41 Europe/Berlin] === INICIANDO ACTUALIZACIÓN DE USUARIO ===
+[27-Jul-2025 20:01:41 Europe/Berlin] ID Usuario a actualizar: 2
+[27-Jul-2025 20:01:41 Europe/Berlin] Datos preparados: Array
+(
+    [email] => trabajador@clinipet.com
+    [nombreCompleto] => Dr. Fernando García
+    [rolId] => 2
+    [cedulaCliente] => 
+    [activo] => 1
+)
+
+[27-Jul-2025 20:01:41 Europe/Berlin] Creando instancia de Usuarios para actualizar...
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:01:41 Europe/Berlin] Llamando a actualizarUsuario...
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuarios::actualizarUsuario() - Iniciando con ID: 2
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuarios::actualizarUsuario() - Datos: Array
+(
+    [email] => trabajador@clinipet.com
+    [nombreCompleto] => Dr. Fernando García
+    [rolId] => 2
+    [cedulaCliente] => 
+    [activo] => 1
+)
+
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuarios::actualizarUsuario() - Editor ID: 1
+[27-Jul-2025 20:01:41 Europe/Berlin] Usuarios::actualizarUsuario() - Validando datos...
+[27-Jul-2025 20:01:41 Europe/Berlin] Error fatal en controller: Class "Sanitizar" not found
+[27-Jul-2025 20:01:41 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\veterinariaSemestral\backend\controller\gestionUsuariosController.php(233): Usuarios->actualizarUsuario(2, Array, '1')
+#1 {main}
+[27-Jul-2025 20:01:41 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:05:35 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:05:35 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:05:35 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+[27-Jul-2025 20:05:35 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerUsuarios
+)
+
+[27-Jul-2025 20:05:35 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:05:35 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:05:35 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:05:35 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:05:35 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:05:35 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:05:35 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:05:35 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:05:35 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:05:35 Europe/Berlin] Acción solicitada: obtenerUsuarios
+[27-Jul-2025 20:05:35 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:05:35 Europe/Berlin] Ejecutando obtenerUsuarios...
+[27-Jul-2025 20:05:35 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:05:35 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:05:35 Europe/Berlin] Instancia de Usuarios creada
+[27-Jul-2025 20:05:35 Europe/Berlin] Usuarios::obtenerUsuarios() - Iniciando con ID: 1
+[27-Jul-2025 20:05:58 Europe/Berlin] Usuarios::obtenerUsuarios() - Resultado obtenido: 2
+[27-Jul-2025 20:05:58 Europe/Berlin] obtenerUsuarios ejecutado, resultados: 2
+[27-Jul-2025 20:05:58 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:05:58 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:05:58 Europe/Berlin] Acción solicitada: obtenerRoles
+[27-Jul-2025 20:05:58 Europe/Berlin] Usuario actual ID: 1
+[27-Jul-2025 20:05:58 Europe/Berlin] Ejecutando obtenerRoles...
+[27-Jul-2025 20:05:58 Europe/Berlin] Usuarios::__construct() - Iniciando constructor
+[27-Jul-2025 20:05:58 Europe/Berlin] Usuarios::__construct() - Conexión creada exitosamente
+[27-Jul-2025 20:05:58 Europe/Berlin] Usuarios::obtenerRoles() - Iniciando...
+[27-Jul-2025 20:05:58 Europe/Berlin] Usuarios::obtenerRoles() - Resultado: Array
+(
+    [0] => Array
+        (
+            [RolID] => 1
+            [NombreRol] => Administrador
+            [Descripcion] => Control total del sistema
+        )
+
+    [1] => Array
+        (
+            [RolID] => 3
+            [NombreRol] => Cliente
+            [Descripcion] => Propietario de mascotas
+        )
+
+    [2] => Array
+        (
+            [RolID] => 2
+            [NombreRol] => Operador
+            [Descripcion] => Operaciones del día a día
+        )
+
+)
+
+[27-Jul-2025 20:05:58 Europe/Berlin] Roles obtenidos: 3
+[27-Jul-2025 20:05:58 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:08:20 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:08:20 Europe/Berlin] === INICIO DEBUG CONTROLLER ===
+[27-Jul-2025 20:08:20 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerUsuarios
+)
+
+[27-Jul-2025 20:08:20 Europe/Berlin] POST data: Array
+(
+    [action] => obtenerRoles
+)
+
+[27-Jul-2025 20:08:20 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:08:20 Europe/Berlin] SESSION data: Array
+(
+)
+
+[27-Jul-2025 20:08:20 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:08:20 Europe/Berlin] Conexion.php cargado correctamente
+[27-Jul-2025 20:08:20 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:08:20 Europe/Berlin] Sanitizar.php cargado correctamente
+[27-Jul-2025 20:08:20 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:08:20 Europe/Berlin] Usuarios.php cargado correctamente
+[27-Jul-2025 20:08:20 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:08:20 Europe/Berlin] Acción solicitada: obtenerUsuarios
+[27-Jul-2025 20:08:20 Europe/Berlin] Usuario actual ID: NULL
+[27-Jul-2025 20:08:20 Europe/Berlin] Sesión iniciada
+[27-Jul-2025 20:08:20 Europe/Berlin] Error general en controller: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 20:08:20 Europe/Berlin] Acción solicitada: obtenerRoles
+[27-Jul-2025 20:08:20 Europe/Berlin] Stack trace: #0 {main}
+[27-Jul-2025 20:08:20 Europe/Berlin] Usuario actual ID: NULL
+[27-Jul-2025 20:08:20 Europe/Berlin] Error general en controller: Acceso no autorizado. Inicie sesión.
+[27-Jul-2025 20:08:20 Europe/Berlin] Stack trace: #0 {main}
+[27-Jul-2025 20:08:20 Europe/Berlin] === FIN DEBUG CONTROLLER ===
+[27-Jul-2025 20:08:20 Europe/Berlin] === FIN DEBUG CONTROLLER ===
