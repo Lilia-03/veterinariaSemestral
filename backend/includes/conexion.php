@@ -5,7 +5,7 @@ class Conexion {
 
     public function __construct() {
         try {
-            $this->pdo = new PDO("sqlsrv:Server=localhost;Database=CliniPet", "usuario_admin", "12345", [
+            $this->pdo = new PDO("sqlsrv:Server=localhost;Database=CliniPet", "clinipet_user", "Clinipet123!", [
                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
             ]);
         } catch (PDOException $e) {

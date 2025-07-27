@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function cargarServicios() {
         mostrarCarga(true);
         
-        fetch('../ServiciosController.php', {
+        fetch('../../backend/controller/ServiciosController.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         mostrarCarga(true);
 
-        fetch('../ServiciosController.php', {
+        fetch('../../backend/controller/ServiciosController.php', {
             method: 'POST',
             body: formData
         })
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'eliminarServicio');
         formData.append('idServicio', deleteServiceId);
 
-        fetch('../ServiciosController.php', {
+        fetch('../../backend/controller/ServiciosController.php', {
             method: 'POST',
             body: formData
         })
@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const timestamp = new Date().getTime();
-            const url = `../ServiciosController.php?action=exportarExcel&t=${timestamp}`;
+            const url = `../../backend/controller/ServiciosController.php?action=exportarExcel&t=${timestamp}`;
             
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'validarCodigoServicio');
         formData.append('codigo', codigo);
 
-        fetch('../ServiciosController.php', {
+        fetch('../../backend/controller/ServiciosController.php', {
             method: 'POST',
             body: formData
         })

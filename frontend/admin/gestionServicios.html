@@ -3,153 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios - CliniPet</title>
-    <link rel="icon" type="image/png" href="../assets/img/logo.png">
+    <title>Gestión de Servicios - CliniPet</title>
+        <link rel="icon" type="image/png" href="../assets/img/logo.png">
+            <link rel="stylesheet" href="../assets/css/footer.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- CSS personalizado -->
-    <link rel="stylesheet" href="../assets/css/Admin.css" />
+    <link rel="stylesheet" href="../assets/css/Servicio.css" />
 </head>
 <body>
     <div class="container-fluid p-3">
         <div class="main-container">
             <!-- Header -->
             <div class="header-section">
-                <h1>👥 Gestión de Usuarios</h1>
-                <p class="mb-0">Administración de usuarios, roles y permisos del sistema</p>
+                <h1>🛠️ Gestión de Servicios</h1>
+                <p class="mb-0">Sistema de control de servicios CliniPet</p>
             </div>
 
             <!-- Content -->
             <div class="p-4">
                 <!-- Navigation Tabs -->
-                <ul class="nav nav-tabs custom-nav-tabs mb-4" id="userTabs" role="tablist">
+                <ul class="nav nav-tabs custom-nav-tabs mb-4" id="servicesTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="list-users-tab" data-bs-toggle="tab" data-bs-target="#listUsersTab" type="button" role="tab">
-                            📋 Lista de Usuarios
+                        <button class="nav-link active" id="add-tab" data-bs-toggle="tab" data-bs-target="#addTab" type="button" role="tab">
+                            ➕ Agregar Servicio
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="create-user-tab" data-bs-toggle="tab" data-bs-target="#createUserTab" type="button" role="tab">
-                            ➕ Crear Usuario
+                        <button class="nav-link" id="delete-tab" data-bs-toggle="tab" data-bs-target="#deleteTab" type="button" role="tab">
+                            🗑️ Eliminar Servicio
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="manage-roles-tab" data-bs-toggle="tab" data-bs-target="#manageRolesTab" type="button" role="tab">
-                            🔐 Gestionar Roles
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="permissions-tab" data-bs-toggle="tab" data-bs-target="#permissionsTab" type="button" role="tab">
-                            🛡️ Permisos
+                        <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#listTab" type="button" role="tab">
+                            📋 Lista de Servicios
                         </button>
                     </li>
                 </ul>
 
                 <!-- Tab Content -->
-                <div class="tab-content" id="userTabContent">
+                <div class="tab-content" id="servicesTabContent">
                     
-                    <!-- Lista de Usuarios Tab -->
-                    <div class="tab-pane fade show active" id="listUsersTab" role="tabpanel">
+                    <!-- Add Service Tab -->
+                    <div class="tab-pane fade show active" id="addTab" role="tabpanel">
                         <div class="form-section">
-                            <h3 class="mb-4">📋 Lista de Usuarios del Sistema</h3>
-                            
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <button id="refreshUsersBtn" class="btn btn-gradient-primary">
-                                        🔄 Actualizar Lista
-                                    </button>
-                                </div>
-                                <div class="col-md-4">
-                                    <select id="filterByRole" class="form-select">
-                                        <option value="">Todos los roles</option>
-                                        <option value="1">Administrador</option>
-                                        <option value="2">Operador</option>
-                                        <option value="3">Cliente</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" id="searchUsersInput" class="form-control" 
-                                           placeholder="🔍 Buscar usuario...">
-                                </div>
-                            </div>
-                            
-                            <div id="usersTableContainer" class="table-responsive">
-                                <table class="table table-hover table-custom" id="usersTable">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Usuario</th>
-                                            <th>Nombre Completo</th>
-                                            <th>Email</th>
-                                            <th>Rol</th>
-                                            <th>Estado</th>
-                                            <th>Último Acceso</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="usersTableBody">
-                                        <!-- Los usuarios se cargarán aquí dinámicamente -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Crear Usuario Tab -->
-                    <div class="tab-pane fade" id="createUserTab" role="tabpanel">
-                        <div class="form-section">
-                            <h3 class="mb-4">➕ Crear Nuevo Usuario</h3>
-                            <form id="createUserForm">
+                            <h3 class="mb-4">➕ Agregar Nuevo Servicio</h3>
+                            <form id="addServiceForm">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="newUserName" class="form-label fw-bold">Nombre de Usuario:</label>
-                                        <input type="text" id="newUserName" class="form-control" 
-                                               placeholder="Ej: juan.perez" required>
-                                        <div class="form-text">Solo letras, números, puntos y guiones bajos</div>
+                                        <label for="newServiceCode" class="form-label fw-bold">Código del Servicio:</label>
+                                        <input type="text" id="newServiceCode" class="form-control" 
+                                               placeholder="Ej: SER001" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="newUserEmail" class="form-label fw-bold">Email:</label>
-                                        <input type="email" id="newUserEmail" class="form-control" 
-                                               placeholder="usuario@ejemplo.com" required>
+                                        <label for="newServiceName" class="form-label fw-bold">Nombre del Servicio:</label>
+                                        <input type="text" id="newServiceName" class="form-control" 
+                                               placeholder="Ej: Consulta veterinaria" required>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="newUserPassword" class="form-label fw-bold">Contraseña:</label>
-                                        <input type="password" id="newUserPassword" class="form-control" 
-                                               placeholder="Mínimo 6 caracteres" required>
+                                        <label for="newServicePrice" class="form-label fw-bold">Precio ($):</label>
+                                        <input type="number" id="newServicePrice" class="form-control" 
+                                               step="0.01" min="0" placeholder="0.00" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="newUserFullName" class="form-label fw-bold">Nombre Completo:</label>
-                                        <input type="text" id="newUserFullName" class="form-control" 
-                                               placeholder="Juan Pérez" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="newUserRole" class="form-label fw-bold">Rol:</label>
-                                        <select id="newUserRole" class="form-select" required>
-                                            <option value="">-- Seleccione un rol --</option>
-                                            <option value="1">Administrador</option>
-                                            <option value="2">Operador</option>
-                                            <option value="3">Cliente</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3" id="clienteCedulaContainer" style="display: none;">
-                                        <label for="newUserCedula" class="form-label fw-bold">Cédula del Cliente:</label>
-                                        <select id="newUserCedula" class="form-select">
-                                            <option value="">-- Seleccione un cliente --</option>
-                                        </select>
-                                        <div class="form-text">Solo para usuarios tipo Cliente</div>
+                                        <!-- Campo vacío para mantener el grid -->
                                     </div>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button type="submit" class="btn btn-gradient-success">
-                                        ➕ Crear Usuario
+                                        ➕ Agregar Servicio
                                     </button>
-                                    <button type="button" id="clearCreateForm" class="btn btn-gradient-secondary">
+                                    <button type="button" id="clearAddForm" class="btn btn-gradient-secondary">
                                         🔄 Limpiar Formulario
                                     </button>
                                 </div>
@@ -157,75 +85,76 @@
                         </div>
                     </div>
 
-                    <!-- Gestionar Roles Tab -->
-                    <div class="tab-pane fade" id="manageRolesTab" role="tabpanel">
+                    <!-- Delete Service Tab -->
+                    <div class="tab-pane fade" id="deleteTab" role="tabpanel">
                         <div class="form-section">
-                            <h3 class="mb-4">🔐 Gestión de Roles</h3>
+                            <h3 class="mb-4">🗑️ Eliminar Servicio</h3>
                             
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>➕ Crear Nuevo Rol</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <form id="createRoleForm">
-                                                <div class="mb-3">
-                                                    <label for="newRoleName" class="form-label fw-bold">Nombre del Rol:</label>
-                                                    <input type="text" id="newRoleName" class="form-control" 
-                                                           placeholder="Ej: Supervisor" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="newRoleDescription" class="form-label fw-bold">Descripción:</label>
-                                                    <textarea id="newRoleDescription" class="form-control" rows="3" 
-                                                              placeholder="Descripción del rol..."></textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-gradient-success">
-                                                    ➕ Crear Rol
-                                                </button>
-                                            </form>
-                                        </div>
+                            <div class="mb-3">
+                                <label for="deleteServiceSelect" class="form-label fw-bold">Seleccionar Servicio a Eliminar:</label>
+                                <select id="deleteServiceSelect" class="form-select">
+                                    <option value="">-- Seleccione un servicio --</option>
+                                </select>
+                            </div>
+
+                            <div id="deleteServiceInfo" class="service-info delete-info" style="display: none;">
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="label">Código</div>
+                                        <div class="value" id="deleteServiceCode">-</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="label">Servicio</div>
+                                        <div class="value" id="deleteServiceName">-</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="label">Precio</div>
+                                        <div class="value" id="deleteServicePrice">-</div>
                                     </div>
                                 </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>📋 Roles Existentes</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div id="rolesListContainer">
-                                                <!-- Lista de roles se carga aquí -->
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="text-center mt-4">
+                                    <button id="confirmDeleteBtn" class="btn btn-gradient-danger me-2">
+                                        🗑️ Confirmar Eliminación
+                                    </button>
+                                    <button id="cancelDeleteBtn" class="btn btn-gradient-secondary">
+                                        ❌ Cancelar
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Permisos Tab -->
-                    <div class="tab-pane fade" id="permissionsTab" role="tabpanel">
+                    <!-- Service List Tab -->
+                    <div class="tab-pane fade" id="listTab" role="tabpanel">
                         <div class="form-section">
-                            <h3 class="mb-4">🛡️ Gestión de Permisos</h3>
+                            <h3 class="mb-4">📋 Lista de Servicios</h3>
                             
-                            <div class="mb-4">
-                                <label for="roleSelectPermisos" class="form-label fw-bold">Seleccionar Rol:</label>
-                                <select id="roleSelectPermisos" class="form-select">
-                                    <option value="">-- Seleccione un rol --</option>
-                                </select>
-                            </div>
-
-                            <div id="permissionsContainer" style="display: none;">
-                                <h5>Permisos del Rol Seleccionado</h5>
-                                <div class="row" id="permissionsGrid">
-                                    <!-- Los permisos se cargarán aquí dinámicamente -->
-                                </div>
-                                <div class="mt-3">
-                                    <button id="savePermissionsBtn" class="btn btn-gradient-primary">
-                                        💾 Guardar Permisos
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <button id="refreshListBtn" class="btn btn-gradient-primary">
+                                        🔄 Actualizar Lista
                                     </button>
                                 </div>
+                                <div class="col-md-6">
+                                    <input type="text" id="searchInput" class="form-control" 
+                                           placeholder="🔍 Buscar servicio...">
+                                </div>
+                            </div>
+                            
+                            <div id="servicesTableContainer" class="table-responsive">
+                                <table class="table table-hover table-custom" id="servicesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Servicio</th>
+                                            <th>Precio</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="servicesTableBody">
+                                        <!-- Los servicios se cargarán aquí dinámicamente -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -240,129 +169,40 @@
                     <p class="mt-2">Procesando...</p>
                 </div>
 
-                <!-- Estadísticas -->
-                <div class="statistics-section">
-                    <h3 class="mb-3">📊 Estadísticas del Sistema</h3>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon">👥</div>
-                                <div class="stat-content">
-                                    <div class="stat-number" id="totalUsers">0</div>
-                                    <div class="stat-label">Total Usuarios</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon">✅</div>
-                                <div class="stat-content">
-                                    <div class="stat-number" id="activeUsers">0</div>
-                                    <div class="stat-label">Usuarios Activos</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon">🔐</div>
-                                <div class="stat-content">
-                                    <div class="stat-number" id="totalRoles">0</div>
-                                    <div class="stat-label">Roles Definidos</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-card">
-                                <div class="stat-icon">🛡️</div>
-                                <div class="stat-content">
-                                    <div class="stat-number" id="totalPermissions">0</div>
-                                    <div class="stat-label">Permisos Totales</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Export Section -->
+                <div class="export-section">
+                    <h3 class="mb-3">📊 Exportar Servicios</h3>
+                    <p class="mb-3">Descarga la lista completa de servicios en formato Excel</p>
+                    <button id="exportBtn" class="btn btn-gradient-success">
+                        📄 Descargar Excel
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para Editar Usuario -->
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editUserModalLabel">✏️ Editar Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editUserForm">
-                        <input type="hidden" id="editUserId">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editUserName" class="form-label fw-bold">Nombre de Usuario:</label>
-                                <input type="text" id="editUserName" class="form-control" readonly>
-                                <div class="form-text">El nombre de usuario no se puede cambiar</div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editUserEmail" class="form-label fw-bold">Email:</label>
-                                <input type="email" id="editUserEmail" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editUserFullName" class="form-label fw-bold">Nombre Completo:</label>
-                                <input type="text" id="editUserFullName" class="form-control" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editUserRole" class="form-label fw-bold">Rol:</label>
-                                <select id="editUserRole" class="form-select" required>
-                                    <option value="1">Administrador</option>
-                                    <option value="2">Operador</option>
-                                    <option value="3">Cliente</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row" id="editClienteCedulaContainer" style="display: none;">
-                            <div class="col-md-6 mb-3">
-                                <label for="editUserCedula" class="form-label fw-bold">Cédula del Cliente:</label>
-                                <select id="editUserCedula" class="form-select">
-                                    <option value="">-- Seleccione un cliente --</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-gradient-secondary" data-bs-dismiss="modal">❌ Cancelar</button>
-                    <button type="button" id="saveUserChanges" class="btn btn-gradient-primary">💾 Guardar Cambios</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Confirmación -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalLabel">Confirmar Acción</h5>
+                    <h5 class="modal-title" id="modalTitle">Confirmar Acción</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="confirmModalMessage">¿Está seguro de que desea realizar esta acción?</p>
+                    <p id="modalMessage">¿Está seguro de que desea realizar esta acción?</p>
                 </div>
                 <div class="modal-footer">
-                    <button id="confirmCancel" type="button" class="btn btn-gradient-secondary" data-bs-dismiss="modal">
+                    <button id="modalCancel" type="button" class="btn btn-gradient-secondary" data-bs-dismiss="modal">
                         Cancelar
                     </button>
-                    <button id="confirmAction" type="button" class="btn btn-gradient-danger">
-                        Confirmar
+                    <button id="modalConfirm" type="button" class="btn btn-gradient-danger">
+                        Sí, Eliminar
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
 
 
         <!-- FOOTER -->
@@ -372,6 +212,6 @@
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Script principal -->
-    <script src="../js/gestionUsuarios.js"></script>
+    <script src="../assets/js/gestionServicio.js"></script>
 </body>
 </html>
