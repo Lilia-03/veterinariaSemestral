@@ -4,60 +4,53 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Consultar Cliente y Mascota</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
-  <link rel="icon" type="image/png" href="/frontend/assets/img/logo.png" />
-    <link rel="stylesheet" href="/frontend/assets/css/colorNavbar.css" />
-    <link rel="stylesheet" href="/frontend/assets/css/estilosGeneral.css" />
-    <link rel="stylesheet" href="/frontend/assets/css/footer.css" />
-  <link rel="stylesheet" href="/frontend/assets/css/estilosConsultar.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="icon" type="image/png" href="../assets/img/logo.png">
+  <link rel="icon" type="image/png" href="../assets/css/footer.css">
+  <link rel="stylesheet" href="../assets/css/estilosGeneral.css" />
+  <link rel="stylesheet" href="../assets/css/colorNavbar.css" />
+  <link rel="stylesheet" href="../assets/css/estilosConsultar.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
   <!-- HEADER -->
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo">
-                <span style="color: white; font-size: 2.5rem; font-weight: 600;">🐾 Clini</span><span style="color: #fea240; font-size: 2.5rem; font-weight: 600;">Pet</span>
-            </div>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Administrador</a></li>
-                </ul>
-                <div class="mobile-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </nav>
-            <div class="user-info" style="display: flex; align-items: center; gap: 15px; color: white;">
-                <div style="text-align: right;">
-                    <div data-user-name style="font-weight: 600;">Cargando...</div>
-                    <div data-user-role style="font-size: 0.9rem; opacity: 0.9;">Administrador</div>
-                </div>
-                <a href="#" class="login-btn" data-logout><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
+  <header class="header">
+    <div class="nav-container">
+      <div class="logo">
+        <span style="color: white; font-size: 2.5rem; font-weight: 600;">🐾 Clini</span><span style="color: #fea240; font-size: 2.5rem; font-weight: 600;">Pet</span>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Administrador</a></li>
+        </ul>
+        <div class="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
-    </header>
-
-    <!-- HERO SECTION PARA ADMIN -->
-    <section id="admin" class="hero admin-hero">
-        <div class="hero-content">
-            <h1>Panel de Administración</h1>
-            <p>Bienvenido, <span data-user-name>Administrador</span>. Desde aquí puedes gestionar todos los aspectos del sistema CliniPet.</p>
+      </nav>
+      <div class="user-info" style="display: flex; align-items: center; gap: 15px; color: white;">
+        <div style="text-align: right;">
+          <div data-user-name style="font-weight: 600;">Cargando...</div>
+          <div data-user-role style="font-size: 0.9rem; opacity: 0.9;">Administrador</div>
         </div>
-    </section>
+        <a href="#" class="login-btn" data-logout><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+      </div>
+    </div>
+  </header>
 
-  <!-- MAIN para mantener el footer al fondo -->
-  <main class="main-content container my-4">
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
     <div class="card">
       <div class="card-body">
-        <h1 class="card-title text-center">Consultar Cliente y Mascota</h1>
+        <h1 class="card-title" style="text-align: center; margin-bottom: 2rem; color: #035E8D;">Consultar Cliente y Mascota</h1>
+        
         <form id="formConsultar">
-          <div class="mb-3">
+          <div class="form-group mb-3">
             <label for="cedula" class="form-label">Cédula del Cliente</label>
             <input type="text" class="form-control" id="cedula" placeholder="Ingrese la cédula" />
           </div>
-          <div class="mb-3">
+          
+          <div class="form-group mb-3">
             <label for="idMascota" class="form-label">ID de la Mascota</label>
             <input
               type="number"
@@ -66,19 +59,20 @@
               placeholder="Ingrese el ID de la mascota"
               min="10000"
             />
-            <div id="idMascotaError" class="text-danger" style="display: none;">
+            <div id="idMascotaError" class="text-danger" style="display: none; color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
               Este campo es obligatorio y debe ser mayor o igual a 10000.
             </div>
           </div>
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Consultar</button>
+          
+          <div class="form-submit" style="display: grid;">
+            <button type="submit" class="btn">Consultar</button>
           </div>
         </form>
 
-        <div id="message" class="alert alert-danger mt-3" style="display: none;"></div>
+        <div id="message" class="alert alert-danger" style="display: none; margin-top: 1rem;"></div>
 
-        <div id="resultContainer" class="mt-4" style="display: none;">
-          <h5 class="text-center">Resultado de la Consulta</h5>
+        <div id="resultContainer" class="result-container" style="display: none; margin-top: 2rem;">
+          <h5 style="text-align: center; color: #035E8D; margin-bottom: 1.5rem;">Resultado de la Consulta</h5>
           <div id="cardResults"></div>
         </div>
       </div>
@@ -87,13 +81,12 @@
 
     <!-- FOOTER -->
     <div id="footer"></div>
-    <script src="/frontend/assets/js/includeSesiones.js"></script>
-        
-    <!-- JavaScript personalizado -->
-    <script src="/frontend/assets/js/consultar.js"></script>
+    <script src="../assets/js/includeSesiones.js"></script>
 
     <!-- Bootstrap JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script principal -->
+    <script src="../assets/js/gestionUsuarios.js"></script>
+
 </body>
 </html>

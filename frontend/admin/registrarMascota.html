@@ -3,187 +3,298 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registrar Mascota</title>
-  <link rel="icon" type="image/png" href="/frontend/assets/img/logo.png" />
-  <link rel="stylesheet" href="/frontend/assets/css/estilosRegistrarMascota.css" />
-  <link rel="stylesheet" href="/frontend/assets/css/colorNavbar.css" />
-  <link rel="stylesheet" href="/frontend/assets/css/estilosGeneral.css" />
-  <link rel="stylesheet" href="/frontend/assets/css/footer.css" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <title>Registrar Mascota - CliniPet</title>
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <link rel="stylesheet" href="../assets/css/estilosRegistrarMascota.css" />
+  <link rel="stylesheet" href="../assets/css/colorNavbar.css" />
+  <link rel="stylesheet" href="../assets/css/estilosGeneral.css" />
+  <link rel="stylesheet" href="../assets/css/footer.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body>
   
- <!-- HEADER -->
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo">
-                <span style="color: white; font-size: 2.5rem; font-weight: 600;">🐾 Clini</span><span style="color: #fea240; font-size: 2.5rem; font-weight: 600;">Pet</span>
-            </div>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Administrador</a></li>
-                </ul>
-                <div class="mobile-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </nav>
-            <div class="user-info" style="display: flex; align-items: center; gap: 15px; color: white;">
-                <div style="text-align: right;">
-                    <div data-user-name style="font-weight: 600;">Cargando...</div>
-                    <div data-user-role style="font-size: 0.9rem; opacity: 0.9;">Administrador</div>
-                </div>
-                <a href="#" class="login-btn" data-logout><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- HERO SECTION PARA ADMIN -->
-    <section id="admin" class="hero admin-hero">
-        <div class="hero-content">
-            <h1>Panel de Administración</h1>
-            <p>Bienvenido, <span data-user-name>Administrador</span>. Desde aquí puedes gestionar todos los aspectos del sistema CliniPet.</p>
-        </div>
-    </section>
-
-  <div class="collapse" id="navbarToggleExternalContent">
-    <div class="navbar-menu p-4">
-      <h4 class="text-white">Menú</h4>
-      <ul class="list-unstyled">
-        <li><a href="RegistrarInventario.html" class="text-white">Registrar Inventario</a></li>
-        <li><a href="RegistroCliente.html" class="text-white">Registrar Cliente</a></li>
-        <li><a href="RegistroMascotas.html" class="text-white">Registrar Mascota</a></li>
-        <li><a href="actualizarCliente.html" class="text-white">Actualizar Cliente</a></li>
-        <li><a href="actualizarMascota.html" class="text-white">Actualizar Mascota</a></li>
-        <li><a href="ConsultarMascotaCliente.html" class="text-white">Consultar Mascota y Cliente</a></li>
-        <li><a href="informacion.html" class="text-white">Información</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="container mt-4 formulario">
-    <h1 class="text-center mb-4">Registrar Mascota</h1>
-    
-    <!-- Spinner de carga -->
-    <div id="loadingSpinner" class="text-center" style="display: none;">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
-      <p class="mt-2">Cargando datos...</p>
-    </div>
-
-    <!-- Formulario de registro de mascota -->
-    <form id="formRegistrarMascota" enctype="multipart/form-data" novalidate>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="nombreMascota" class="form-label">Nombre de la Mascota <span class="text-danger">*</span></label>
-          <input type="text" class="form-control" id="nombreMascota" name="nombre" required maxlength="50" />
-          <div class="invalid-feedback">Por favor ingrese el nombre de la mascota.</div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label for="especie" class="form-label">Especie <span class="text-danger">*</span></label>
-          <select id="especie" name="especie" class="form-select" required>
-            <option value="">Seleccione especie</option>
-            <option value="1" data-nombre="Perro">Perro</option>
-            <option value="2" data-nombre="Gato">Gato</option>
-          </select>
-          <div class="invalid-feedback">Por favor seleccione una especie.</div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="raza" class="form-label">Raza <span class="text-danger">*</span></label>
-          <select class="form-select" id="raza" name="razaID" required disabled>
-            <option value="">Seleccione una especie primero</option>
-          </select>
-          <div class="invalid-feedback">Por favor seleccione una raza.</div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label for="genero" class="form-label">Género <span class="text-danger">*</span></label>
-          <select class="form-select" id="genero" name="genero" required>
-            <option value="">Seleccione</option>
-            <option value="Macho">Macho</option>
-            <option value="Hembra">Hembra</option>
-          </select>
-          <div class="invalid-feedback">Por favor seleccione el género.</div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="peso" class="form-label">Peso (lb) <span class="text-danger">*</span></label>
-          <input type="number" step="0.1" min="0.1" max="300" class="form-control" id="peso" name="peso" required />
-          <div class="invalid-feedback">Por favor ingrese un peso válido (0.1 - 300 lb).</div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label for="edad" class="form-label">Edad (años) <span class="text-danger">*</span></label>
-          <input type="number" min="1" max="30" class="form-control" id="edad" name="edad" required />
-          <div class="invalid-feedback">Por favor ingrese una edad válida (0 - 30 años).</div>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label for="cedulaCliente" class="form-label">Cédula del Cliente <span class="text-danger">*</span></label>
-        <input
-          type="text"
-          class="form-control"
-          id="cedulaCliente"
-          name="cedulaCliente"
-          placeholder="Ej: 8-123-4567, 10-1234-5678 o E-123456"
-          pattern="(^[1-9]-\d{1,4}-\d{1,4}$)|(^10-\d{1,4}-\d{1,4}$)|(^E-\d{6,}$)|(^[A-Z][0-9].*)"
-          title="Formato válido: 8-123-4567, 8-1020-102, 10-1234-5678, E-123456 o pasaporte"
-          required
-          maxlength="20"
-        />
-        <div class="invalid-feedback">Por favor ingrese una cédula válida.</div>
-        <div class="form-text">Formatos válidos: 8-123-4567, 10-1234-5678, E-123456 o pasaporte</div>
-      </div>
-
-      <div class="mb-3">
-        <label for="foto" class="form-label">Foto de la Mascota</label>
-        <input type="file" class="form-control" id="foto" name="foto" accept="image/jpeg,image/jpg,image/png,image/gif" />
-        <div class="form-text">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Condiciones Médicas</label>
-        <div id="condicionesContainer" class="p-3 border rounded bg-light" role="group" aria-labelledby="condicionesContainer">
-          <p class="text-muted mb-0">Seleccione una especie para ver las condiciones médicas disponibles</p>
-        </div>
-      </div>
-
-      <!-- botón submit -->
-      <div class="text-center">
-        <button type="submit" class="btn btn-primary btn-lg px-5" id="btnSubmit">
-          <span id="btnText">Registrar Mascota</span>
-          <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;" role="status">
-            <span class="visually-hidden">Guardando...</span>
-          </span>
+  <!-- HEADER COMPACTO -->
+  <header class="header-compact">
+    <div class="nav-container">
+      <div class="header-left">
+        <button class="btn-back" onclick="window.history.back();" title="Regresar">
+          <i class="fas fa-arrow-left"></i>
         </button>
+        <div class="logo">
+          <span style="color: white; font-size: 1.8rem; font-weight: 600;">🐾 Clini</span>
+          <span style="color: #fea240; font-size: 1.8rem; font-weight: 600;">Pet</span>
+        </div>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Administrador</a></li>
+        </ul>
+        <div class="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+      <div class="user-info">
+        <div class="user-details">
+          <div data-user-name>Cargando...</div>
+          <div data-user-role>Administrador</div>
+        </div>
+        <a href="#" class="login-btn" data-logout>
+          <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL CON ESTILO GESTIÓN USUARIOS -->
+  <div class="container-fluid p-3">
+    <div class="main-container">
+      <!-- Header Section -->
+      <div class="header-section-compact">
+        <h1>🐾 Registro de Mascotas</h1>
+        <p class="mb-0">Sistema de registro de mascotas CliniPet</p>
       </div>
 
-      <!-- DIV para mostrar info del cliente (añadido) -->
-      <div id="cliente-info" style="display:none; margin-bottom: 15px;"></div>
+      <!-- Content -->
+      <div class="p-4">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs custom-nav-tabs mb-4" id="mascotaTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registroTab" type="button" role="tab">
+              ➕ Registrar Mascota
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="buscar-tab" data-bs-toggle="tab" data-bs-target="#buscarTab" type="button" role="tab">
+              🔍 Buscar Cliente
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="condiciones-tab" data-bs-toggle="tab" data-bs-target="#condicionesTab" type="button" role="tab">
+              🏥 Condiciones Médicas
+            </button>
+          </li>
+        </ul>
 
-      <div id="responseMessage" class="alert mt-3 text-center" style="display:none;" role="alert"></div>
-    </form>
+        <!-- Tab Content -->
+        <div class="tab-content" id="mascotaTabContent">
+          
+          <!-- Registro Tab -->
+          <div class="tab-pane fade show active" id="registroTab" role="tabpanel">
+            <div class="form-section">
+              <h3 class="mb-4">➕ Registrar Nueva Mascota</h3>
+              
+              <!-- Spinner de carga -->
+              <div id="loadingSpinner" class="text-center py-4" style="display: none;">
+                <div class="spinner-custom"></div>
+                <p class="mt-2">Cargando datos...</p>
+              </div>
+
+              <!-- Formulario de registro de mascota -->
+              <form id="formRegistrarMascota" enctype="multipart/form-data" novalidate>
+                
+                <!-- Fila 1: Nombre y Especie -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="nombreMascota" class="form-label fw-bold">
+                      <i class="fas fa-paw text-primary"></i>
+                      Nombre de la Mascota <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="nombreMascota" name="nombre" required maxlength="50" placeholder="Ej: Firulais" />
+                    <div class="invalid-feedback">Por favor ingrese el nombre de la mascota.</div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="especie" class="form-label fw-bold">
+                      <i class="fas fa-dog text-primary"></i>
+                      Especie <span class="text-danger">*</span>
+                    </label>
+                    <select id="especie" name="especie" class="form-select" required>
+                      <option value="">Seleccione especie</option>
+                      <option value="1" data-nombre="Perro">🐕 Perro</option>
+                      <option value="2" data-nombre="Gato">🐱 Gato</option>
+                    </select>
+                    <div class="invalid-feedback">Por favor seleccione una especie.</div>
+                  </div>
+                </div>
+
+                <!-- Fila 2: Raza y Género -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="raza" class="form-label fw-bold">
+                      <i class="fas fa-dna text-primary"></i>
+                      Raza <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" id="raza" name="razaID" required disabled>
+                      <option value="">Seleccione una especie primero</option>
+                    </select>
+                    <div class="invalid-feedback">Por favor seleccione una raza.</div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="genero" class="form-label fw-bold">
+                      <i class="fas fa-venus-mars text-primary"></i>
+                      Género <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" id="genero" name="genero" required>
+                      <option value="">Seleccione</option>
+                      <option value="Macho">♂️ Macho</option>
+                      <option value="Hembra">♀️ Hembra</option>
+                    </select>
+                    <div class="invalid-feedback">Por favor seleccione el género.</div>
+                  </div>
+                </div>
+
+                <!-- Fila 3: Peso y Edad -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="peso" class="form-label fw-bold">
+                      <i class="fas fa-weight text-primary"></i>
+                      Peso (lb) <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" step="0.1" min="0.1" max="300" class="form-control" id="peso" name="peso" required placeholder="Ej: 15.5" />
+                    <div class="invalid-feedback">Por favor ingrese un peso válido (0.1 - 300 lb).</div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="edad" class="form-label fw-bold">
+                      <i class="fas fa-birthday-cake text-primary"></i>
+                      Edad (años) <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" min="0" max="30" class="form-control" id="edad" name="edad" required placeholder="Ej: 3" />
+                    <div class="invalid-feedback">Por favor ingrese una edad válida (0 - 30 años).</div>
+                  </div>
+                </div>
+
+                <!-- Fila 4: Cédula del Cliente (campo completo) -->
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label for="cedulaCliente" class="form-label fw-bold">
+                      <i class="fas fa-id-card text-primary"></i>
+                      Cédula del Cliente <span class="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cedulaCliente"
+                      name="cedulaCliente"
+                      placeholder="Ej: 8-123-4567, 10-1234-5678 o E-123456"
+                      pattern="(^[1-9]-\d{1,4}-\d{1,4}$)|(^10-\d{1,4}-\d{1,4}$)|(^E-\d{6,}$)|(^[A-Z][0-9].*)"
+                      title="Formato válido: 8-123-4567, 8-1020-102, 10-1234-5678, E-123456 o pasaporte"
+                      required
+                      maxlength="20"
+                    />
+                    <div class="invalid-feedback">Por favor ingrese una cédula válida.</div>
+                    <div class="form-text">Formatos válidos: 8-123-4567, 10-1234-5678, E-123456 o pasaporte</div>
+                  </div>
+                </div>
+
+                <!-- Información del cliente -->
+                <div id="cliente-info" class="cliente-info-card" style="display:none;">
+                  <div class="card">
+                    <div class="card-header bg-primary text-white">
+                      <h5 class="mb-0"><i class="fas fa-user"></i> Información del Cliente</h5>
+                    </div>
+                    <div class="card-body">
+                      <div id="cliente-detalles"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fila 5: Foto de la Mascota (campo completo) -->
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label for="foto" class="form-label fw-bold">
+                      <i class="fas fa-camera text-primary"></i>
+                      Foto de la Mascota
+                    </label>
+                    <input type="file" class="form-control" id="foto" name="foto" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                    <div class="form-text">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</div>
+                  </div>
+                </div>
+
+                <!-- Condiciones Médicas (campo completo) -->
+                <div class="row">
+                  <div class="col-12 mb-4">
+                    <label class="form-label fw-bold">
+                      <i class="fas fa-stethoscope text-primary"></i>
+                      Condiciones Médicas
+                    </label>
+                    <div id="condicionesContainer" class="condiciones-container p-3 border rounded bg-light">
+                      <div class="text-muted text-center">
+                        <i class="fas fa-info-circle"></i>
+                        <p class="mb-0">Seleccione una especie para ver las condiciones médicas disponibles</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-gradient-success" id="btnSubmit">
+                    <span id="btnText">
+                      <i class="fas fa-plus-circle"></i>
+                      Registrar Mascota
+                    </span>
+                    <span id="btnSpinner" style="display: none;">
+                      <i class="fas fa-spinner fa-spin"></i>
+                      Guardando...
+                    </span>
+                  </button>
+                  <button type="button" class="btn btn-gradient-secondary" onclick="document.getElementById('formRegistrarMascota').reset();">
+                    <i class="fas fa-undo"></i>
+                    Limpiar Formulario
+                  </button>
+                </div>
+
+                <!-- Mensaje de respuesta -->
+                <div id="responseMessage" class="mt-3" style="display:none;"></div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Buscar Cliente Tab -->
+          <div class="tab-pane fade" id="buscarTab" role="tabpanel">
+            <div class="form-section">
+              <h3 class="mb-4">🔍 Buscar Cliente Existente</h3>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="buscarCedula" class="form-label fw-bold">Cédula del Cliente:</label>
+                  <input type="text" id="buscarCedula" class="form-control" placeholder="Ingrese la cédula a buscar">
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                  <button class="btn btn-gradient-primary">
+                    <i class="fas fa-search"></i> Buscar
+                  </button>
+                </div>
+              </div>
+              <div id="resultadoBusqueda" class="mt-4"></div>
+            </div>
+          </div>
+
+          <!-- Condiciones Médicas Tab -->
+          <div class="tab-pane fade" id="condicionesTab" role="tabpanel">
+            <div class="form-section">
+              <h3 class="mb-4">🏥 Gestión de Condiciones Médicas</h3>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                Las condiciones médicas se cargan automáticamente según la especie seleccionada en el formulario de registro.
+              </div>
+              <div id="listaCondiciones"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts Container -->
+        <div id="alertContainer" class="mt-3"></div>
+      </div>
+    </div>
   </div>
 
     <!-- FOOTER -->
     <div id="footer"></div>
-    <script src="/frontend/assets/js/includeSesiones.js"></script>
-        
-    <!-- JavaScript personalizado -->
-    <script src="/frontend/assets/js/consultar.js"></script>
-
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="../assets/js/includeSesiones.js"></script>
+    <script src="../assets/js/consultar.js"></script>
 </body>
 </html>
