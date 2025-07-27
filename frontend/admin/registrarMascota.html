@@ -12,7 +12,40 @@
 </head>
 <body>
   
+ <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <span style="color: white; font-size: 2.5rem; font-weight: 600;">🐾 Clini</span><span style="color: #fea240; font-size: 2.5rem; font-weight: 600;">Pet</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="active"><i class="fas fa-user-shield"></i> Administrador</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+            <div class="user-info" style="display: flex; align-items: center; gap: 15px; color: white;">
+                <div style="text-align: right;">
+                    <div data-user-name style="font-weight: 600;">Cargando...</div>
+                    <div data-user-role style="font-size: 0.9rem; opacity: 0.9;">Administrador</div>
+                </div>
+                <a href="#" class="login-btn" data-logout><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
 
+    <!-- HERO SECTION PARA ADMIN -->
+    <section id="admin" class="hero admin-hero">
+        <div class="hero-content">
+            <h1>Panel de Administración</h1>
+            <p>Bienvenido, <span data-user-name>Administrador</span>. Desde aquí puedes gestionar todos los aspectos del sistema CliniPet.</p>
+        </div>
+    </section>
+    
   <div class="collapse" id="navbarToggleExternalContent">
     <div class="navbar-menu p-4">
       <h4 class="text-white">Menú</h4>
