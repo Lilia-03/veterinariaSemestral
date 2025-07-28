@@ -7,4 +7,5 @@ function includeHTML(id, file) {
             document.getElementById(id).innerHTML = data;
         });
 }
-includeHTML("footer", "../assets/components/footer.html");
+
+includeHTML("footer", "../frontend/assets/components/footer.html");

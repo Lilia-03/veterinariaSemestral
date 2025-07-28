@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrar Mascota - CliniPet</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+  <link rel="icon" type="image/png" href="../img/logo.png" />
+  <link rel="stylesheet" href="../css/estilosRegistrarMascota.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header-container">
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-paw"></i>
+        Clini<span style="color: #ffa500;">Pet</span>
+      </div>
+      
+      <div class="user-info">
+        <div class="admin-badge">
+          <i class="fas fa-user-shield"></i>
+          <span>Administrador</span>
+        </div>
+        
+        <div class="user-profile">
+          <div class="username">Administrador Principal</div>
+          <div class="role">Administrador</div>
+        </div>
+        
+        <a href="javascript:void(0);" onclick="window.history.back();" class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+          Regresar
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h1><i class="fas fa-paw"></i> Gestión de Mascotas</h1>
+      <p>Sistema de registro y actualización de mascotas CliniPet</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button class="tab-btn active" onclick="showTab('register')">
+        <i class="fas fa-plus-circle"></i> Registrar Mascota
+      </button>
+      <button class="tab-btn" onclick="showTab('update')">
+        <i class="fas fa-edit"></i> Actualizar Mascota
+      </button>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerForm" class="form-container active">
+      <div class="container-wide formulario">
+        <div class="form-card">
+          <h2 class="form-title">
+            <i class="fas fa-plus-circle text-primary me-2"></i>
+            Registrar Nueva Mascota
+          </h2>
+          
+          <!-- Spinner de carga -->
+          <div id="loadingSpinner" class="loading-container" style="display: none;">
+            <div class="loading-content">
+              <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+              <h5 class="text-primary">Cargando datos...</h5>
+              <p class="text-muted">Por favor espere</p>
+            </div>
+          </div>
+
+          <!-- Formulario de registro de mascota -->
+          <form id="formRegistrarMascota" enctype="multipart/form-data" novalidate>
+            <div class="form-section">
+              <h6 class="section-title">
+                <i class="fas fa-paw text-orange me-2"></i>
+                Información Básica
+              </h6>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="nombreMascota" class="form-label">Nombre de la Mascota <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="nombreMascota" name="nombre" required maxlength="50" />
+                  <div class="invalid-feedback">Por favor ingrese el nombre de la mascota.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="especie" class="form-label">Especie <span class="text-danger">*</span></label>
+                  <select id="especie" name="especie" class="form-select" required>
+                    <option value="">Seleccione especie</option>
+                    <option value="1" data-nombre="Perro">Perro</option>
+                    <option value="2" data-nombre="Gato">Gato</option>
+                  </select>
+                  <div class="invalid-feedback">Por favor seleccione una especie.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="raza" class="form-label">Raza <span class="text-danger">*</span></label>
+                  <select class="form-select" id="raza" name="razaID" required disabled>
+                    <option value="">Seleccione una especie primero</option>
+                  </select>
+                  <div class="invalid-feedback">Por favor seleccione una raza.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="genero" class="form-label">Género <span class="text-danger">*</span></label>
+                  <select class="form-select" id="genero" name="genero" required>
+                    <option value="">Seleccione</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Hembra">Hembra</option>
+                  </select>
+                  <div class="invalid-feedback">Por favor seleccione el género.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="peso" class="form-label">Peso (lb) <span class="text-danger">*</span></label>
+                  <input type="number" step="0.1" min="0.1" max="300" class="form-control" id="peso" name="peso" required />
+                  <div class="invalid-feedback">Por favor ingrese un peso válido (0.1 - 300 lb).</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="edad" class="form-label">Edad (años) <span class="text-danger">*</span></label>
+                  <input type="number" min="0" max="30" class="form-control" id="edad" name="edad" required />
+                  <div class="invalid-feedback">Por favor ingrese una edad válida (0 - 30 años).</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h6 class="section-title">
+                <i class="fas fa-user text-success me-2"></i>
+                Información del Cliente
+              </h6>
+              
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="cedulaCliente" class="form-label">Cédula del Cliente <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="cedulaCliente"
+                    name="cedulaCliente"
+                    placeholder="Ej: 8-123-4567, 10-1234-5678 o E-123456"
+                    pattern="(^[1-9]-\d{1,4}-\d{1,4}$)|(^10-\d{1,4}-\d{1,4}$)|(^E-\d{6,}$)|(^[A-Z][0-9].*)"
+                    title="Formato válido: 8-123-4567, 8-1020-102, 10-1234-5678, E-123456 o pasaporte"
+                    required
+                    maxlength="20"
+                  />
+                  <div class="invalid-feedback">Por favor ingrese una cédula válida.</div>
+                  <div class="form-text">Formatos válidos: 8-123-4567, 10-1234-5678, E-123456 o pasaporte</div>
+                </div>
+              </div>
+
+              <!-- DIV para mostrar info del cliente -->
+              <div id="cliente-info" class="cliente-info-card" style="display:none;"></div>
+            </div>
+
+            <div class="form-section">
+              <h6 class="section-title">
+                <i class="fas fa-camera text-info me-2"></i>
+                Foto de la Mascota
+              </h6>
+              
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="file-upload-container">
+                    <input type="file" class="form-control" id="foto" name="foto" accept="image/jpeg,image/jpg,image/png,image/gif" />
+                    <div class="form-text">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h6 class="section-title">
+                <i class="fas fa-heartbeat text-danger me-2"></i>
+                Condiciones Médicas
+              </h6>
+              
+              <div id="condicionesContainer" class="condiciones-container" role="group" aria-labelledby="condicionesContainer">
+                <div class="text-center text-muted py-4">
+                  <i class="fas fa-info-circle fa-2x mb-2"></i>
+                  <p class="mb-0">Seleccione una especie para ver las condiciones médicas disponibles</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- botón submit -->
+            <div class="submit-container">
+              <button type="submit" class="btn-submit" id="btnSubmit">
+                <span id="btnText">
+                  <i class="fas fa-plus-circle me-2"></i>
+                  Registrar Mascota
+                </span>
+                <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;" role="status">
+                  <span class="visually-hidden">Guardando...</span>
+                </span>
+              </button>
+            </div>
+
+            <div id="responseMessage" class="alert mt-3 text-center" style="display:none;" role="alert"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Form -->
+    <div id="updateForm" class="form-container">
+      <div class="container-wide formulario">
+        <div class="form-card">
+          <h2 class="form-title">
+            <i class="fas fa-edit text-warning me-2"></i>
+            Actualizar Mascota Existente
+          </h2>
+          
+          <div class="search-section">
+            <div class="search-header">
+              <h5><i class="fas fa-search me-2"></i> Buscar Mascota</h5>
+              <p class="mb-3">Ingrese el ID o nombre de la mascota que desea actualizar.</p>
+            </div>
+            
+            <div class="search-form">
+              <div class="row g-3">
+                <div class="col-md-8">
+                  <div class="search-input-group">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control search-input" id="searchMascota" placeholder="ID de mascota o nombre completo">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <button type="button" class="btn btn-primary w-100 search-btn" onclick="buscarMascota()">
+                    <i class="fas fa-search me-2"></i> Buscar
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div id="searchLoading" class="search-loading" style="display: none;">
+              <div class="spinner-border text-primary me-2" role="status">
+                <span class="visually-hidden">Buscando...</span>
+              </div>
+              Buscando mascota...
+            </div>
+          </div>
+
+          <div id="updateFormContent" class="update-form-content" style="display: none;">
+            <form id="formActualizarMascota" enctype="multipart/form-data" novalidate>
+              <div class="alert alert-info border-0 shadow-sm mb-4">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-info-circle fa-2x text-info me-3"></i>
+                  <div>
+                    <h6 class="mb-1">Mascota encontrada</h6>
+                    <p class="mb-0">Los datos actuales aparecerán precargados en el formulario.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <input type="hidden" name="idMascota" id="idMascota" />
+
+              <div class="form-section">
+                <h6 class="section-title">
+                  <i class="fas fa-sync-alt text-warning me-2"></i>
+                  Actualizar Información
+                </h6>
+                
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="pesoActualizar" class="form-label">Nuevo Peso (lb) <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-weight"></i></span>
+                      <input type="number" step="0.1" min="0.1" max="300" name="peso" id="pesoActualizar" class="form-control" required />
+                      <span class="input-group-text">lb</span>
+                    </div>
+                    <div class="invalid-feedback">Por favor ingrese un peso válido.</div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="edadActualizar" class="form-label">Nueva Edad (años) <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
+                      <input type="number" min="0" max="30" name="edad" id="edadActualizar" class="form-control" required />
+                      <span class="input-group-text">años</span>
+                    </div>
+                    <div class="invalid-feedback">Por favor ingrese una edad válida.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="submit-container">
+                <button type="submit" class="btn-submit btn-update">
+                  <i class="fas fa-sync-alt me-2"></i> 
+                  Actualizar Mascota
+                </button>
+              </div>
+
+              <div id="updateResponseMessage" class="alert mt-3 text-center" style="display:none;" role="alert"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2025 Clinipet. Todos los derechos reservados. | Cuidando a tus mascotas con amor y profesionalismo</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/registrarMascota.js"></script>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</body>
+  </script>
+
+  <!-- Scripts originales -->
+  <script src="../js/registrarMascota.js"></script>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
