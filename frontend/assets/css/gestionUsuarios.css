@@ -33,6 +33,8 @@ body {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    margin-top: 80px;
+    padding: 20px;
     overflow: hidden;
     margin: 20px auto;
     max-width: 1200px;
