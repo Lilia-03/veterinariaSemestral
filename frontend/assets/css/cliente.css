@@ -322,6 +322,13 @@ body {
     min-height: 180px;
 }
 
+.disabled-module {
+    pointer-events: none;      /* No permite hacer clic */
+    opacity: 0.5;              /* Visualmente deshabilitado */
+    filter: grayscale(0.7);    /* Opcional: lo pone gris */
+    cursor: not-allowed;       /* Cursor de prohibido */
+}
+
 .module-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.4);

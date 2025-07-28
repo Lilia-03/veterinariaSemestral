@@ -12,7 +12,20 @@
     display: flex;
     align-items: center;
 }
-
+/* Header */
+.header1 {
+    background-color: var(--clinipet-blue);
+    color: white;
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
 /* Resto de los estilos */
 .nav-container {
     max-width: 1200px;
