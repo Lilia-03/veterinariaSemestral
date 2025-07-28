@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function cargarServicios() {
         mostrarCarga(true);
         
-        fetch('../ServiciosController.php', {
+        fetch('../../backend/controller/ServiciosController.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -156,89 +156,129 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function agregarServicio(e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        // Validar que todos los elementos existan antes de acceder a sus valores
-        const codigoElement = document.getElementById('newServiceCode');
-        const nombreElement = document.getElementById('newServiceName');
-        const precioElement = document.getElementById('newServicePrice');
+    // Validar que todos los elementos existan antes de acceder a sus valores
+    const codigoElement = document.getElementById('newServiceCode');
+    const nombreElement = document.getElementById('newServiceName');
+    const precioElement = document.getElementById('newServicePrice');
 
-        // Verificar que todos los elementos existen
-        if (!codigoElement || !nombreElement || !precioElement) {
-            mostrarAlerta('Error: No se encontraron todos los campos del formulario', 'error');
-            return;
-        }
-
-        // Obtener los valores de forma segura
-        const codigo = codigoElement.value.trim();
-        const nombre = nombreElement.value.trim();
-        const precio = precioElement.value;
-
-        // Validaciones básicas en el frontend
-        if (!codigo || !nombre || !precio) {
-            mostrarAlerta('Complete todos los campos obligatorios', 'error');
-            return;
-        }
-
-        // Validar formato del código
-        if (codigo.length < 3) {
-            mostrarAlerta('El código debe tener al menos 3 caracteres', 'error');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('action', 'agregarServicio');
-        formData.append('codigo', codigo);
-        formData.append('nombre', nombre);
-        formData.append('precio', precio);
-
-        mostrarCarga(true);
-
-        fetch('../ServiciosController.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(text => {
-            console.log('Respuesta agregar servicio:', text);
-            
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-                console.error('Error parsing JSON:', e);
-                console.error('Respuesta recibida:', text);
-                throw new Error('Respuesta inválida del servidor');
-            }
-            
-            mostrarCarga(false);
-
-            if (data.success) {
-                mostrarAlerta('Servicio agregado correctamente', 'success');
-                limpiarFormularioAgregar();
-                cargarServicios(); // Recargar lista de servicios
-                // Cambiar a la pestaña de lista de servicios usando Bootstrap
-                mostrarPestana('listTab');
-            } else {
-                // Mensajes más específicos
-                let mensajeError = data.message || 'Error desconocido';
-                if (mensajeError.includes('Ya existe un servicio')) {
-                    mensajeError = '⚠️ Ya existe un servicio con ese código. Intente con otro código.';
-                }
-                mostrarAlerta('Error: ' + mensajeError, 'error');
-            }
-        })
-        .catch(error => {
-            mostrarCarga(false);
-            console.error('Error:', error);
-            mostrarAlerta('Error: ' + error.message, 'error');
-        });
+    // Verificar que todos los elementos existen
+    if (!codigoElement || !nombreElement || !precioElement) {
+        mostrarAlerta('Error: No se encontraron todos los campos del formulario', 'error');
+        return;
     }
+
+    // Obtener los valores de forma segura
+    const codigo = codigoElement.value.trim();
+    const nombre = nombreElement.value.trim();
+    const precio = precioElement.value;
+
+    // DEBUGGING: Mostrar los datos que se van a enviar
+    console.log('=== DATOS A ENVIAR ===');
+    console.log('Código:', codigo, '(tipo:', typeof codigo, ', longitud:', codigo.length, ')');
+    console.log('Nombre:', nombre, '(tipo:', typeof nombre, ', longitud:', nombre.length, ')');
+    console.log('Precio:', precio, '(tipo:', typeof precio, ')');
+    console.log('====================');
+
+    // Validaciones básicas en el frontend
+    if (!codigo || !nombre || !precio) {
+        mostrarAlerta('Complete todos los campos obligatorios', 'error');
+        return;
+    }
+
+    // Validar formato del código
+    if (codigo.length < 3) {
+        mostrarAlerta('El código debe tener al menos 3 caracteres', 'error');
+        return;
+    }
+
+    // Validar que el precio sea un número válido
+    const precioNumero = parseFloat(precio);
+    if (isNaN(precioNumero) || precioNumero <= 0) {
+        mostrarAlerta('El precio debe ser un número válido mayor a 0', 'error');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('action', 'agregarServicio');
+    formData.append('codigo', codigo);
+    formData.append('nombre', nombre);
+    formData.append('precio', precio);
+
+    // DEBUGGING: Mostrar FormData
+    console.log('=== FORMDATA ENVIADA ===');
+    for (let [key, value] of formData.entries()) {
+        console.log(key + ':', value);
+    }
+    console.log('========================');
+
+    mostrarCarga(true);
+
+    fetch('../../backend/controller/ServiciosController.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('=== RESPONSE INFO ===');
+        console.log('Status:', response.status);
+        console.log('StatusText:', response.statusText);
+        console.log('Headers:', response.headers);
+        console.log('====================');
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+        }
+        return response.text();
+    })
+    .then(text => {
+        console.log('=== RESPUESTA COMPLETA DEL SERVIDOR ===');
+        console.log('Respuesta agregar servicio:', text);
+        console.log('Longitud de respuesta:', text.length);
+        console.log('======================================');
+        
+        let data;
+        try {
+            data = JSON.parse(text);
+            console.log('JSON parseado exitosamente:', data);
+        } catch (e) {
+            console.error('Error parsing JSON:', e);
+            console.error('Respuesta recibida:', text);
+            throw new Error('Respuesta inválida del servidor');
+        }
+        
+        mostrarCarga(false);
+
+        if (data.success) {
+            mostrarAlerta('Servicio agregado correctamente', 'success');
+            limpiarFormularioAgregar();
+            cargarServicios(); // Recargar lista de servicios
+            // Cambiar a la pestaña de lista de servicios usando Bootstrap
+            mostrarPestana('listTab');
+        } else {
+            // DEBUGGING: Mostrar mensaje de error detallado
+            console.error('=== ERROR DEL SERVIDOR ===');
+            console.error('Message:', data.message);
+            console.error('Data completa:', data);
+            console.error('========================');
+            
+            // Mensajes más específicos
+            let mensajeError = data.message || 'Error desconocido';
+            if (mensajeError.includes('Ya existe un servicio')) {
+                mensajeError = '⚠️ Ya existe un servicio con ese código. Intente con otro código.';
+            }
+            mostrarAlerta('Error: ' + mensajeError, 'error');
+        }
+    })
+    .catch(error => {
+        mostrarCarga(false);
+        console.error('=== ERROR COMPLETO ===');
+        console.error('Error:', error);
+        console.error('Stack:', error.stack);
+        console.error('==================');
+        mostrarAlerta('Error: ' + error.message, 'error');
+    });
+}
 
     function limpiarFormularioAgregar() {
         addServiceForm.reset();
@@ -284,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'eliminarServicio');
         formData.append('idServicio', deleteServiceId);
 
-        fetch('../ServiciosController.php', {
+        fetch('../../backend/controller/ServiciosController.php', {
             method: 'POST',
             body: formData
         })
@@ -430,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const timestamp = new Date().getTime();
-            const url = `../ServiciosController.php?action=exportarExcel&t=${timestamp}`;
+            const url = `../../backend/controller/ServiciosController.php?action=exportarExcel&t=${timestamp}`;
             
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
@@ -508,7 +548,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'validarCodigoServicio');
         formData.append('codigo', codigo);
 
-        fetch('../ServiciosController.php', {
+        fetch('../../backend/controller/ServiciosController.php', {
             method: 'POST',
             body: formData
         })

@@ -4,12 +4,12 @@ ob_start();
 
 // Habilitar errores para debug (solo en desarrollo)
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Cambiar a 0 para producción
+ini_set('display_errors', 1); // Cambiar a 0 para producción
 ini_set('log_errors', 1);
 
-require_once 'Conexion.php';
-require_once 'Sanitizar.php';
-require_once 'clases/Servicio.php';
+require_once '../includes/Conexion.php';
+require_once '../includes/Sanitizar.php';
+require_once '../clases/Servicio.php';
 
 // Limpiar cualquier salida previa
 ob_clean();

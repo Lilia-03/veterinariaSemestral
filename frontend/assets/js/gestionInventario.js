@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function cargarProductos() {
         mostrarCarga(true);
        
-        fetch('../InventarioController.php', {
+        fetch('../../backend/controller/inventarioController.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('idItem', idItem);
         formData.append('cantidad', cantidad);
         
-        fetch('../InventarioController.php', {
+        fetch('../../backend/controller/inventarioController.php', {
             method: 'POST',
             body: formData
         })
@@ -326,8 +326,8 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('stock', stock);
         
         mostrarCarga(true);
-        
-        fetch('../InventarioController.php', {
+
+        fetch('../../backend/controller/inventarioController.php', {
             method: 'POST',
             body: formData
         })
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('action', 'eliminarProducto');
         formData.append('idItem', deleteProductId);
         
-        fetch('../InventarioController.php', {
+        fetch('../../backend/controller/inventarioController.php', {
             method: 'POST',
             body: formData
         })
@@ -613,8 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             const timestamp = new Date().getTime();
-            const url = `../InventarioController.php?action=exportarExcel&t=${timestamp}`;
-           
+            const url = `../../backend/controller/inventarioController.php?action=exportarExcel&t=${timestamp}`;
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             iframe.style.position = 'absolute';
@@ -686,8 +685,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('action', 'validarCodigoProducto');
         formData.append('codigo', codigo);
-        
-        fetch('../InventarioController.php', {
+
+        fetch('../../backend/controller/inventarioController.php', {
             method: 'POST',
             body: formData
         })

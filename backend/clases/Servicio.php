@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../Conexion.php';  
-require_once __DIR__ . '/../Sanitizar.php'; 
+require_once __DIR__ . '/../includes/conexion.php';  
+require_once __DIR__ . '/../includes/sanitizar.php';
 
 class Servicio {
 
