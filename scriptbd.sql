@@ -2119,3 +2119,520 @@ BEGIN
     WHERE Tipo = 'Servicio';
 END;
 GO
+
+
+--------------------------------------------------------
+----------------------------------------------------------
+-- Procedimiento para obtener todos los productos y servicios con disponibilidad
+CREATE PROCEDURE ObtenerProductosServiciosUsuario
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- CTE para obtener la cantidad disponible más reciente de cada producto
+    WITH UltimoInventario AS (
+        SELECT 
+            i.IDITEM,
+            i.CantidadDisponible,
+            ROW_NUMBER() OVER (PARTITION BY i.IDITEM ORDER BY i.IDInventario DESC) as rn
+        FROM Inventario i
+    )
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.Tipo,
+        sp.PrecioITEM,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN ISNULL(ui.CantidadDisponible, 0)
+            ELSE NULL -- Los servicios no tienen cantidad limitada
+        END AS CantidadDisponible,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN 
+                CASE 
+                    WHEN ISNULL(ui.CantidadDisponible, 0) > 0 THEN 'Disponible'
+                    ELSE 'Agotado'
+                END
+            ELSE 'Disponible' -- Los servicios siempre están disponibles
+        END AS EstadoDisponibilidad
+    FROM Servicio_Producto sp
+    LEFT JOIN UltimoInventario ui ON sp.IDITEM = ui.IDITEM AND ui.rn = 1
+    ORDER BY sp.Tipo, sp.NombreProducto;
+END;
+
+-- Procedimiento para buscar productos y servicios con filtros
+CREATE PROCEDURE BuscarProductosServiciosUsuario
+    @Termino NVARCHAR(100) = '',
+    @Tipo NVARCHAR(50) = ''
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- CTE para obtener la cantidad disponible más reciente de cada producto
+    WITH UltimoInventario AS (
+        SELECT 
+            i.IDITEM,
+            i.CantidadDisponible,
+            ROW_NUMBER() OVER (PARTITION BY i.IDITEM ORDER BY i.IDInventario DESC) as rn
+        FROM Inventario i
+    )
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.Tipo,
+        sp.PrecioITEM,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN ISNULL(ui.CantidadDisponible, 0)
+            ELSE NULL
+        END AS CantidadDisponible,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN 
+                CASE 
+                    WHEN ISNULL(ui.CantidadDisponible, 0) > 0 THEN 'Disponible'
+                    ELSE 'Agotado'
+                END
+            ELSE 'Disponible'
+        END AS EstadoDisponibilidad
+    FROM Servicio_Producto sp
+    LEFT JOIN UltimoInventario ui ON sp.IDITEM = ui.IDITEM AND ui.rn = 1
+    WHERE 
+        (@Termino = '' OR sp.NombreProducto LIKE '%' + @Termino + '%')
+        AND (@Tipo = '' OR sp.Tipo = @Tipo)
+    ORDER BY sp.Tipo, sp.NombreProducto;
+END;
+
+-- Procedimiento para obtener detalles de un producto o servicio específico
+CREATE PROCEDURE ObtenerDetalleProductoServicioUsuario
+    @IDITEM INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- CTE para obtener la cantidad disponible más reciente del producto específico
+    WITH UltimoInventario AS (
+        SELECT 
+            i.IDITEM,
+            i.CantidadDisponible,
+            ROW_NUMBER() OVER (PARTITION BY i.IDITEM ORDER BY i.IDInventario DESC) as rn
+        FROM Inventario i
+        WHERE i.IDITEM = @IDITEM
+    )
+    SELECT 
+        sp.IDITEM,
+        sp.NombreProducto,
+        sp.Tipo,
+        sp.PrecioITEM,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN ISNULL(ui.CantidadDisponible, 0)
+            ELSE NULL
+        END AS CantidadDisponible,
+        CASE 
+            WHEN sp.Tipo = 'Producto' THEN 
+                CASE 
+                    WHEN ISNULL(ui.CantidadDisponible, 0) > 0 THEN 'Disponible'
+                    ELSE 'Agotado'
+                END
+            ELSE 'Disponible'
+        END AS EstadoDisponibilidad
+    FROM Servicio_Producto sp
+    LEFT JOIN UltimoInventario ui ON sp.IDITEM = ui.IDITEM AND ui.rn = 1
+    WHERE sp.IDITEM = @IDITEM;
+END;
+
+------------
+------------------------------citass wiiiiiiiii-------------------------------
+-------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- ============================================
+-- SISTEMA DE CITAS - CLINIPET
+-- Procedimientos Almacenados
+-- ============================================
+
+-- 1. CREAR TABLA CITA
+CREATE TABLE Cita (
+    IDCita INT IDENTITY(1,1) PRIMARY KEY,
+    CedulaCliente NVARCHAR(20) NOT NULL FOREIGN KEY REFERENCES Cliente(Cedula),
+    IDMascota INT NOT NULL FOREIGN KEY REFERENCES Mascota(IDMascota),
+    FechaCita DATE NOT NULL,
+    HoraCita TIME NOT NULL,
+    EstadoCita NVARCHAR(20) DEFAULT 'Pendiente' CHECK (EstadoCita IN ('Pendiente', 'Confirmada', 'Cancelada', 'Completada', 'No Show')),
+    TipoServicio NVARCHAR(100),
+    Observaciones NVARCHAR(500),
+    FechaCreacion DATETIME DEFAULT GETDATE(),
+    UsuarioCreador INT FOREIGN KEY REFERENCES Usuarios(UsuarioID),
+    FechaConfirmacion DATETIME NULL,
+    MotivoCancelacion NVARCHAR(255) NULL
+);
+
+-- ============================================
+-- 1. PROCEDIMIENTO PARA CREAR CITA
+-- ============================================
+CREATE PROCEDURE CrearCita
+    @CedulaCliente NVARCHAR(20),
+    @IDMascota INT,
+    @FechaCita DATE,
+    @HoraCita TIME,
+    @TipoServicio NVARCHAR(100),
+    @Observaciones NVARCHAR(500) = NULL,
+    @UsuarioCreador INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Validar que el cliente existe
+        IF NOT EXISTS (SELECT 1 FROM Cliente WHERE Cedula = @CedulaCliente)
+        BEGIN
+            RAISERROR('El cliente no existe.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar que la mascota existe y pertenece al cliente
+        IF NOT EXISTS (SELECT 1 FROM Mascota WHERE IDMascota = @IDMascota AND CedulaCliente = @CedulaCliente)
+        BEGIN
+            RAISERROR('La mascota no existe o no pertenece a este cliente.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar que la fecha no sea en el pasado
+        IF @FechaCita < CAST(GETDATE() AS DATE)
+        BEGIN
+            RAISERROR('La fecha de la cita no puede ser en el pasado.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar horario de atención (8:00 AM a 6:00 PM)
+        IF @HoraCita < '08:00:00' OR @HoraCita > '18:00:00'
+        BEGIN
+            RAISERROR('Horario fuera del rango de atención (8:00 AM - 6:00 PM).', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar que no hay otra cita en la misma fecha y hora
+        IF EXISTS (SELECT 1 FROM Cita 
+                  WHERE FechaCita = @FechaCita 
+                  AND HoraCita = @HoraCita 
+                  AND EstadoCita NOT IN ('Cancelada'))
+        BEGIN
+            RAISERROR('Ya existe una cita programada para esa fecha y hora.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Insertar la cita
+        INSERT INTO Cita (CedulaCliente, IDMascota, FechaCita, HoraCita, TipoServicio, Observaciones, UsuarioCreador)
+        VALUES (@CedulaCliente, @IDMascota, @FechaCita, @HoraCita, @TipoServicio, @Observaciones, @UsuarioCreador);
+
+        DECLARE @IDCita INT = SCOPE_IDENTITY();
+
+        COMMIT TRANSACTION;
+        
+        SELECT @IDCita AS IDCita, 'Cita creada exitosamente' AS Mensaje;
+
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
+END;
+GO
+
+-- ============================================
+-- 2. OBTENER CITAS POR CLIENTE
+-- ============================================
+CREATE PROCEDURE ObtenerCitasPorCliente
+    @CedulaCliente NVARCHAR(20)
+AS
+BEGIN
+    SELECT 
+        c.IDCita,
+        c.FechaCita,
+        c.HoraCita,
+        c.EstadoCita,
+        c.TipoServicio,
+        c.Observaciones,
+        c.FechaCreacion,
+        m.Nombre AS NombreMascota,
+        m.Especie,
+        cl.Nombre AS NombreCliente
+    FROM Cita c
+    INNER JOIN Mascota m ON c.IDMascota = m.IDMascota
+    INNER JOIN Cliente cl ON c.CedulaCliente = cl.Cedula
+    WHERE c.CedulaCliente = @CedulaCliente
+    ORDER BY c.FechaCita DESC, c.HoraCita DESC;
+END;
+GO
+
+-- ============================================
+-- 3. OBTENER CITAS POR FECHA
+-- ============================================
+CREATE PROCEDURE ObtenerCitasPorFecha
+    @FechaInicio DATE,
+    @FechaFin DATE = NULL
+AS
+BEGIN
+    IF @FechaFin IS NULL
+        SET @FechaFin = @FechaInicio;
+
+    SELECT 
+        c.IDCita,
+        c.FechaCita,
+        c.HoraCita,
+        c.EstadoCita,
+        c.TipoServicio,
+        c.Observaciones,
+        cl.Nombre AS NombreCliente,
+        cl.Cedula,
+        cl.Teléfono,
+        m.Nombre AS NombreMascota,
+        m.Especie,
+        u.NombreCompleto AS CreadoPor
+    FROM Cita c
+    INNER JOIN Cliente cl ON c.CedulaCliente = cl.Cedula
+    INNER JOIN Mascota m ON c.IDMascota = m.IDMascota
+    LEFT JOIN Usuarios u ON c.UsuarioCreador = u.UsuarioID
+    WHERE c.FechaCita BETWEEN @FechaInicio AND @FechaFin
+    ORDER BY c.FechaCita, c.HoraCita;
+END;
+GO
+
+-- ============================================
+-- 4. ACTUALIZAR ESTADO DE CITA
+-- ============================================
+CREATE PROCEDURE ActualizarEstadoCita
+    @IDCita INT,
+    @NuevoEstado NVARCHAR(20),
+    @MotivoCancelacion NVARCHAR(255) = NULL,
+    @UsuarioModificador INT
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Validar que la cita existe
+        IF NOT EXISTS (SELECT 1 FROM Cita WHERE IDCita = @IDCita)
+        BEGIN
+            RAISERROR('La cita no existe.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar estado válido
+        IF @NuevoEstado NOT IN ('Pendiente', 'Confirmada', 'Cancelada', 'Completada', 'No Show')
+        BEGIN
+            RAISERROR('Estado de cita no válido.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Actualizar la cita
+        UPDATE Cita 
+        SET EstadoCita = @NuevoEstado,
+            FechaConfirmacion = CASE WHEN @NuevoEstado = 'Confirmada' THEN GETDATE() ELSE FechaConfirmacion END,
+            MotivoCancelacion = CASE WHEN @NuevoEstado = 'Cancelada' THEN @MotivoCancelacion ELSE NULL END
+        WHERE IDCita = @IDCita;
+
+        COMMIT TRANSACTION;
+        
+        SELECT 'Estado de cita actualizado exitosamente' AS Mensaje;
+
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- ============================================
+-- 5. REAGENDAR CITA
+-- ============================================
+CREATE PROCEDURE ReagendarCita
+    @IDCita INT,
+    @NuevaFecha DATE,
+    @NuevaHora TIME,
+    @UsuarioModificador INT
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Validar que la cita existe
+        IF NOT EXISTS (SELECT 1 FROM Cita WHERE IDCita = @IDCita)
+        BEGIN
+            RAISERROR('La cita no existe.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar que la nueva fecha no sea en el pasado
+        IF @NuevaFecha < CAST(GETDATE() AS DATE)
+        BEGIN
+            RAISERROR('La nueva fecha no puede ser en el pasado.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar horario de atención
+        IF @NuevaHora < '08:00:00' OR @NuevaHora > '18:00:00'
+        BEGIN
+            RAISERROR('Horario fuera del rango de atención (8:00 AM - 6:00 PM).', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Validar disponibilidad del nuevo horario
+        IF EXISTS (SELECT 1 FROM Cita 
+                  WHERE FechaCita = @NuevaFecha 
+                  AND HoraCita = @NuevaHora 
+                  AND EstadoCita NOT IN ('Cancelada')
+                  AND IDCita != @IDCita)
+        BEGIN
+            RAISERROR('Ya existe una cita programada para esa fecha y hora.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Actualizar la cita
+        UPDATE Cita 
+        SET FechaCita = @NuevaFecha,
+            HoraCita = @NuevaHora,
+            EstadoCita = 'Pendiente'  -- Volver a estado pendiente al reagendar
+        WHERE IDCita = @IDCita;
+
+        COMMIT TRANSACTION;
+        
+        SELECT 'Cita reagendada exitosamente' AS Mensaje;
+
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- ============================================
+-- 6. OBTENER DISPONIBILIDAD DE HORARIOS
+-- ============================================
+CREATE PROCEDURE ObtenerDisponibilidadHorarios
+    @Fecha DATE
+AS
+BEGIN
+    -- Crear tabla temporal con todos los horarios del día
+    DECLARE @HorariosDisponibles TABLE (
+        Hora TIME,
+        Disponible BIT
+    );
+
+    -- Insertar horarios de 8:00 AM a 6:00 PM cada 30 minutos
+    DECLARE @HoraActual TIME = '08:00:00';
+    
+    WHILE @HoraActual <= '18:00:00'
+    BEGIN
+        INSERT INTO @HorariosDisponibles (Hora, Disponible)
+        SELECT @HoraActual, 
+               CASE WHEN EXISTS (SELECT 1 FROM Cita 
+                               WHERE FechaCita = @Fecha 
+                               AND HoraCita = @HoraActual 
+                               AND EstadoCita NOT IN ('Cancelada'))
+                    THEN 0 ELSE 1 END;
+        
+        SET @HoraActual = DATEADD(MINUTE, 30, @HoraActual);
+    END
+
+    SELECT * FROM @HorariosDisponibles ORDER BY Hora;
+END;
+GO
+
+-- ============================================
+-- 7. OBTENER CITAS PENDIENTES DE CONFIRMACIÓN
+-- ============================================
+CREATE PROCEDURE ObtenerCitasPendientesConfirmacion
+AS
+BEGIN
+    SELECT 
+        c.IDCita,
+        c.FechaCita,
+        c.HoraCita,
+        cl.Nombre AS NombreCliente,
+        cl.Email,
+        cl.Teléfono,
+        m.Nombre AS NombreMascota,
+        c.TipoServicio,
+        DATEDIFF(HOUR, c.FechaCreacion, GETDATE()) AS HorasDesdeCreacion
+    FROM Cita c
+    INNER JOIN Cliente cl ON c.CedulaCliente = cl.Cedula
+    INNER JOIN Mascota m ON c.IDMascota = m.IDMascota
+    WHERE c.EstadoCita = 'Pendiente'
+    AND c.FechaCita >= CAST(GETDATE() AS DATE)
+    ORDER BY c.FechaCita, c.HoraCita;
+END;
+GO
+
+-- ============================================
+-- 8. OBTENER DETALLES DE CITA
+-- ============================================
+CREATE PROCEDURE ObtenerDetalleCita
+    @IDCita INT
+AS
+BEGIN
+    SELECT 
+        c.IDCita,
+        c.FechaCita,
+        c.HoraCita,
+        c.EstadoCita,
+        c.TipoServicio,
+        c.Observaciones,
+        c.FechaCreacion,
+        c.FechaConfirmacion,
+        c.MotivoCancelacion,
+        cl.Cedula,
+        cl.Nombre AS NombreCliente,
+        cl.Teléfono,
+        cl.Email,
+        cl.Dirección,
+        m.IDMascota,
+        m.Nombre AS NombreMascota,
+        m.Especie,
+        m.Peso,
+        m.Edad,
+        r.Nombre AS RazaMascota,
+        u.NombreCompleto AS CreadoPor
+    FROM Cita c
+    INNER JOIN Cliente cl ON c.CedulaCliente = cl.Cedula
+    INNER JOIN Mascota m ON c.IDMascota = m.IDMascota
+    LEFT JOIN Raza r ON m.RazaID = r.RazaID
+    LEFT JOIN Usuarios u ON c.UsuarioCreador = u.UsuarioID
+    WHERE c.IDCita = @IDCita;
+END;
+GO
+
+-- ============================================
+-- 9. REPORTES Y ESTADÍSTICAS
+-- ============================================
+CREATE PROCEDURE ObtenerEstadisticasCitas
+    @FechaInicio DATE,
+    @FechaFin DATE
+AS
+BEGIN
+    SELECT 
+        COUNT(*) AS TotalCitas,
+        SUM(CASE WHEN EstadoCita = 'Confirmada' THEN 1 ELSE 0 END) AS CitasConfirmadas,
+        SUM(CASE WHEN EstadoCita = 'Completada' THEN 1 ELSE 0 END) AS CitasCompletadas,
+        SUM(CASE WHEN EstadoCita = 'Cancelada' THEN 1 ELSE 0 END) AS CitasCanceladas,
+        SUM(CASE WHEN EstadoCita = 'No Show' THEN 1 ELSE 0 END) AS NoShow,
+        SUM(CASE WHEN EstadoCita = 'Pendiente' THEN 1 ELSE 0 END) AS CitasPendientes
+    FROM Cita
+    WHERE FechaCita BETWEEN @FechaInicio AND @FechaFin;
+END;
+GO
