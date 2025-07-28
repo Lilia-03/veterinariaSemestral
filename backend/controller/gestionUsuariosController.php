@@ -379,6 +379,152 @@ try {
             }
             break;
 
+            // Agregar estos casos al switch de tu gestionUsuariosController.php
+// Busca el switch($action) y agrega estos casos antes del default:
+
+        case 'actualizarPermisosRol':
+            if (!isset($_POST['rolId']) || !isset($_POST['permisos'])) {
+                throw new Exception('Datos insuficientes');
+            }
+
+            try {
+                $rolId = (int)$_POST['rolId'];
+                $permisos = json_decode($_POST['permisos'], true);
+                
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw new Exception('Formato de permisos inválido');
+                }
+
+                // Iniciar transacción
+                $pdo->beginTransaction();
+                
+                // Eliminar permisos actuales del rol
+                $sqlDelete = "DELETE FROM RolesPermisos WHERE RolID = ?";
+                $stmtDelete = $pdo->prepare($sqlDelete);
+                $stmtDelete->execute([$rolId]);
+                
+                // Insertar nuevos permisos
+                if (!empty($permisos)) {
+                    $sqlInsert = "INSERT INTO RolesPermisos (RolID, PermisoID) VALUES (?, ?)";
+                    $stmtInsert = $pdo->prepare($sqlInsert);
+                    
+                    foreach ($permisos as $permisoId) {
+                        $stmtInsert->execute([$rolId, (int)$permisoId]);
+                    }
+                }
+                
+                // Confirmar transacción
+                $pdo->commit();
+                
+                echo json_encode(['success' => true, 'message' => 'Permisos actualizados correctamente']);
+                
+            } catch (Exception $e) {
+                // Revertir transacción en caso de error
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                throw new Exception('Error al actualizar permisos: ' . $e->getMessage());
+            }
+            break;
+
+        case 'obtenerTodosPermisos':
+            try {
+                $sql = "SELECT PermisoID, NombrePermiso, Modulo FROM Permisos ORDER BY Modulo, NombrePermiso";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute();
+                $permisos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode(['success' => true, 'data' => $permisos]);
+            } catch (Exception $e) {
+                throw new Exception('Error al obtener todos los permisos: ' . $e->getMessage());
+            }
+            break;
+
+        case 'crearRol':
+            if (!isset($_POST['nombreRol']) || !isset($_POST['descripcion'])) {
+                throw new Exception('Nombre y descripción del rol son requeridos');
+            }
+
+            try {
+                $sql = "INSERT INTO Roles (NombreRol, Descripcion, FechaCreacion) VALUES (?, ?, GETDATE())";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([trim($_POST['nombreRol']), trim($_POST['descripcion'])]);
+                
+                echo json_encode(['success' => true, 'message' => 'Rol creado correctamente']);
+            } catch (PDOException $e) {
+                if (strpos($e->getMessage(), 'UNIQUE constraint') !== false) {
+                    throw new Exception('Ya existe un rol con ese nombre');
+                }
+                throw new Exception('Error al crear rol: ' . $e->getMessage());
+            }
+            break;
+
+        case 'actualizarRol':
+            if (!isset($_POST['rolId']) || !isset($_POST['nombreRol']) || !isset($_POST['descripcion'])) {
+                throw new Exception('Datos del rol incompletos');
+            }
+
+            try {
+                $sql = "UPDATE Roles SET NombreRol = ?, Descripcion = ? WHERE RolID = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([trim($_POST['nombreRol']), trim($_POST['descripcion']), (int)$_POST['rolId']]);
+                
+                echo json_encode(['success' => true, 'message' => 'Rol actualizado correctamente']);
+            } catch (PDOException $e) {
+                if (strpos($e->getMessage(), 'UNIQUE constraint') !== false) {
+                    throw new Exception('Ya existe un rol con ese nombre');
+                }
+                throw new Exception('Error al actualizar rol: ' . $e->getMessage());
+            }
+            break;
+
+        case 'eliminarRol':
+            if (!isset($_POST['rolId'])) {
+                throw new Exception('ID del rol es requerido');
+            }
+
+            try {
+                $rolId = (int)$_POST['rolId'];
+                
+                // Verificar que no haya usuarios con este rol
+                $sqlCheck = "SELECT COUNT(*) as total FROM Usuarios WHERE RolID = ?";
+                $stmtCheck = $pdo->prepare($sqlCheck);
+                $stmtCheck->execute([$rolId]);
+                $result = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+                
+                if ($result['total'] > 0) {
+                    throw new Exception('No se puede eliminar el rol porque tiene usuarios asignados');
+                }
+                
+                // No permitir eliminar roles básicos del sistema
+                if ($rolId <= 3) {
+                    throw new Exception('No se pueden eliminar los roles básicos del sistema');
+                }
+                
+                // Iniciar transacción
+                $pdo->beginTransaction();
+                
+                // Eliminar permisos del rol
+                $sqlDeletePermisos = "DELETE FROM RolesPermisos WHERE RolID = ?";
+                $stmtDeletePermisos = $pdo->prepare($sqlDeletePermisos);
+                $stmtDeletePermisos->execute([$rolId]);
+                
+                // Eliminar el rol
+                $sqlDeleteRol = "DELETE FROM Roles WHERE RolID = ?";
+                $stmtDeleteRol = $pdo->prepare($sqlDeleteRol);
+                $stmtDeleteRol->execute([$rolId]);
+                
+                $pdo->commit();
+                
+                echo json_encode(['success' => true, 'message' => 'Rol eliminado correctamente']);
+                
+            } catch (Exception $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                throw new Exception('Error al eliminar rol: ' . $e->getMessage());
+            }
+            break;
+
         default:
             throw new Exception('Acción no válida: ' . $action);
     }

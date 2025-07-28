@@ -10,21 +10,6 @@
             configurarModulos();
         });
         
-        async function cargarEstadisticasAdmin() {
-            try {
-                // Aquí harías llamadas a tu API para obtener estadísticas reales
-                // Por ahora mantenemos los valores hardcodeados
-                
-                // Ejemplo de cómo podrías cargar datos reales:
-                // const response = await fetch('../backend/api/estadisticas.php');
-                // const data = await response.json();
-                // document.getElementById('totalMascotas').textContent = data.mascotas;
-                
-                console.log('Estadísticas cargadas');
-            } catch (error) {
-                console.error('Error cargando estadísticas:', error);
-            }
-        }
         
         function configurarModulos() {
             // Agregar eventos a los módulos
