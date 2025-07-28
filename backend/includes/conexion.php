@@ -9,8 +9,7 @@ class Conexion {
                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
             ]);
         } catch (PDOException $e) {
-            error_log("Error de conexión: " . $e->getMessage());
-            throw new Exception("Error de conexión a la base de datos");
+            die("Error de conexión: " . $e->getMessage());
         }
     }
 
@@ -98,142 +97,34 @@ class Conexion {
         }
     }
     
-public function crearUsuario($datos, $usuarioCreadorId = null) {
-    error_log("Conexion::crearUsuario() - Iniciando con datos: " . print_r($datos, true));
-    error_log("Conexion::crearUsuario() - Usuario creador: " . $usuarioCreadorId);
-    
-    try {
-        // Validar campos obligatorios
-        if (empty($datos['nombreUsuario']) || empty($datos['email']) || 
-            empty($datos['password']) || empty($datos['nombreCompleto']) || 
-            empty($datos['rolId'])) {
-            error_log("Conexion::crearUsuario() - Campos obligatorios faltantes");
-            throw new Exception('Todos los campos obligatorios deben ser proporcionados');
-        }
-
-        // Validar rol cliente requiere cédula
-        if ($datos['rolId'] == 3 && empty($datos['cedulaCliente'])) {
-            error_log("Conexion::crearUsuario() - Cliente sin cédula");
-            throw new Exception('Se requiere cédula válida para usuarios cliente');
-        }
-
-        // Preparar parámetros adicionales para cliente
-        $telefono = null;
-        $direccion = null;
-        
-        if ($datos['rolId'] == 3) {
-            if (empty($datos['telefono']) || empty($datos['direccion'])) {
-                error_log("Conexion::crearUsuario() - Cliente sin teléfono o dirección");
-                throw new Exception('Se requiere teléfono y dirección para usuarios cliente');
-            }
-            $telefono = $datos['telefono'];
-            $direccion = $datos['direccion'];
-            error_log("Conexion::crearUsuario() - Datos de cliente: tel=$telefono, dir=$direccion");
-        }
-
-        $passwordHash = password_hash($datos['password'], PASSWORD_DEFAULT);
-        error_log("Conexion::crearUsuario() - Password hasheado");
-        
-        // Llamar al procedimiento almacenado con todos los parámetros
-        $sql = "EXEC CrearUsuario 
-            @NombreUsuario = ?, 
-            @Email = ?, 
-            @PasswordHash = ?, 
-            @NombreCompleto = ?, 
-            @RolID = ?, 
-            @CedulaCliente = ?, 
-            @UsuarioCreadorID = ?,
-            @Telefono = ?,
-            @Direccion = ?";
-        
-        error_log("Conexion::crearUsuario() - SQL preparado: " . $sql);
-        
-        $stmt = $this->pdo->prepare($sql);
-        error_log("Conexion::crearUsuario() - Statement preparado");
-        
-        $parametros = [
-            $datos['nombreUsuario'],
-            $datos['email'],
-            $passwordHash,
-            $datos['nombreCompleto'],
-            $datos['rolId'],
-            $datos['cedulaCliente'] ?? null,
-            $usuarioCreadorId,
-            $telefono,
-            $direccion
-        ];
-        
-        error_log("Conexion::crearUsuario() - Parámetros: " . print_r($parametros, true));
-        
-        $resultado = $stmt->execute($parametros);
-        error_log("Conexion::crearUsuario() - Execute resultado: " . ($resultado ? 'true' : 'false'));
-        
-        if (!$resultado) {
-            $errorInfo = $stmt->errorInfo();
-            error_log("Conexion::crearUsuario() - Error en execute: " . print_r($errorInfo, true));
-            throw new Exception('Error al ejecutar el procedimiento: ' . implode(' - ', $errorInfo));
-        }
-        
-        // Intentar obtener el resultado
+    public function crearUsuario($datos, $usuarioCreadorId = null) {
         try {
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            error_log("Conexion::crearUsuario() - Resultado fetch: " . print_r($result, true));
+            $sql = "EXEC CrearUsuario ?, ?, ?, ?, ?, ?, ?";
+            $stmt = $this->pdo->prepare($sql);
             
-            $newId = $result['UsuarioID'] ?? null;
-            error_log("Conexion::crearUsuario() - Nuevo ID: " . $newId);
+            $passwordHash = password_hash($datos['password'], PASSWORD_DEFAULT);
             
-        } catch (Exception $fetchException) {
-            error_log("Conexion::crearUsuario() - Error en fetch: " . $fetchException->getMessage());
-            $newId = null;
+            $stmt->execute([
+                $datos['nombreUsuario'],
+                $datos['email'],
+                $passwordHash,
+                $datos['nombreCompleto'],
+                $datos['rolId'],
+                $datos['cedulaCliente'],
+                $usuarioCreadorId
+            ]);
+            
+            return [
+                'success' => true,
+                'message' => 'Usuario creado exitosamente'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Error al crear usuario: ' . $e->getMessage()
+            ];
         }
-        
-        return [
-            'success' => true,
-            'usuarioId' => $newId,
-            'message' => 'Usuario creado exitosamente'
-        ];
-        
-    } catch (PDOException $e) {
-        error_log("Conexion::crearUsuario() - PDOException: " . $e->getMessage());
-        error_log("Conexion::crearUsuario() - Error Code: " . $e->getCode());
-        error_log("Conexion::crearUsuario() - Error Info: " . print_r($e->errorInfo ?? [], true));
-        
-        // Manejo de errores específicos
-        $errorMessage = $e->getMessage();
-        
-        // Errores de duplicados
-        if (strpos($errorMessage, '2627') !== false || strpos($errorMessage, 'UNIQUE constraint') !== false) {
-            if (strpos($errorMessage, 'NombreUsuario') !== false) {
-                $errorMessage = 'El nombre de usuario ya está en uso';
-            } elseif (strpos($errorMessage, 'Email') !== false) {
-                $errorMessage = 'El correo electrónico ya está registrado';
-            } elseif (strpos($errorMessage, 'Teléfono') !== false) {
-                $errorMessage = 'El número de teléfono ya está registrado';
-            } elseif (strpos($errorMessage, 'Cedula') !== false) {
-                $errorMessage = 'La cédula ya está registrada';
-            }
-        }
-        
-        // Errores de validación del procedimiento
-        if (strpos($errorMessage, 'Se requiere') !== false) {
-            // Mantener el mensaje original del procedimiento
-        } elseif (strpos($errorMessage, 'formato') !== false) {
-            // Mantener mensajes de formato
-        }
-        
-        return [
-            'success' => false,
-            'message' => $errorMessage
-        ];
-    } catch (Exception $e) {
-        error_log("Conexion::crearUsuario() - Exception general: " . $e->getMessage());
-        error_log("Conexion::crearUsuario() - Stack trace: " . $e->getTraceAsString());
-        return [
-            'success' => false,
-            'message' => $e->getMessage()
-        ];
     }
-}
 
     public function registrarCliente($cedula, $nombre, $telefono, $email, $direccion) {
         $sql = "EXEC RegistrarCliente @Cedula = ?, @Nombre = ?, @Teléfono = ?, @Email = ?, @Dirección = ?";
@@ -341,119 +232,107 @@ public function obtenerRoles() {
 // Registrar usuario (usando CrearUsuario con validación de permisos)
 public function registrarUsuario($datosUsuario, $usuarioCreadorId) {
     try {
-        // In the registrarUsuario method, ensure all parameters are passed:
-$sql = "EXEC CrearUsuario 
-    @NombreUsuario = ?, 
-    @Email = ?, 
-    @PasswordHash = ?, 
-    @NombreCompleto = ?, 
-    @RolID = ?, 
-    @CedulaCliente = ?, 
-    @UsuarioCreadorID = ?,
-    @Telefono = ?,
-    @Direccion = ?";
-    
-$stmt = $this->pdo->prepare($sql);
-$stmt->execute([
-    $datosUsuario['nombreUsuario'],
-    $datosUsuario['email'],
-    $passwordHash,
-    $datosUsuario['nombreCompleto'],
-    $datosUsuario['rolId'],
-    $datosUsuario['cedulaCliente'] ?? null,
-    $usuarioCreadorId,
-    $datosUsuario['telefono'] ?? null,
-    $datosUsuario['direccion'] ?? null
-]);
-        
-        return [
-            'success' => true,
-            'message' => 'Usuario creado exitosamente'
-        ];
+        // Validar campos requeridos
+        if (empty($datosUsuario['nombreUsuario']) || empty($datosUsuario['email']) || 
+            empty($datosUsuario['nombreCompleto']) || empty($datosUsuario['rolId'])) {
+            throw new Exception("Todos los campos marcados como requeridos deben ser completados");
+        }
+
+        // Validar formato de email
+        if (!filter_var($datosUsuario['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("El formato del correo electrónico no es válido");
+        }
+
+        // Si es cliente, validar cédula
+        $cedulaCliente = null;
+        if ($datosUsuario['rolId'] == 3) {
+            if (empty($datosUsuario['cedulaCliente'])) {
+                throw new Exception("Para usuarios tipo Cliente se requiere una cédula válida");
+            }
+            $cedulaCliente = $datosUsuario['cedulaCliente'];
+        }
+
+        // Hashear la contraseña
+        $passwordHash = password_hash($datosUsuario['password'], PASSWORD_DEFAULT);
+
+        // Llamar al procedimiento almacenado
+        $sql = "EXEC CrearUsuario ?, ?, ?, ?, ?, ?, ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            $datosUsuario['nombreUsuario'],
+            $datosUsuario['email'],
+            $passwordHash,
+            $datosUsuario['nombreCompleto'],
+            $datosUsuario['rolId'],
+            $cedulaCliente,
+            $usuarioCreadorId
+        ]);
+
+        return ['success' => true, 'message' => 'Usuario creado exitosamente'];
     } catch (PDOException $e) {
-        error_log("Error en registrarUsuario: " . $e->getMessage());
+        error_log("Error registrando usuario: " . $e->getMessage());
         
-        // Manejo específico de errores de SQL Server
-        if (strpos($e->getMessage(), 'UNIQUE constraint') !== false) {
-            if (strpos($e->getMessage(), 'NombreUsuario') !== false) {
-                throw new Exception('El nombre de usuario ya está en uso');
-            }
-            if (strpos($e->getMessage(), 'Email') !== false) {
-                throw new Exception('El correo electrónico ya está registrado');
-            }
+        // Manejar errores específicos de la base de datos
+        if (strpos($e->getMessage(), 'El nombre de usuario o email ya está registrado') !== false) {
+            throw new Exception("El nombre de usuario o correo electrónico ya está en uso");
+        }
+        if (strpos($e->getMessage(), 'Se requiere cédula válida') !== false) {
+            throw new Exception("La cédula proporcionada no existe en la base de clientes");
         }
         
-        throw new Exception('Error al crear usuario: ' . $e->getMessage());
+        throw new Exception("Error al registrar usuario: " . $e->getMessage());
     }
 }
 
+// Actualizar usuario (usando ActualizarUsuario con validación de permisos)
 public function actualizarUsuario($idUsuario, $datosUsuario, $usuarioEditorId) {
-    error_log("Conexion::actualizarUsuario() - Iniciando con ID: " . $idUsuario);
-    error_log("Conexion::actualizarUsuario() - Datos: " . print_r($datosUsuario, true));
-    error_log("Conexion::actualizarUsuario() - Editor: " . $usuarioEditorId);
-    
     try {
-        $sql = "EXEC ActualizarUsuario 
-            @UsuarioID = ?, 
-            @NombreCompleto = ?, 
-            @Email = ?, 
-            @CedulaCliente = ?, 
-            @Activo = ?, 
-            @UsuarioEditorID = ?,
-            @Telefono = ?,
-            @Direccion = ?";
-        
-        error_log("Conexion::actualizarUsuario() - SQL: " . $sql);
-        
+        // Validar campos requeridos
+        if (empty($datosUsuario['email']) || empty($datosUsuario['nombreCompleto'])) {
+            throw new Exception("Todos los campos marcados como requeridos deben ser completados");
+        }
+
+        // Validar formato de email
+        if (!filter_var($datosUsuario['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("El formato del correo electrónico no es válido");
+        }
+
+        // Si es cliente, validar cédula
+        $cedulaCliente = null;
+        if (isset($datosUsuario['rolId']) && $datosUsuario['rolId'] == 3) {
+            if (empty($datosUsuario['cedulaCliente'])) {
+                throw new Exception("Para usuarios tipo Cliente se requiere una cédula válida");
+            }
+            $cedulaCliente = $datosUsuario['cedulaCliente'];
+        }
+
+        // Llamar al procedimiento almacenado
+        $sql = "EXEC ActualizarUsuario ?, ?, ?, ?, ?, ?";
         $stmt = $this->pdo->prepare($sql);
-        
-        $parametros = [
+        $stmt->execute([
             $idUsuario,
-            $datosUsuario['nombreCompleto'] ?? null,
-            $datosUsuario['email'] ?? null,
-            $datosUsuario['cedulaCliente'] ?? null,
-            $datosUsuario['activo'] ?? 1,
-            $usuarioEditorId,
-            $datosUsuario['telefono'] ?? null,
-            $datosUsuario['direccion'] ?? null
-        ];
-        
-        error_log("Conexion::actualizarUsuario() - Parámetros: " . print_r($parametros, true));
-        
-        $resultado = $stmt->execute($parametros);
-        error_log("Conexion::actualizarUsuario() - Execute resultado: " . ($resultado ? 'true' : 'false'));
-        
-        if (!$resultado) {
-            $errorInfo = $stmt->errorInfo();
-            error_log("Conexion::actualizarUsuario() - Error en execute: " . print_r($errorInfo, true));
-            throw new Exception('Error al ejecutar el procedimiento: ' . implode(' - ', $errorInfo));
-        }
-        
-        // Cambiar contraseña si se proporciona
+            $datosUsuario['nombreCompleto'],
+            $datosUsuario['email'],
+            $cedulaCliente,
+            $datosUsuario['activo'],
+            $usuarioEditorId
+        ]);
+
+        // Si se proporcionó nueva contraseña, actualizarla
         if (!empty($datosUsuario['password'])) {
-            error_log("Conexion::actualizarUsuario() - Cambiando contraseña...");
-            $passwordHash = password_hash($datosUsuario['password'], PASSWORD_DEFAULT);
-            $sqlPassword = "UPDATE Usuarios SET PasswordHash = ? WHERE UsuarioID = ?";
-            $stmtPassword = $this->pdo->prepare($sqlPassword);
-            $resultadoPassword = $stmtPassword->execute([$passwordHash, $idUsuario]);
-            error_log("Conexion::actualizarUsuario() - Password actualizado: " . ($resultadoPassword ? 'true' : 'false'));
+            $this->cambiarContrasena($idUsuario, $datosUsuario['password']);
+        }
+
+        return ['success' => true, 'message' => 'Usuario actualizado exitosamente'];
+    } catch (PDOException $e) {
+        error_log("Error actualizando usuario: " . $e->getMessage());
+        
+        // Manejar errores específicos de la base de datos
+        if (strpos($e->getMessage(), 'No tienes permisos') !== false) {
+            throw new Exception("No tienes permisos para realizar esta acción");
         }
         
-        return ['success' => true, 'message' => 'Usuario actualizado exitosamente'];
-        
-    } catch (PDOException $e) {
-        error_log("Conexion::actualizarUsuario() - PDOException: " . $e->getMessage());
-        error_log("Conexion::actualizarUsuario() - Error Code: " . $e->getCode());
-        return [
-            'success' => false,
-            'message' => $e->getMessage()
-        ];
-    } catch (Exception $e) {
-        error_log("Conexion::actualizarUsuario() - Exception: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => $e->getMessage()
-        ];
+        throw new Exception("Error al actualizar usuario: " . $e->getMessage());
     }
 }
 
@@ -793,5 +672,53 @@ public function actualizarPermisosRol($rolId, $permisos) {
             throw new Exception("Error al obtener reporte: " . $e->getMessage());
         }
     }
+    ////////////////////////////////////////////////////////////////////////////////////////
+public function obtenerProductosServiciosUsuario() {
+    try {
+        $sql = "EXEC ObtenerProductosServiciosUsuario";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error en obtenerProductosServiciosUsuario: " . $e->getMessage());
+        throw new Exception("Error al obtener productos y servicios: " . $e->getMessage());
+    }
+}
+public function buscarProductosServiciosUsuario($termino = '', $tipo = '') {
+    try {
+        $sql = "EXEC BuscarProductosServiciosUsuario @Termino = ?, @Tipo = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$termino, $tipo]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error en buscarProductosServiciosUsuario: " . $e->getMessage());
+        throw new Exception("Error al buscar productos y servicios: " . $e->getMessage());
+    }
+}
+
+public function obtenerDetalleProductoServicioUsuario($idItem) {
+    try {
+        $sql = "EXEC ObtenerDetalleProductoServicioUsuario @IDITEM = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idItem]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error en obtenerDetalleProductoServicioUsuario: " . $e->getMessage());
+        throw new Exception("Error al obtener detalle del item: " . $e->getMessage());
+    }
+}
+
+public function existeProductoServicio($idItem) {
+    try {
+        $sql = "SELECT COUNT(*) as total FROM Servicio_Producto WHERE IDITEM = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$idItem]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] > 0;
+    } catch (PDOException $e) {
+        error_log("Error en existeProductoServicio: " . $e->getMessage());
+        throw new Exception("Error al verificar existencia del item: " . $e->getMessage());
+    }
+}
 }
 ?>

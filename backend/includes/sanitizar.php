@@ -820,6 +820,229 @@ public static function validarMetodoHTTPUsuario($metodoRequerido = 'GET') {
         'method' => $metodoActual
     ];
 }    
+// Validar y sanitizar fecha
+    public static function validarFecha($fecha) {
+        if (empty($fecha)) return null;
+        
+        // Verificar formato YYYY-MM-DD
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            throw new InvalidArgumentException("Formato de fecha inválido. Use YYYY-MM-DD");
+        }
+        
+        // Verificar que sea una fecha válida
+        $partes = explode('-', $fecha);
+        if (!checkdate($partes[1], $partes[2], $partes[0])) {
+            throw new InvalidArgumentException("Fecha inválida");
+        }
+        
+        // Verificar que no sea una fecha pasada
+        $fechaDate = new DateTime($fecha);
+        $hoy = new DateTime('today');
+        
+        if ($fechaDate < $hoy) {
+            throw new InvalidArgumentException("La fecha no puede ser anterior a hoy");
+        }
+        
+        return $fecha;
+    }
+
+    // Validar y sanitizar hora
+    public static function validarHora($hora) {
+        if (empty($hora)) return null;
+        
+        // Verificar formato HH:MM:SS o HH:MM
+        if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/', $hora)) {
+            throw new InvalidArgumentException("Formato de hora inválido. Use HH:MM o HH:MM:SS");
+        }
+        
+        // Asegurar formato HH:MM:SS
+        if (strlen($hora) === 5) {
+            $hora .= ':00';
+        }
+        
+        // Verificar que esté dentro del horario de atención (8:00 - 18:00)
+        $horaTime = new DateTime($hora);
+        $horaInicio = new DateTime('08:00:00');
+        $horaFin = new DateTime('18:00:00');
+        
+        if ($horaTime < $horaInicio || $horaTime > $horaFin) {
+            throw new InvalidArgumentException("La hora debe estar entre 08:00 y 18:00");
+        }
+        
+        return $hora;
+    }
+
+    // Validar cédula panameña
+    public static function validarCedula($cedula) {
+        if (empty($cedula)) return null;
+        
+        $cedula = self::limpiarCadena($cedula);
+        
+        // Patrones válidos para cédulas panameñas
+        $patronesCedula = [
+            '/^[1-9]-\d{1,4}-\d{1,6}$/',     // Nacionales: X-XXX-XXXX
+            '/^1[0-3]-\d{1,4}-\d{1,6}$/',   // Provincias 10-13: XX-XXX-XXXX
+            '/^E-\d{1,4}-\d{1,6}$/',        // Extranjeros: E-XXX-XXXX
+            '/^[A-Z]\d{6,9}$/'              // Pasaportes: AXXXXXXX
+        ];
+        
+        $esValida = false;
+        foreach ($patronesCedula as $patron) {
+            if (preg_match($patron, $cedula)) {
+                $esValida = true;
+                break;
+            }
+        }
+        
+        if (!$esValida) {
+            throw new InvalidArgumentException("Formato de cédula inválido");
+        }
+        
+        return $cedula;
+    }
+
+    // Validar email
+    public static function validarEmail($email) {
+        if (empty($email)) return null;
+        
+        $email = self::limpiarCadena($email);
+        $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+        
+        if ($email === false) {
+            throw new InvalidArgumentException("Email inválido");
+        }
+        
+        return $email;
+    }
+
+    // Validar teléfono
+    public static function validarTelefono($telefono) {
+        if (empty($telefono)) return null;
+        
+        $telefono = self::limpiarCadena($telefono);
+        
+        // Remover espacios, guiones y paréntesis
+        $telefonoLimpio = preg_replace('/[\s\-\(\)]/', '', $telefono);
+        
+        // Verificar que solo contenga números y tenga longitud apropiada
+        if (!preg_match('/^\d{7,8}$/', $telefonoLimpio)) {
+            throw new InvalidArgumentException("Teléfono inválido. Debe tener 7 u 8 dígitos");
+        }
+        
+        return $telefono;
+    }
+
+    // Validar estado de cita
+    public static function validarEstadoCita($estado) {
+        if (empty($estado)) return null;
+        
+        $estadosValidos = ['Pendiente', 'Confirmada', 'Cancelada', 'Completada', 'No Show'];
+        
+        if (!in_array($estado, $estadosValidos)) {
+            throw new InvalidArgumentException("Estado de cita inválido");
+        }
+        
+        return $estado;
+    }
+
+    // Sanitizar observaciones/comentarios
+    public static function sanitizarTextoLargo($texto, $longitudMaxima = 500) {
+        if (empty($texto)) return null;
+        
+        $texto = self::limpiarCadena($texto);
+        
+        if (strlen($texto) > $longitudMaxima) {
+            throw new InvalidArgumentException("El texto excede la longitud máxima de {$longitudMaxima} caracteres");
+        }
+        
+        return $texto;
+    }
+
+    // Validar ID de cita
+    public static function validarIdCita($id) {
+        $id = self::validarEntero($id);
+        
+        if ($id === null || $id <= 0) {
+            throw new InvalidArgumentException("ID de cita inválido");
+        }
+        
+        return $id;
+    }
+
+    // Validar nombre de servicio
+    public static function validarNombreServicio($servicio) {
+        if (empty($servicio)) {
+            throw new InvalidArgumentException("Debe especificar un tipo de servicio");
+        }
+        
+        $servicio = self::limpiarCadena($servicio);
+        
+        if (strlen($servicio) < 3 || strlen($servicio) > 100) {
+            throw new InvalidArgumentException("El nombre del servicio debe tener entre 3 y 100 caracteres");
+        }
+        
+        return $servicio;
+    }
+
+    // Método general para validar datos de cita
+    public static function validarDatosCita($datos) {
+        $datosValidados = [];
+        
+        try {
+            if (isset($datos['cedulaCliente'])) {
+                $datosValidados['cedulaCliente'] = self::validarCedula($datos['cedulaCliente']);
+            }
+            
+            if (isset($datos['idMascota'])) {
+                $datosValidados['idMascota'] = self::validarEntero($datos['idMascota']);
+            }
+            
+            if (isset($datos['fechaCita'])) {
+                $datosValidados['fechaCita'] = self::validarFecha($datos['fechaCita']);
+            }
+            
+            if (isset($datos['horaCita'])) {
+                $datosValidados['horaCita'] = self::validarHora($datos['horaCita']);
+            }
+            
+            if (isset($datos['tipoServicio'])) {
+                $datosValidados['tipoServicio'] = self::validarNombreServicio($datos['tipoServicio']);
+            }
+            
+            if (isset($datos['observaciones'])) {
+                $datosValidados['observaciones'] = self::sanitizarTextoLargo($datos['observaciones']);
+            }
+            
+            if (isset($datos['estadoCita'])) {
+                $datosValidados['estadoCita'] = self::validarEstadoCita($datos['estadoCita']);
+            }
+            
+            return $datosValidados;
+            
+        } catch (InvalidArgumentException $e) {
+            throw new InvalidArgumentException("Error en validación de datos: " . $e->getMessage());
+        }
+    }
+
+    // Método para sanitizar arrays de datos
+    public static function sanitizarArray($array) {
+        if (!is_array($array)) return [];
+        
+        $arraySanitizado = [];
+        foreach ($array as $clave => $valor) {
+            if (is_string($valor)) {
+                $arraySanitizado[$clave] = self::limpiarCadena($valor);
+            } elseif (is_numeric($valor)) {
+                $arraySanitizado[$clave] = $valor;
+            } elseif (is_array($valor)) {
+                $arraySanitizado[$clave] = self::sanitizarArray($valor);
+            } else {
+                $arraySanitizado[$clave] = $valor;
+            }
+        }
+        
+        return $arraySanitizado;
+    }
 }
 
 ?>

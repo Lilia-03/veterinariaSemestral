@@ -1,0 +1,482 @@
+/* ========================================
+   ESTILOS GENERALES PARA MÓDULO DE CITAS
+   ======================================== */
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ========================================
+   CARDS Y CONTENEDORES
+   ======================================== */
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+    font-weight: 600;
+}
+
+/* ========================================
+   NAVEGACIÓN DE PESTAÑAS
+   ======================================== */
+
+.nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    margin-right: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    color: #495057;
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    box-shadow: 0 0.25rem 0.5rem rgba(13, 110, 253, 0.25);
+}
+
+/* ========================================
+   FORMULARIOS
+   ======================================== */
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    transform: translateY(-1px);
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    font-weight: 500;
+}
+
+/* ========================================
+   BOTONES
+   ======================================== */
+
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    border-width: 1px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+    border-color: #0d6efd;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border-color: #198754;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #d39e00 100%);
+    border-color: #ffc107;
+    color: #000;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
+    border-color: #dc3545;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #0dcaf0 0%, #086489 100%);
+    border-color: #0dcaf0;
+    color: #000;
+}
+
+/* ========================================
+   ALERTAS
+   ======================================== */
+
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+    border-left: 4px solid;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    border-left-color: #198754;
+    color: #0a3622;
+}
+
+.alert-info {
+    background-color: #cff4fc;
+    border-left-color: #0dcaf0;
+    color: #055160;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-left-color: #ffc107;
+    color: #664d03;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-left-color: #dc3545;
+    color: #58151c;
+}
+
+/* ========================================
+   TABLAS DE CITAS
+   ======================================== */
+
+.table-citas {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.table-citas th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    padding: 1rem 0.75rem;
+}
+
+.table-citas td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table-citas tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+/* ========================================
+   BADGES DE ESTADO
+   ======================================== */
+
+.badge-estado {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 1rem;
+}
+
+.estado-pendiente {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.estado-confirmada {
+    background-color: #198754;
+    color: #fff;
+}
+
+.estado-cancelada {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.estado-completada {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.estado-no-show {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+/* ========================================
+   CARDS DE CITA
+   ======================================== */
+
+.cita-card {
+    border-left: 4px solid #0d6efd;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.cita-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.cita-card.pendiente {
+    border-left-color: #ffc107;
+}
+
+.cita-card.confirmada {
+    border-left-color: #198754;
+}
+
+.cita-card.cancelada {
+    border-left-color: #dc3545;
+}
+
+.cita-card.completada {
+    border-left-color: #0dcaf0;
+}
+
+.cita-card.no-show {
+    border-left-color: #6c757d;
+}
+
+/* ========================================
+   HORARIOS DISPONIBLES
+   ======================================== */
+
+.horario-disponible {
+    background-color: #d1e7dd;
+    border: 1px solid #198754;
+    color: #0a3622;
+}
+
+.horario-ocupado {
+    background-color: #f8d7da;
+    border: 1px solid #dc3545;
+    color: #58151c;
+}
+
+.horario-item {
+    padding: 0.5rem;
+    margin: 0.25rem;
+    border-radius: 0.375rem;
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.horario-item:hover {
+    transform: scale(1.05);
+}
+
+/* ========================================
+   LOADING SPINNER
+   ======================================== */
+
+#loadingSpinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* ========================================
+   MODALES
+   ======================================== */
+
+.modal-content {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0.5rem 0.5rem 0 0;
+    background-color: #f8f9fa;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #495057;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* ========================================
+   PANEL DE INFORMACIÓN
+   ======================================== */
+
+.info-panel {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 1px solid #2196f3;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.info-panel h6 {
+    color: #1976d2;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-in-out;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding: 0.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* ========================================
+   UTILIDADES ADICIONALES
+   ======================================== */
+
+.text-primary-custom {
+    color: #0d6efd !important;
+}
+
+.bg-primary-custom {
+    background-color: #0d6efd !important;
+}
+
+.border-primary-custom {
+    border-color: #0d6efd !important;
+}
+
+.shadow-custom {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.rounded-custom {
+    border-radius: 0.5rem !important;
+}
+
+/* ========================================
+   SCROLL PERSONALIZADO
+   ======================================== */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
