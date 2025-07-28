@@ -33,24 +33,57 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.estado === 'ok') {
             let html = '';
 
+            // Información del cliente mejorada
             if (data.cliente) {
                 html += `
-                    <div class="cliente-info-card mb-4">
-                        <div class="card border-success">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0"><i class="fas fa-user"></i> Información del Cliente</h5>
+                    <div class="resultado-cliente mb-4">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-gradient-primary text-white">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-container me-3">
+                                        <i class="fas fa-user-circle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0">Información del Cliente</h5>
+                                        <small class="opacity-75">Datos del propietario</small>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row g-3">
                                     <div class="col-md-6">
-                                        <p><strong>Cédula:</strong> ${data.cliente.CedulaCliente}</p>
-                                        <p><strong>Nombre:</strong> ${data.cliente.NombreCliente}</p>
-                                        <p><strong>Teléfono:</strong> ${data.cliente.Teléfono || 'No disponible'}</p>
+                                        <div class="info-item">
+                                            <i class="fas fa-id-card text-primary me-2"></i>
+                                            <strong>Cédula:</strong>
+                                            <span class="info-value">${data.cliente.CedulaCliente}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-user text-primary me-2"></i>
+                                            <strong>Nombre:</strong>
+                                            <span class="info-value">${data.cliente.NombreCliente}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-phone text-primary me-2"></i>
+                                            <strong>Teléfono:</strong>
+                                            <span class="info-value">${data.cliente.Teléfono || 'No disponible'}</span>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <p><strong>Email:</strong> ${data.cliente.Email || 'No disponible'}</p>
-                                        <p><strong>Dirección:</strong> ${data.cliente.Dirección || 'No disponible'}</p>
-                                        <p><strong>Total de Mascotas:</strong> <span class="badge bg-success">${data.totalMascotas}</span></p>
+                                        <div class="info-item">
+                                            <i class="fas fa-envelope text-primary me-2"></i>
+                                            <strong>Email:</strong>
+                                            <span class="info-value">${data.cliente.Email || 'No disponible'}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                            <strong>Dirección:</strong>
+                                            <span class="info-value">${data.cliente.Dirección || 'No disponible'}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-paw text-primary me-2"></i>
+                                            <strong>Total de Mascotas:</strong>
+                                            <span class="badge bg-success ms-2">${data.totalMascotas}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -59,12 +92,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
             }
 
+            // Información de mascotas mejorada
             if (data.mascotas && data.mascotas.length > 0) {
                 html += `
                     <div class="mascotas-section">
-                        <h5 class="mb-3">
-                            <i class="fas fa-paw"></i> Mascotas Registradas (${data.mascotas.length})
-                        </h5>
+                        <div class="section-title mb-4">
+                            <h4 class="d-flex align-items-center">
+                                <i class="fas fa-paw text-orange me-2"></i>
+                                Mascotas Registradas
+                                <span class="badge bg-orange ms-2">${data.mascotas.length}</span>
+                            </h4>
+                        </div>
                 `;
 
                 data.mascotas.forEach((mascota, index) => {
@@ -73,77 +111,141 @@ document.addEventListener('DOMContentLoaded', function () {
                         'No disponible';
 
                     html += `
-                        <div class="resultado-card mb-3">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="resultado-imagen-container">
-                                        ${mascota.FotoBase64 ?
-                            `<img src="data:image/jpeg;base64,${mascota.FotoBase64}" 
-                                                 alt="Foto de ${mascota.NombreMascota}" 
-                                                 class="resultado-imagen"
-                                                 onclick="ampliarImagen(this, '${mascota.NombreMascota}')"
-                                                 style="cursor: pointer;">` :
+                        <div class="mascota-card mb-4">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-body">
+                                    <div class="row g-4">
+                                        <!-- Foto de la mascota -->
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="mascota-foto-container">
+                                                ${mascota.FotoBase64 ?
+                            `<div class="foto-mascota" onclick="ampliarImagen(this.querySelector('img'), '${mascota.NombreMascota}')">
+                                                    <img src="data:image/jpeg;base64,${mascota.FotoBase64}" 
+                                                         alt="Foto de ${mascota.NombreMascota}" 
+                                                         class="mascota-imagen">
+                                                    <div class="foto-overlay">
+                                                        <i class="fas fa-search-plus"></i>
+                                                    </div>
+                                                </div>` :
                             `<div class="no-image-placeholder">
-                                                <i class="fas fa-paw fa-3x text-muted"></i>
-                                                <p class="text-muted mt-2">Sin foto</p>
-                                             </div>`
+                                                    <i class="fas fa-paw fa-3x text-muted"></i>
+                                                    <p class="text-muted mt-2 mb-0">Sin foto</p>
+                                                </div>`
                         }
-                                        <div class="resultado-nombre">${mascota.NombreMascota}</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-9">
-                                    <div class="resultado-info">
-                                        <div class="mascota-datos mb-3">
-                                            <h6 class="text-primary mb-2"><i class="fas fa-paw"></i> Datos de la Mascota</h6>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <p><strong>ID:</strong> ${mascota.IDMascota}</p>
-                                                    <p><strong>Especie:</strong> ${mascota.Especie}</p>
-                                                    <p><strong>Raza:</strong> ${mascota.RazaMascota || 'No especificada'}</p>
-                                                    <p><strong>Género:</strong> ${mascota.Genero}</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p><strong>Peso:</strong> ${mascota.Peso} kg</p>
-                                                    <p><strong>Edad:</strong> ${mascota.Edad} años</p>
-                                                    <p><strong>Fecha de Registro:</strong> ${fechaRegistro}</p>
+                                                <div class="mascota-nombre">
+                                                    <h5 class="text-center mt-2 mb-0">${mascota.NombreMascota}</h5>
+                                                    <p class="text-center text-muted small mb-0">ID: ${mascota.IDMascota}</p>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        ${data.cliente ? `
-                                        <div class="dueno-datos mb-3">
-                                            <h6 class="text-success mb-2"><i class="fas fa-user"></i> Datos del Dueño</h6>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <p><strong>Nombre:</strong> ${data.cliente.NombreCliente}</p>
-                                                    <p><strong>Cédula:</strong> ${data.cliente.CedulaCliente}</p>
+                                        
+                                        <!-- Información de la mascota -->
+                                        <div class="col-lg-9 col-md-8">
+                                            <div class="mascota-info">
+                                                <!-- Datos básicos -->
+                                                <div class="info-section mb-4">
+                                                    <h6 class="section-header">
+                                                        <i class="fas fa-paw text-orange me-2"></i>
+                                                        Datos de la Mascota
+                                                    </h6>
+                                                    <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Especie</span>
+                                                                <span class="info-value-modern">${mascota.Especie}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Raza</span>
+                                                                <span class="info-value-modern">${mascota.RazaMascota || 'No especificada'}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Género</span>
+                                                                <span class="info-value-modern">${mascota.Genero}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Peso</span>
+                                                                <span class="info-value-modern">${mascota.Peso} kg</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Edad</span>
+                                                                <span class="info-value-modern">${mascota.Edad} años</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Fecha de Registro</span>
+                                                                <span class="info-value-modern">${fechaRegistro}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <p><strong>Teléfono:</strong> ${data.cliente.Teléfono || 'No disponible'}</p>
-                                                    <p><strong>Email:</strong> ${data.cliente.Email || 'No disponible'}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        ` : ''}
 
-                                        <div class="condiciones-medicas">
-                                            <h6 class="text-warning mb-2"><i class="fas fa-heartbeat"></i> Condiciones Médicas</h6>
-                                            <div class="mt-2">
-                                                ${mascota.CondicionesMedicas &&
+                                                ${data.cliente ? `
+                                                <!-- Datos del dueño -->
+                                                <div class="info-section mb-4">
+                                                    <h6 class="section-header">
+                                                        <i class="fas fa-user text-success me-2"></i>
+                                                        Datos del Propietario
+                                                    </h6>
+                                                    <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Nombre</span>
+                                                                <span class="info-value-modern">${data.cliente.NombreCliente}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Cédula</span>
+                                                                <span class="info-value-modern">${data.cliente.CedulaCliente}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Teléfono</span>
+                                                                <span class="info-value-modern">${data.cliente.Teléfono || 'No disponible'}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="info-item-modern">
+                                                                <span class="info-label">Email</span>
+                                                                <span class="info-value-modern">${data.cliente.Email || 'No disponible'}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                ` : ''}
+
+                                                <!-- Condiciones médicas -->
+                                                <div class="info-section">
+                                                    <h6 class="section-header">
+                                                        <i class="fas fa-heartbeat text-danger me-2"></i>
+                                                        Condiciones Médicas
+                                                    </h6>
+                                                    <div class="condiciones-container">
+                                                        ${mascota.CondicionesMedicas &&
                             mascota.CondicionesMedicas !== 'Sin condiciones médicas' &&
                             mascota.CondicionesMedicas.trim() !== '' ?
                             mascota.CondicionesMedicas.split(', ').map(condicion =>
-                                `<span class="badge bg-warning text-dark me-1">${condicion.trim()}</span>`
+                                `<span class="badge-condicion badge-warning">${condicion.trim()}</span>`
                             ).join('') :
-                            '<span class="badge bg-success">Sin condiciones médicas</span>'
+                            '<span class="badge-condicion badge-success">Sin condiciones médicas</span>'
                         }
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            ${index < data.mascotas.length - 1 ? '<hr class="my-3">' : ''}
                         </div>
                     `;
                 });
@@ -151,8 +253,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 html += '</div>';
             } else {
                 html += `
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> ${data.mensaje || 'Este cliente no tiene mascotas registradas.'}
+                    <div class="alert alert-info border-0 shadow-sm">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle fa-2x text-info me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Sin mascotas registradas</h6>
+                                <p class="mb-0">${data.mensaje || 'Este cliente no tiene mascotas registradas.'}</p>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -165,8 +273,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 100);
         } else {
             cardResults.innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle"></i> ${data.mensaje || 'Error desconocido'}
+                <div class="alert alert-danger border-0 shadow-sm">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle fa-2x text-danger me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Error en la consulta</h6>
+                            <p class="mb-0">${data.mensaje || 'Error desconocido'}</p>
+                        </div>
+                    </div>
                 </div>
             `;
             resultContainer.style.display = 'block';
@@ -194,13 +308,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            // Mostrar indicador de carga
+            // Mostrar indicador de carga mejorado
             cardResults.innerHTML = `
-                <div class="text-center p-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Cargando...</span>
+                <div class="loading-container">
+                    <div class="loading-content">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <h5 class="text-primary">Buscando información...</h5>
+                        <p class="text-muted">Por favor espere mientras consultamos la base de datos</p>
                     </div>
-                    <p class="mt-2">Buscando información...</p>
                 </div>
             `;
             resultContainer.style.display = 'block';
@@ -256,69 +373,53 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             cardResults.innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle"></i> 
-                    <strong>Error:</strong> ${mensajeError}
-                    <br><small class="text-muted">Detalles técnicos: ${error.message}</small>
+                <div class="alert alert-danger border-0 shadow-sm">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle fa-2x text-danger me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Error de conexión</h6>
+                            <p class="mb-1">${mensajeError}</p>
+                            <small class="text-muted">Detalles técnicos: ${error.message}</small>
+                        </div>
+                    </div>
                 </div>
             `;
             resultContainer.style.display = 'block';
         }
     }
 
-    // 🖼️ Función para ampliar imágenes
+    // 🖼️ Función para ampliar imágenes mejorada
     function ampliarImagen(img, nombreMascota) {
         const modal = document.createElement('div');
-        modal.style.cssText = `
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); display: flex; align-items: center;
-            justify-content: center; z-index: 10000; cursor: pointer;
+        modal.className = 'modal-imagen';
+        modal.innerHTML = `
+            <div class="modal-imagen-overlay">
+                <div class="modal-imagen-content">
+                    <div class="modal-imagen-header">
+                        <h4>Foto de ${nombreMascota}</h4>
+                        <button class="btn-cerrar-modal" onclick="this.closest('.modal-imagen').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-imagen-body">
+                        <img src="${img.src}" alt="Foto de ${nombreMascota}" class="imagen-ampliada">
+                    </div>
+                    <div class="modal-imagen-footer">
+                        <button class="btn btn-light" onclick="this.closest('.modal-imagen').remove()">
+                            <i class="fas fa-times me-2"></i>Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
         `;
 
-        const contenido = document.createElement('div');
-        contenido.style.cssText = 'max-width: 90%; max-height: 90%; text-align: center;';
-
-        const titulo = document.createElement('h4');
-        titulo.textContent = `Foto de ${nombreMascota}`;
-        titulo.style.cssText = 'color: white; margin-bottom: 20px;';
-
-        const imgAmpliada = document.createElement('img');
-        imgAmpliada.src = img.src;
-        imgAmpliada.style.cssText = 'max-width: 100%; max-height: 80vh; border-radius: 8px;';
-
-        const btnCerrar = document.createElement('button');
-        btnCerrar.innerHTML = '✕ Cerrar';
-        btnCerrar.className = 'btn btn-light mt-3';
-        btnCerrar.onclick = () => modal.remove();
-
-        contenido.appendChild(titulo);
-        contenido.appendChild(imgAmpliada);
-        contenido.appendChild(btnCerrar);
-        modal.appendChild(contenido);
-
         modal.onclick = (e) => {
-            if (e.target === modal) modal.remove();
+            if (e.target.classList.contains('modal-imagen-overlay')) {
+                modal.remove();
+            }
         };
 
         document.body.appendChild(modal);
-    }
-
-    // 🔧 Función de debug para probar conexión
-    async function probarConexion() {
-        try {
-            console.log('🔄 Probando conexión...');
-            const response = await fetch(`${BASE_URL}?accion=listarEspecies`);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('✅ Conexión exitosa:', data);
-                mostrarMensaje('Conexión exitosa con el servidor', 'success');
-            } else {
-                throw new Error(`HTTP ${response.status}`);
-            }
-        } catch (error) {
-            console.error('❌ Error de conexión:', error);
-            mostrarMensaje(`Error de conexión: ${error.message}`, 'danger');
-        }
     }
 
     // Event listeners para validación de campos
@@ -406,13 +507,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Limpiar al cargar la página
     limpiarResultados();
 
-    // Hacer funciones disponibles globalmente para debugging
-    window.probarConexion = probarConexion;
-    window.realizarConsulta = realizarConsulta;
+    // Hacer funciones disponibles globalmente
     window.ampliarImagen = ampliarImagen;
+    window.realizarConsulta = realizarConsulta;
 
     console.log('🚀 consultar.js cargado correctamente');
-    console.log('🔧 Funciones de debug disponibles:');
-    console.log('  - probarConexion(): Probar conexión con el servidor');
-    console.log('  - realizarConsulta(): Ejecutar consulta manualmente');
 });
