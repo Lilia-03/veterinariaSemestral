@@ -550,13 +550,12 @@ public function crearUsuario($datos, $usuarioCreadorId = null) {
         }
     }
 
-    public function actualizarMascota($idMascota, $peso, $edad, $condiciones) {
+    public function actualizarMascota($idMascota, $peso, $edad) {
         try {
-            $stmt = $this->conn->prepare("EXEC ActualizarMascota @IDMascota = ?, @NuevoPeso = ?, @NuevaEdad = ?, @Condiciones = ?");
+            $stmt = $this->conn->prepare("EXEC ActualizarMascota @IDMascota = ?, @NuevoPeso = ?, @NuevaEdad = ?");
             $stmt->bindParam(1, $idMascota, PDO::PARAM_INT);
             $stmt->bindParam(2, $peso);
             $stmt->bindParam(3, $edad);
-            $stmt->bindParam(4, $condiciones);
             $stmt->execute();
 
             return ['success' => true, 'message' => 'Mascota actualizada correctamente'];

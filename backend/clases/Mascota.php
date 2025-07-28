@@ -126,9 +126,8 @@ class Mascota {
         $idMascota = $datos['idMascota'] ?? null;
         $peso = $datos['peso'] ?? null;
         $edad = $datos['edad'] ?? null;
-        $condiciones = $datos['condiciones'] ?? '';
 
-        return $this->conexion->actualizarMascota($idMascota, $peso, $edad, $condiciones);
+        return $this->conexion->actualizarMascota($idMascota, $peso, $edad);
     }
 
     
