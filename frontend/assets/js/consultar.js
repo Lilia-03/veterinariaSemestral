@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const cardResults = document.getElementById('cardResults');
 
     // 🔧 CONFIGURACIÓN - Ajusta según tu estructura
-    const BASE_URL = '../../../backend/controller/mascotasController.php';
+    const BASE_URL = '../../../backend/controller/controller.php';
 
     function mostrarMensaje(mensaje, tipo = 'danger') {
         messageDiv.textContent = mensaje;
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (error.message.includes('HTML')) {
                 mensajeError = 'Error en la configuración del servidor. La URL puede estar incorrecta.';
             } else if (error.message.includes('404')) {
-                mensajeError = 'No se encontró el archivo mascotasController.php. Verifique la ruta.';
+                mensajeError = 'No se encontró el archivo controller.php. Verifique la ruta.';
             } else if (error.message.includes('500')) {
                 mensajeError = 'Error interno del servidor. Verifique los logs del servidor.';
             }

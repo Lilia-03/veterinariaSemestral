@@ -241,62 +241,362 @@ public function crearUsuario($datos, $usuarioCreadorId = null) {
         return $stmt->execute([$cedula, $nombre, $telefono, $email, $direccion]);
     }
 
-    public function registrarMascota($nombre, $especie, $peso, $edad, $cedulaCliente, $razaID, $genero, $foto = null, $condiciones = null) {
-        $sql = "EXEC RegistrarMascota 
-            @Nombre = ?, 
-            @Especie = ?, 
-            @Peso = ?, 
-            @Edad = ?, 
-            @CedulaCliente = ?, 
-            @RazaID = ?, 
-            @Genero = ?, 
-            @Foto = ?, 
-            @Condiciones = ?";
-        $stmt = $this->pdo->prepare($sql);
+    public function registrarMascota($nombre, $especie, $peso, $edad, $cedulaCliente, $razaID, $genero, $foto = null, $condiciones = []) {
+        try {
+            error_log("=== INICIO REGISTRAR MASCOTA ===");
+            error_log("Nombre: $nombre");
+            error_log("Especie recibida: $especie");
+            error_log("Peso: $peso");
+            error_log("Edad: $edad");
+            error_log("CedulaCliente: $cedulaCliente");
+            error_log("RazaID: $razaID");
+            error_log("Genero: $genero");
+            error_log("Foto presente: " . ($foto ? "SÍ - " . strlen($foto) . " bytes" : "NO"));
+            
+            // Validaciones básicas con mensajes amigables
+            if (empty($nombre) || empty($especie) || empty($cedulaCliente)) {
+                throw new Exception("Faltan algunos datos obligatorios");
+            }
 
-        // Para la foto, si existe conviertes a binario (ya en PHP recibes con $_FILES)
-        $fotoBinaria = null;
-        if ($foto && is_file($foto)) {
-            $fotoBinaria = file_get_contents($foto);
-        } elseif (is_string($foto)) {
-            // Si ya es contenido binario base64 o algo, úsalo directamente
-            $fotoBinaria = $foto;
+            if ($peso <= 0) {
+                throw new Exception("El peso debe ser mayor a cero");
+            }
+
+            if (!is_numeric($edad) || intval($edad) <= 0) {
+                throw new Exception("La edad debe ser un numero mayor a cero");
+            }
+
+            // SOLUCIÓN: Convertir ID de especie a nombre de especie
+            $nombreEspecie = null;
+            if (is_numeric($especie)) {
+                $sqlEspecie = "SELECT Nombre FROM Especie WHERE EspecieID = ?";
+                $stmtEspecie = $this->pdo->prepare($sqlEspecie);
+                $stmtEspecie->execute([intval($especie)]);
+                $resultadoEspecie = $stmtEspecie->fetch(PDO::FETCH_ASSOC);
+                
+                if ($resultadoEspecie) {
+                    $nombreEspecie = $resultadoEspecie['Nombre'];
+                    error_log("Especie convertida: ID $especie -> Nombre '$nombreEspecie'");
+                } else {
+                    throw new Exception("La especie seleccionada no es valida");
+                }
+            } else {
+                $nombreEspecie = trim($especie);
+                error_log("Especie ya es nombre: '$nombreEspecie'");
+            }
+
+            // Validar y convertir condiciones a cadena
+            $condicionesStr = null;
+            if (is_array($condiciones)) {
+                $condicionesValidas = array_filter($condiciones, function($c) {
+                    return is_numeric($c) && intval($c) > 0;
+                });
+                $condicionesStr = !empty($condicionesValidas) ? implode(",", $condicionesValidas) : null;
+            } elseif (is_string($condiciones) && preg_match('/^\d+(,\d+)*$/', $condiciones)) {
+                $condicionesStr = $condiciones;
+            }
+            error_log("Condiciones procesadas: " . ($condicionesStr ?? "NINGUNA"));
+
+            // NUEVA ESTRATEGIA: Primero registrar SIN foto usando el SP, luego agregar la foto
+            error_log("=== PASO 1: Registrando mascota sin foto ===");
+            
+            $sql = "EXEC RegistrarMascota @Nombre = ?, @Especie = ?, @Peso = ?, @Edad = ?, @CedulaCliente = ?, @RazaID = ?, @Genero = ?, @Foto = NULL, @Condiciones = ?";
+            $stmt = $this->pdo->prepare($sql);
+            
+            $params = [
+                trim($nombre),
+                $nombreEspecie,
+                floatval($peso),
+                strval($edad),
+                trim($cedulaCliente),
+                intval($razaID),
+                trim($genero),
+                $condicionesStr
+            ];
+
+            error_log("SQL: $sql");
+            error_log("Parámetros:");
+            foreach ($params as $i => $param) {
+                error_log("  Param $i: " . var_export($param, true));
+            }
+
+            $resultado = $stmt->execute($params);
+            
+            if (!$resultado) {
+                $errorInfo = $stmt->errorInfo();
+                error_log("Error info: " . print_r($errorInfo, true));
+                throw new Exception("Error al registrar la mascota: " . $errorInfo[2]);
+            }
+
+            error_log("=== PASO 1 COMPLETADO: Mascota registrada sin foto ===");
+
+            // PASO 2: Si hay foto, agregarla por separado
+            if ($foto !== null && strlen($foto) > 0) {
+                error_log("=== PASO 2: Agregando foto ===");
+                
+                try {
+                    // Obtener el ID de la mascota que acabamos de crear
+                    $sqlGetID = "SELECT TOP 1 IDMascota FROM Mascota WHERE CedulaCliente = ? AND Nombre = ? ORDER BY IDMascota DESC";
+                    $stmtGetID = $this->pdo->prepare($sqlGetID);
+                    $stmtGetID->execute([trim($cedulaCliente), trim($nombre)]);
+                    $mascotaID = $stmtGetID->fetchColumn();
+                    
+                    if (!$mascotaID) {
+                        error_log("ERROR: No se pudo obtener el ID de la mascota");
+                        throw new Exception("No se pudo obtener el ID de la mascota registrada");
+                    }
+                    
+                    error_log("ID de mascota obtenido: $mascotaID");
+                    
+                    // Intentar actualizar la foto con diferentes métodos
+                    $fotoGuardada = false;
+                    
+                    // MÉTODO 1: UPDATE directo con datos binarios
+                    try {
+                        error_log("Intentando MÉTODO 1: UPDATE directo");
+                        $sqlUpdateFoto = "UPDATE Mascota SET Foto = ? WHERE IDMascota = ?";
+                        $stmtUpdateFoto = $this->pdo->prepare($sqlUpdateFoto);
+                        $resultadoFoto = $stmtUpdateFoto->execute([$foto, $mascotaID]);
+                        
+                        if ($resultadoFoto) {
+                            error_log("✅ MÉTODO 1 EXITOSO: Foto guardada con UPDATE directo");
+                            $fotoGuardada = true;
+                        }
+                    } catch (Exception $e1) {
+                        error_log("❌ MÉTODO 1 FALLÓ: " . $e1->getMessage());
+                    }
+                    
+                    // MÉTODO 2: Si el método 1 falló, intentar con archivo temporal
+                    if (!$fotoGuardada) {
+                        try {
+                            error_log("Intentando MÉTODO 2: Archivo temporal");
+                            $sqlUpdateFoto = "UPDATE Mascota SET Foto = ? WHERE IDMascota = ?";
+                            $stmtUpdateFoto = $this->pdo->prepare($sqlUpdateFoto);
+                            
+                            // Crear archivo temporal
+                            $tempFile = tmpfile();
+                            fwrite($tempFile, $foto);
+                            rewind($tempFile);
+                            
+                            $stmtUpdateFoto->bindValue(1, $tempFile, PDO::PARAM_LOB);
+                            $stmtUpdateFoto->bindValue(2, $mascotaID, PDO::PARAM_INT);
+                            
+                            $resultadoFoto = $stmtUpdateFoto->execute();
+                            fclose($tempFile);
+                            
+                            if ($resultadoFoto) {
+                                error_log("✅ MÉTODO 2 EXITOSO: Foto guardada con archivo temporal");
+                                $fotoGuardada = true;
+                            }
+                        } catch (Exception $e2) {
+                            error_log("❌ MÉTODO 2 FALLÓ: " . $e2->getMessage());
+                        }
+                    }
+                    
+                    // MÉTODO 3: Si ambos fallaron, intentar con base64
+                    if (!$fotoGuardada) {
+                        try {
+                            error_log("Intentando MÉTODO 3: Base64");
+                            $fotoBase64 = base64_encode($foto);
+                            $sqlUpdateFoto = "UPDATE Mascota SET Foto = CONVERT(varbinary(max), ?, 1) WHERE IDMascota = ?";
+                            $stmtUpdateFoto = $this->pdo->prepare($sqlUpdateFoto);
+                            $resultadoFoto = $stmtUpdateFoto->execute(['0x' . bin2hex($foto), $mascotaID]);
+                            
+                            if ($resultadoFoto) {
+                                error_log("✅ MÉTODO 3 EXITOSO: Foto guardada con base64");
+                                $fotoGuardada = true;
+                            }
+                        } catch (Exception $e3) {
+                            error_log("❌ MÉTODO 3 FALLÓ: " . $e3->getMessage());
+                        }
+                    }
+                    
+                    if (!$fotoGuardada) {
+                        error_log("⚠️ ADVERTENCIA: Mascota registrada pero no se pudo guardar la foto");
+                        // NO lanzar excepción aquí - la mascota sí se registró
+                    } else {
+                        error_log("=== PASO 2 COMPLETADO: Foto guardada exitosamente ===");
+                    }
+                    
+                } catch (Exception $eFoto) {
+                    error_log("Error al procesar foto: " . $eFoto->getMessage());
+                    // NO lanzar excepción - la mascota ya se registró
+                }
+            }
+
+            error_log("=== MASCOTA REGISTRADA EXITOSAMENTE ===");
+            return true;
+
+        } catch (PDOException $e) {
+            $msg = $e->getMessage();
+            error_log("=== ERROR PDO ===");
+            error_log("Mensaje completo: " . $msg);
+            error_log("Código: " . $e->getCode());
+
+            // Manejo de errores específicos del SP con mensajes amigables
+            if (stripos($msg, 'El cliente no existe') !== false) {
+                throw new Exception("No encontramos un cliente registrado con esa cedula");
+            } elseif (stripos($msg, 'ya tiene 2 mascotas') !== false) {
+                throw new Exception("Este cliente ya tiene 2 mascotas registradas (maximo permitido)");
+            } elseif (stripos($msg, 'peso debe ser mayor') !== false) {
+                throw new Exception("El peso debe ser mayor a cero");
+            } elseif (stripos($msg, 'edad debe ser mayor') !== false) {
+                throw new Exception("La edad debe ser un numero mayor a cero");
+            } elseif (stripos($msg, 'raza proporcionada no es válida') !== false) {
+                throw new Exception("La raza seleccionada no es valida");
+            } elseif (stripos($msg, 'CHECK constraint') !== false && stripos($msg, 'Especie') !== false) {
+                throw new Exception("El tipo de especie no es valido");
+            } elseif (stripos($msg, 'CHECK constraint') !== false && stripos($msg, 'CantidadDeMascotas') !== false) {
+                throw new Exception("Este cliente ya tiene el maximo de mascotas permitidas");
+            } elseif (stripos($msg, 'UPDATE statement conflicted') !== false && stripos($msg, 'CantidadDeMascotas') !== false) {
+                throw new Exception("Este cliente ya tiene el maximo de mascotas permitidas");
+            } else {
+                // Limpiar mensaje genérico
+                $mensajeLimpio = preg_replace('/SQLSTATE\[.*?\]: .*?\] /', '', $msg);
+                $mensajeLimpio = preg_replace('/\[.*?\]/', '', $mensajeLimpio);
+                $mensajeLimpio = preg_replace('/The .* statement conflicted with the CHECK constraint.*/', 'Valor no permitido por las reglas de la base de datos', $mensajeLimpio);
+                $mensajeLimpio = trim($mensajeLimpio);
+                
+                if (empty($mensajeLimpio) || stripos($mensajeLimpio, 'SQLSTATE') !== false) {
+                    $mensajeLimpio = "Error al registrar la mascota";
+                }
+                
+                throw new Exception($mensajeLimpio);
+            }
+        } catch (Exception $e) {
+            error_log("=== ERROR GENERAL ===");
+            error_log("Mensaje: " . $e->getMessage());
+            throw $e;
         }
-
-        return $stmt->execute([$nombre, $especie, $peso, $edad, $cedulaCliente, $razaID, $genero, $fotoBinaria, $condiciones]);
     }
-
-
 
     public function consultarMascota($idMascota = null, $cedula = null) {
-        $sql = "EXEC ConsultarClienteYMascota @Cedula = ?, @IDMascota = ?";
-        $stmt = $this->pdo->prepare($sql);
+        try {
+            error_log("=== CONSULTA MASCOTA ===");
+            error_log("ID Mascota: " . ($idMascota ?? "NULL"));
+            error_log("Cedula: " . ($cedula ?? "NULL"));
 
-        // Ejecutar pasando ambos parámetros (uno puede ser null)
-        $stmt->execute([$cedula, $idMascota]);
+            $sql = "EXEC ConsultarClienteYMascota @Cedula = ?, @IDMascota = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$cedula, $idMascota]);
 
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Obtener TODOS los resultados (no solo uno)
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("Número de resultados obtenidos: " . count($resultados));
 
-        if ($resultado && $resultado['Foto'] !== null) {
-            $resultado['FotoBase64'] = base64_encode($resultado['Foto']);
-            unset($resultado['Foto']);
+            if (empty($resultados)) {
+                error_log("No se encontraron resultados");
+                return null;
+            }
+
+            // Si hay resultados, procesarlos
+            $datosCliente = null;
+            $mascotas = [];
+
+            foreach ($resultados as $fila) {
+                error_log("Procesando fila: " . print_r($fila, true));
+
+                // Extraer datos del cliente (solo una vez)
+                if ($datosCliente === null) {
+                    $datosCliente = [
+                        'CedulaCliente' => $fila['CedulaCliente'],
+                        'NombreCliente' => $fila['NombreCliente'],
+                        'Teléfono' => $fila['Teléfono'],
+                        'Email' => $fila['Email'],
+                        'Dirección' => $fila['Dirección'],
+                        'CantidadDeMascotas' => $fila['CantidadDeMascotas']
+                    ];
+                }
+
+                // Solo procesar si hay mascota (IDMascota no es null)
+                if (!empty($fila['IDMascota'])) {
+                    // Procesar foto si existe
+                    $fotoBase64 = null;
+                    if (!empty($fila['Foto'])) {
+                        $fotoBase64 = base64_encode($fila['Foto']);
+                    }
+
+                    $mascota = [
+                        'IDMascota' => $fila['IDMascota'],
+                        'NombreMascota' => $fila['NombreMascota'],
+                        'Especie' => $fila['Especie'],
+                        'RazaMascota' => $fila['RazaMascota'],
+                        'Peso' => $fila['Peso'],
+                        'Edad' => $fila['Edad'],
+                        'Genero' => $fila['Genero'],
+                        'FechaRegistro' => $fila['FechaRegistro'],
+                        'CondicionesMedicas' => $fila['CondicionesMedicas'] ?? 'Sin condiciones médicas',
+                        'FotoBase64' => $fotoBase64
+                    ];
+
+                    $mascotas[] = $mascota;
+                }
+            }
+
+            // Estructurar respuesta final
+            $respuesta = [
+                'cliente' => $datosCliente,
+                'mascotas' => $mascotas,
+                'totalMascotas' => count($mascotas)
+            ];
+
+            error_log("Respuesta estructurada: " . print_r($respuesta, true));
+            return $respuesta;
+
+        } catch (PDOException $e) {
+            error_log("Error al consultar mascota: " . $e->getMessage());
+            throw new Exception("Error al consultar mascota: " . $e->getMessage());
         }
-
-        return $resultado;
     }
 
-    public function listarRazas() {
-        $sql = "SELECT RazaID, Nombre FROM Raza ORDER BY Nombre";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function listarRazasPorEspecie($especieID) {
+        try {
+            $sql = "SELECT RazaID, Nombre FROM Raza WHERE EspecieID = ? ORDER BY Nombre";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$especieID]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al listar razas: " . $e->getMessage());
+            throw new Exception("Error al listar razas: " . $e->getMessage());
+        }
     }
 
-    public function listarCondiciones() {
-        $sql = "SELECT CondicionID, Nombre FROM CondicionMedica ORDER BY Nombre";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function listarCondicionesPorEspecie($especieID) {
+        try {
+            $sql = "SELECT CondicionID, Nombre FROM CondicionMedica WHERE EspecieID = ? ORDER BY Nombre";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$especieID]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al listar condiciones: " . $e->getMessage());
+            throw new Exception("Error al listar condiciones: " . $e->getMessage());
+        }
+    }
+
+    public function listarEspecies() {
+        try {
+            $sql = "SELECT EspecieID, Nombre FROM Especie ORDER BY Nombre";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al listar especies: " . $e->getMessage());
+            throw new Exception("Error al listar especies: " . $e->getMessage());
+        }
+    }
+
+    public function obtenerClientePorCedula($cedula) {
+        try {
+            $query = "SELECT * FROM Cliente WHERE Cedula = ?";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute([$cedula]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $resultado ?: null;
+        } catch (PDOException $e) {
+            error_log("Error al obtener cliente: " . $e->getMessage());
+            throw new Exception("Error al obtener cliente: " . $e->getMessage());
+        }
     }
 
 
