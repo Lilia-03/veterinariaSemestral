@@ -109,6 +109,30 @@ try {
                 exit;
             }
 
+            if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['accion']) && $_GET['accion'] === 'listarCondicionesPorEspecie') {
+            $especieID = intval($_GET['especieID']);
+            
+            require_once __DIR__ . '/clases/Mascota.php';
+            $mascota = new Mascota();
+
+            $condiciones = $mascota->obtenerCondicionesPorEspecie($especieID);
+
+            header('Content-Type: application/json');
+            if ($condiciones) {
+                echo json_encode([
+                    'estado' => 'ok',
+                    'condiciones' => $condiciones
+                ]);
+            } else {
+                echo json_encode([
+                    'estado' => 'error',
+                    'mensaje' => 'No se encontraron condiciones médicas para esta especie.'
+                ]);
+            }
+            exit;
+        }
+
+
             if ($accion === 'consultarMascota') {
                 $idMascota = isset($_GET['id']) ? intval($_GET['id']) : null;
                 $cedula = $_GET['cedula'] ?? null;
@@ -414,36 +438,60 @@ try {
             break;
     }
 
-} catch (PDOException $e) {
-    error_log("PDO Exception: " . $e->getMessage());
-    error_log("PDO Stack trace: " . $e->getTraceAsString());
-    
-    http_response_code(500);
-    $mensajeCompleto = $e->getMessage();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $accion = $_POST['accion'] ?? '';
 
-    if (stripos($mensajeCompleto, 'UQ_Cliente_Email') !== false || stripos($mensajeCompleto, 'Email') !== false) {
-        $mensajeLimpio = "El correo electronico ya esta registrado";
-    } elseif (stripos($mensajeCompleto, 'PRIMARY KEY') !== false || stripos($mensajeCompleto, 'Cedula') !== false) {
-        $mensajeLimpio = "La cedula ya esta registrada";
-    } elseif (stripos($mensajeCompleto, 'translating a PHP stream') !== false || stripos($mensajeCompleto, 'UTF-8 to UTF-16') !== false) {
-        $mensajeLimpio = "Error al procesar la imagen. Intente con una imagen diferente o registre sin imagen";
-    } else {
-        if (stripos($mensajeCompleto, ']') !== false) {
-            $partes = explode("]", $mensajeCompleto);
-            $mensajeLimpio = trim(end($partes));
-        } else {
-            $mensajeLimpio = "Ocurrio un error en la base de datos";
+        if ($accion === 'actualizarMascota') {
+            error_log("=== PROCESANDO ACTUALIZAR MASCOTA ===");
+            try {
+                $resultado = $mascota->actualizarMascota($_POST);
+                if ($resultado) {
+                    echo json_encode(["estado" => "ok", "mensaje" => "Mascota actualizada correctamente"], JSON_UNESCAPED_UNICODE);
+                } else {
+                    throw new Exception("No se pudo actualizar la mascota");
+                }
+            } catch (Exception $e) {
+                error_log("Error en actualizarMascota: " . $e->getMessage());
+                http_response_code(400);
+                echo json_encode(["estado" => "error", "mensaje" => mensajeAmigable($e->getMessage())], JSON_UNESCAPED_UNICODE);
+            }
+            exit;
         }
+            $resultado = $mascota->actualizarMascota($_POST);
+            echo json_encode($resultado);
+            exit;
+        }
+
+    } catch (PDOException $e) {
+        error_log("PDO Exception: " . $e->getMessage());
+        error_log("PDO Stack trace: " . $e->getTraceAsString());
+        
+        http_response_code(500);
+        $mensajeCompleto = $e->getMessage();
+
+        if (stripos($mensajeCompleto, 'UQ_Cliente_Email') !== false || stripos($mensajeCompleto, 'Email') !== false) {
+            $mensajeLimpio = "El correo electronico ya esta registrado";
+        } elseif (stripos($mensajeCompleto, 'PRIMARY KEY') !== false || stripos($mensajeCompleto, 'Cedula') !== false) {
+            $mensajeLimpio = "La cedula ya esta registrada";
+        } elseif (stripos($mensajeCompleto, 'translating a PHP stream') !== false || stripos($mensajeCompleto, 'UTF-8 to UTF-16') !== false) {
+            $mensajeLimpio = "Error al procesar la imagen. Intente con una imagen diferente o registre sin imagen";
+        } else {
+            if (stripos($mensajeCompleto, ']') !== false) {
+                $partes = explode("]", $mensajeCompleto);
+                $mensajeLimpio = trim(end($partes));
+            } else {
+                $mensajeLimpio = "Ocurrio un error en la base de datos";
+            }
+        }
+
+        echo json_encode(["estado" => "error", "mensaje" => mensajeAmigable($mensajeLimpio)], JSON_UNESCAPED_UNICODE);
+    } catch (Exception $e) {
+        error_log("General Exception: " . $e->getMessage());
+        error_log("General Stack trace: " . $e->getTraceAsString());
+        
+        http_response_code(500);
+        echo json_encode(["estado" => "error", "mensaje" => mensajeAmigable($e->getMessage())], JSON_UNESCAPED_UNICODE);
     }
 
-    echo json_encode(["estado" => "error", "mensaje" => mensajeAmigable($mensajeLimpio)], JSON_UNESCAPED_UNICODE);
-} catch (Exception $e) {
-    error_log("General Exception: " . $e->getMessage());
-    error_log("General Stack trace: " . $e->getTraceAsString());
-    
-    http_response_code(500);
-    echo json_encode(["estado" => "error", "mensaje" => mensajeAmigable($e->getMessage())], JSON_UNESCAPED_UNICODE);
-}
-
-error_log("=== DEBUG CONTROLLER END ===");
-?>
+    error_log("=== DEBUG CONTROLLER END ===");
+    ?>

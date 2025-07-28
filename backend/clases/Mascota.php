@@ -121,6 +121,33 @@ class Mascota {
         return $tamano <= $maxTamano;
     }
 
+    // Método para actualizar los datos de una mascota
+    public function actualizarMascota($datos) {
+        $idMascota = $datos['idMascota'] ?? null;
+        $peso = $datos['peso'] ?? null;
+        $edad = $datos['edad'] ?? null;
+        $condiciones = $datos['condiciones'] ?? '';
+
+        return $this->conexion->actualizarMascota($idMascota, $peso, $edad, $condiciones);
+    }
+
+    
+    // Método para obtener condiciones médicas desde SQL
+    public static function obtenerCondicionesMedicasPorEspecie($especieID)
+    {
+        $especieID = SanitizarEntrada::validarEntero($especieID);
+        if ($especieID <= 0) {
+            throw new Exception("ID de especie inválido");
+        }
+        return Conexion::obtenerCondicionesMedicasPorEspecie($especieID);
+    }   
+
+
+    // Método para obtener todas las condiciones médicas
+    public static function obtenerCondicionesMedicas() {
+        return Conexion::obtenerCondicionesMedicasDesdeSQL();
+    }
+
     // Getters
     public function getNombre() { return $this->nombre; }
     public function getEspecie() { return $this->especie; }

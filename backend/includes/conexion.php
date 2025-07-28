@@ -550,6 +550,40 @@ public function crearUsuario($datos, $usuarioCreadorId = null) {
         }
     }
 
+    public function actualizarMascota($idMascota, $peso, $edad, $condiciones) {
+        try {
+            $stmt = $this->conn->prepare("EXEC ActualizarMascota @IDMascota = ?, @NuevoPeso = ?, @NuevaEdad = ?, @Condiciones = ?");
+            $stmt->bindParam(1, $idMascota, PDO::PARAM_INT);
+            $stmt->bindParam(2, $peso);
+            $stmt->bindParam(3, $edad);
+            $stmt->bindParam(4, $condiciones);
+            $stmt->execute();
+
+            return ['success' => true, 'message' => 'Mascota actualizada correctamente'];
+        } catch (PDOException $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+     public static function obtenerCondicionesMedicasDesdeSQL() {
+        $conn = self::conectar();
+
+        $sql = "SELECT CondicionID, NombreCondicion FROM CondicionesMedicas"; // ajusta los nombres
+        $stmt = sqlsrv_query($conn, $sql);
+
+        $condiciones = [];
+
+            if ($stmt) {
+                while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                    $condiciones[] = $row;
+                }
+            } else {
+                die(print_r(sqlsrv_errors(), true));
+            }
+
+            return $condiciones;
+        }
+
     public function listarRazasPorEspecie($especieID) {
         try {
             $sql = "SELECT RazaID, Nombre FROM Raza WHERE EspecieID = ? ORDER BY Nombre";
@@ -598,6 +632,21 @@ public function crearUsuario($datos, $usuarioCreadorId = null) {
             throw new Exception("Error al obtener cliente: " . $e->getMessage());
         }
     }
+
+    public function obtenerCondicionesPorEspecie($especieID) {
+        $sql = "SELECT id, descripcion FROM condiciones_medicas WHERE especie_id = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $especieID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $condiciones = [];
+        while ($row = $result->fetch_assoc()) {
+            $condiciones[] = $row;
+        }
+        return $condiciones;
+    }
+
 
 
  ///////////////////////////////////////////////////////////////////////
