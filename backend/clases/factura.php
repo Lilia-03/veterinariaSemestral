@@ -339,10 +339,7 @@ private function generarClavesFallback($usuarioId) {
         return false;
     }
 }
-
-
-        
-
+ 
     //Generar la firma digital de la factura
     private function generarFirmaDigital($usuarioId) {
     try {
@@ -572,8 +569,6 @@ private function generarClavesFallback($usuarioId) {
     }
     }
 
-
-
     // Método para obtener información de la firma
     public function obtenerInfoFirma($firmaBase64) {
         try {
@@ -749,7 +744,7 @@ private function generarClavesFallback($usuarioId) {
     } catch (PDOException $e) {
         throw new Exception("Error al obtener detalles de factura: " . $e->getMessage());
     }
-}
+    }
 
     public function getIdFactura() {
         return $this->idFactura;
@@ -758,5 +753,103 @@ private function generarClavesFallback($usuarioId) {
     public function setIdFactura($id) {
         $this->idFactura = $id;
     }
+
+    //METODOS PARA OBTENER HISTORIAL DE FACTURAS
+    
+ //1. Obtener historial de facturas con filtros
+ 
+public function obtenerHistorialFacturas($usuarioId = null, $fechaInicio = null, $fechaFin = null, $limit = 50, $offset = 0) {
+    try {
+        $sql = "EXEC ObtenerHistorialFacturas ?, ?, ?, ?, ?";
+        $stmt = $this->conexion->getPDO()->prepare($sql);
+        $stmt->execute([$usuarioId, $fechaInicio, $fechaFin, $limit, $offset]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error obteniendo historial facturas: " . $e->getMessage());
+        return [];
+    }
+}
+
+//2. Buscar facturas por diferentes criterios
+
+public function buscarFacturas($termino = '', $tipoBusqueda = 'TODOS', $fechaInicio = null, $fechaFin = null, $estadoFactura = 'TODOS') {
+    try {
+        $sql = "EXEC BuscarFacturas ?, ?, ?, ?, ?";
+        $stmt = $this->conexion->getPDO()->prepare($sql);
+        $stmt->execute([$termino, $tipoBusqueda, $fechaInicio, $fechaFin, $estadoFactura]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error buscando facturas: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * 3. Obtener detalles completos de una factura
+ */
+public function obtenerDetallesCompletos($idFactura) {
+    try {
+        $sql = "EXEC ObtenerDetallesFacturaCompletos ?";
+        $stmt = $this->conexion->getPDO()->prepare($sql);
+        $stmt->execute([$idFactura]);
+        
+        // Obtener información de la factura (primer conjunto de resultados)
+        $factura = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$factura) {
+            return null;
+        }
+        
+        // Obtener items de la factura (segundo conjunto de resultados)
+        $stmt->nextRowset();
+        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return [
+            'factura' => $factura,
+            'items' => $items
+        ];
+        
+    } catch (Exception $e) {
+        error_log("Error obteniendo detalles completos: " . $e->getMessage());
+        throw new Exception("Error al obtener detalles completos de la factura");
+    }
+}
+
+/**
+ * 4. Obtener facturas por usuario específico
+ */
+public function obtenerFacturasPorUsuario($usuarioId, $limit = 20) {
+    try {
+        $sql = "EXEC ObtenerFacturasPorUsuario ?, ?";
+        $stmt = $this->conexion->getPDO()->prepare($sql);
+        $stmt->execute([$usuarioId, $limit]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error obteniendo facturas por usuario: " . $e->getMessage());
+        return [];
+    }
+}
+
+//verifica si el usuario tiene acceso a las facturas
+/**
+ * Verificar acceso a facturas
+ */
+public function verificarAccesoFactura($idFactura, $usuarioId) {
+    try {
+        $sql = "EXEC VerificarAccesoFactura ?, ?";
+        $stmt = $this->conexion->getPDO()->prepare($sql);
+        $stmt->execute([$idFactura, $usuarioId]);
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $resultado && $resultado['TieneAcceso'] == 1;
+        
+    } catch (Exception $e) {
+        error_log("Error verificando acceso a factura: " . $e->getMessage());
+        return false;
+    }
+}
 }
 ?>

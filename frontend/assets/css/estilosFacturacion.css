@@ -101,7 +101,50 @@
             font-size: 1.2rem;
             margin-bottom: 40px;
         }
-        
+
+        /* HEADER SECTION */
+    .header-section {
+        background: linear-gradient(135deg, var(--clinipet-blue) 0%, #0284c7 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px 15px 0 0;
+        margin: -40px -40px 30px -40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 0%, rgba(254, 162, 64, 0.1) 50%, transparent 100%);
+        animation: shimmer 3s ease-in-out infinite;
+    }
+
+    .header-section h1 {
+        color: white !important;
+        margin: 0;
+        font-weight: 700;
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        font-size: 2.5rem;
+    }
+
+    .header-section p {
+        color: rgba(255, 255, 255, 0.9) !important;
+        margin: 0;
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    
+            
         /* TARJETAS DE SECCIÓN */
         .card {
             border: none;

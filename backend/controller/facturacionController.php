@@ -154,6 +154,124 @@ try {
                     ]);
                 }
                 
+            } elseif ($accion === 'obtenerHistorial') {
+                if (!isset($_SESSION['usuario_id'])) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
+                    exit;
+                }
+                
+                $fechaInicio = $_GET['fechaInicio'] ?? null;
+                $fechaFin = $_GET['fechaFin'] ?? null;
+                $limit = $_GET['limit'] ?? 50;
+                $offset = $_GET['offset'] ?? 0;
+                
+                // Solo administradores y operadores pueden ver todas las facturas
+                $usuarioFiltro = null;
+                if ($_SESSION['rol_id'] == 3) { // Cliente
+                    $usuarioFiltro = $_SESSION['usuario_id'];
+                }
+                
+                $historial = $factura->obtenerHistorialFacturas($usuarioFiltro, $fechaInicio, $fechaFin, $limit, $offset);
+                
+                echo json_encode([
+                    "estado" => "ok", 
+                    "historial" => $historial,
+                    "total" => count($historial),
+                    "usuario" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario']
+                ]);
+                
+            } elseif ($accion === 'buscarFacturas') {
+                if (!isset($_SESSION['usuario_id'])) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
+                    exit;
+                }
+                
+                $termino = $_GET['termino'] ?? '';
+                $tipoBusqueda = $_GET['tipo'] ?? 'TODOS';
+                $fechaInicio = $_GET['fechaInicio'] ?? null;
+                $fechaFin = $_GET['fechaFin'] ?? null;
+                $estadoFactura = $_GET['estado'] ?? 'TODOS';
+                
+                $resultados = $factura->buscarFacturas($termino, $tipoBusqueda, $fechaInicio, $fechaFin, $estadoFactura);
+                
+                // Filtrar resultados para clientes (solo sus facturas)
+                if ($_SESSION['rol_id'] == 3) {
+                    $resultados = array_filter($resultados, function($fact) {
+                        return $fact['UsuarioFirma'] == $_SESSION['usuario_id'];
+                    });
+                    $resultados = array_values($resultados); // Reindexar
+                }
+                
+                echo json_encode([
+                    "estado" => "ok", 
+                    "resultados" => $resultados,
+                    "total" => count($resultados),
+                    "termino" => $termino,
+                    "tipo" => $tipoBusqueda
+                ]);
+                
+            } elseif ($accion === 'verDetalleCompleto') {
+                $idFactura = $_GET['id'] ?? '';
+                
+                if (empty($idFactura)) {
+                    echo json_encode(["estado" => "error", "mensaje" => "ID de factura requerido"]);
+                    exit;
+                }
+                
+                if (!isset($_SESSION['usuario_id'])) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
+                    exit;
+                }
+                
+                // Verificar permisos de acceso
+                $tieneAcceso = $factura->verificarAccesoFactura($idFactura, $_SESSION['usuario_id']);
+                
+                if (!$tieneAcceso) {
+                    echo json_encode(["estado" => "error", "mensaje" => "No tiene permisos para ver esta factura"]);
+                    exit;
+                }
+                
+                $detalles = $factura->obtenerDetallesCompletos($idFactura);
+                
+                // Preparar información de firma para el frontend
+                if (isset($detalles['factura']['FirmaDigital']) && $detalles['factura']['FirmaDigital']) {
+                    $detalles['factura']['TieneFirmaDigital'] = true;
+                    
+                    // Verificar firma si es necesario
+                    $firmaValida = $factura->verificarFirmaDigital($detalles['factura']['FirmaDigital']);
+                    $detalles['factura']['FirmaValida'] = $firmaValida;
+                    
+                    // No enviar la firma binaria al frontend
+                    unset($detalles['factura']['FirmaDigital']);
+                } else {
+                    $detalles['factura']['TieneFirmaDigital'] = false;
+                    $detalles['factura']['FirmaValida'] = false;
+                }
+                
+                echo json_encode([
+                    "estado" => "ok", 
+                    "factura" => $detalles['factura'],
+                    "items" => $detalles['items'],
+                    "usuario" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario']
+                ]);
+                
+            } elseif ($accion === 'misFacturas') {
+                if (!isset($_SESSION['usuario_id'])) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
+                    exit;
+                }
+                
+                $limit = $_GET['limit'] ?? 20;
+                
+                $misFacturas = $factura->obtenerFacturasPorUsuario($_SESSION['usuario_id'], $limit);
+                
+                echo json_encode([
+                    "estado" => "ok", 
+                    "facturas" => $misFacturas,
+                    "total" => count($misFacturas),
+                    "usuario" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario']
+                ]);
+                
             } else {
                 http_response_code(400);
                 echo json_encode(["estado" => "error", "mensaje" => "Acción GET no válida"]);
@@ -183,10 +301,12 @@ try {
                     exit;
                 }
 
+                
                 $factura->setDatos($cedulaCliente, $idMascota);
                 
                 // Generar factura con firma digital
                 $idFactura = $factura->generar($_SESSION['usuario_id'], $firmaPersonalizada);
+                
                 
                 echo json_encode([
                     "estado" => "ok", 
@@ -196,6 +316,7 @@ try {
                     "fechaFirma" => date('Y-m-d H:i:s'),
                     "algoritmo" => "RSA-SHA256"
                 ]);
+                
                 
             } elseif ($accion === 'agregarProducto') {
                 $idFactura = $input['idFactura'] ?? '';
