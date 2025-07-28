@@ -10,130 +10,81 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS personalizado -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="../css/qr.css">
 </head>
 <body>
     <!-- Header -->
-  <header class="header-container">
-    <div class="header-content">
-      <div class="logo">
-        <i class="fas fa-paw"></i>
-        Clini<span style="color: #ffa500;">Pet</span>
-      </div>
-      
-      <div class="user-info">
-        <div class="admin-badge">
-          <i class="fas fa-user-shield"></i>
-          <span>Administrador</span>
+    <header class="header-container">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-paw"></i>
+                Clini<span style="color: #ffa500;">Pet</span>
+            </div>
+            
+            <div class="user-info">
+                <div class="admin-badge">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Generador QR</span>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="username">Sistema de Códigos QR</div>
+                    <div class="role">Identificación de Mascotas</div>
+                </div>
+                
+                <a href="javascript:void(0);" onclick="window.history.back();" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Regresar
+                </a>
+            </div>
         </div>
-        
-        <div class="user-profile">
-          <div class="username">Administrador Principal</div>
-          <div class="role">Administrador</div>
-        </div>
-        
-        <a href="javascript:void(0);" onclick="window.history.back();" class="back-btn">
-          <i class="fas fa-arrow-left"></i>
-          Regresar
-        </a>
-      </div>
+    </header>
+
+    <!-- Section Header -->
+    <div class="section-header">
+        <h1><i class="fas fa-qrcode me-3"></i>Generador de Códigos QR</h1>
+        <p>Busca una mascota y genera su código QR para identificación rápida</p>
     </div>
-  </header>
 
     <!-- Main Content -->
-    <div class="container">
-        <div class="main-container">
-            <div class="container-fluid p-4">
-                <!-- Título Principal -->
-                <div class="text-center mb-4">
-                    <div class="icon-badge mx-auto mb-3">
-                        <i class="fas fa-qrcode fa-2x"></i>
-                    </div>
-                    <h2 class="display-6 fw-bold text-primary mb-2">Generador de Códigos QR</h2>
-                    <p class="lead text-muted">Busca una mascota y genera su código QR para identificación rápida</p>
-                </div>
-
-                <!-- Formulario de Búsqueda -->
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="card search-card">
-                            <div class="card-body p-4">
-                                <h5 class="card-title mb-3">
-                                    <i class="fas fa-search text-primary me-2"></i>
-                                    Buscar Mascota
-                                </h5>
-                                
-                                <form id="searchForm">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label for="searchType" class="form-label fw-semibold">Buscar por:</label>
-                                            <select id="searchType" class="form-select form-control-custom">
-                                                <option value="id">ID de Mascota</option>
-                                                <option value="cedula">Cédula del Cliente</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="searchValue" class="form-label fw-semibold">Valor de búsqueda:</label>
-                                            <input type="text" id="searchValue" class="form-control form-control-custom" 
-                                                   placeholder="Ingrese ID o cédula" required>
-                                        </div>
-                                        <div class="col-12 text-center">
-                                            <button type="submit" class="btn btn-custom">
-                                                <i class="fas fa-search me-2"></i>
-                                                Buscar Mascota
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-
-                                <!-- Loading Spinner -->
-                                <div id="loadingSpinner" class="loading-spinner text-center mt-3">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Buscando...</span>
-                                    </div>
-                                    <p class="mt-2 text-muted">Buscando mascota...</p>
-                                </div>
-                            </div>
+    <div class="main-content">
+        <div class="container-wide">
+            <!-- Formulario de Búsqueda -->
+            <div class="form-card">
+                <h5 class="mb-4">
+                    <i class="fas fa-search text-primary me-2"></i>
+                    Buscar Mascota
+                </h5>
+                
+                <form id="searchForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="searchType" class="form-label">Buscar por:</label>
+                            <select id="searchType" class="form-select">
+                                <option value="id">ID de Mascota</option>
+                                <option value="cedula">Cédula del Cliente</option>
+                            </select>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Resultados y QR -->
-                <div id="resultsContainer" style="display: none;">
-                    <!-- Información de la Mascota -->
-                    <div id="mascotaInfo" class="mascota-info fade-in">
-                        <!-- Se llenará dinámicamente -->
-                    </div>
-
-                    <!-- Display del QR -->
-                    <div class="qr-display fade-in">
-                        <h4 class="mb-3">
-                            <i class="fas fa-qrcode text-primary me-2"></i>
-                            Código QR Generado
-                        </h4>
-                        
-                        <div class="qr-code-container" id="qrContainer">
-                            <canvas id="qrCanvas"></canvas>
+                        <div class="col-md-6">
+                            <label for="searchValue" class="form-label">Valor de búsqueda:</label>
+                            <input type="text" id="searchValue" class="form-control" 
+                                   placeholder="Ingrese ID o cédula" required>
                         </div>
-
-                        <div class="mt-4">
-                            <button id="downloadPDF" class="btn btn-download">
-                                <i class="fas fa-file-pdf me-2"></i>
-                                Descargar PDF
-                            </button>
-                            <button id="downloadPNG" class="btn btn-download">
-                                <i class="fas fa-image me-2"></i>
-                                Descargar PNG
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>
+                                Buscar Mascota
                             </button>
                         </div>
-
-                        <div class="mt-3">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Escanea este código QR para acceder rápidamente a la información de la mascota
-                            </small>
-                        </div>
                     </div>
+                </form>
+
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="loading-spinner text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Buscando...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Buscando mascota...</p>
                 </div>
 
                 <!-- Mensajes de Error -->
@@ -147,15 +98,53 @@
                     <!-- Mensajes dinámicos -->
                 </div>
             </div>
+
+            <!-- Resultados y QR -->
+            <div id="resultsContainer" style="display: none;">
+                <!-- Información de la Mascota -->
+                <div id="mascotaInfo" class="form-card fade-in">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+
+                <!-- Display del QR -->
+                <div class="form-card text-center fade-in">
+                    <h4 class="mb-4" style="color: #035E8D;">
+                        <i class="fas fa-qrcode me-2"></i>
+                        Código QR Generado
+                    </h4>
+                    
+                    <div class="qr-code-container mb-4" style="display: inline-block; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); border: 3px solid #f8f9fa;">
+                        <canvas id="qrCanvas"></canvas>
+                    </div>
+
+                    <div class="mb-3">
+                        <button id="downloadPDF" class="btn btn-success me-2">
+                            <i class="fas fa-file-pdf me-2"></i>
+                            Descargar PDF
+                        </button>
+                        <button id="downloadPNG" class="btn btn-success">
+                            <i class="fas fa-image me-2"></i>
+                            Descargar PNG
+                        </button>
+                    </div>
+
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Escanea este código QR para acceder rápidamente a la información de la mascota
+                        </small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <p>© 2025 Clinipet. Todos los derechos reservados. | Cuidando a tus mascotas con amor y profesionalismo</p>
-    </div>
-  </footer>
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2025 Clinipet. Todos los derechos reservados. | Cuidando a tus mascotas con amor y profesionalismo</p>
+        </div>
+    </footer>
 
     <!-- QR Code Generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
@@ -164,6 +153,6 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- JavaScript personalizado -->
-    <script src="assets/js/generarQR.js"></script>
+    <script src="../js/generarQR.js"></script>
 </body>
 </html>
