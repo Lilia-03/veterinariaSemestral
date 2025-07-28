@@ -833,6 +833,48 @@ public function obtenerFacturasPorUsuario($usuarioId, $limit = 20) {
     }
 }
 
+public function obtenerFacturasPorCedula($cedulaCliente, $limit = 20) {
+    try {
+        $sql = "
+            SELECT DISTINCT
+                f.IDFactura,
+                f.CedulaCliente,
+                c.Nombre AS NombreCliente,
+                f.IDMascota,
+                m.Nombre AS NombreMascota,
+                f.Fecha AS FechaFactura,
+                f.subtotalf,
+                f.ITBMSFactura,
+                f.totalFactura,
+                f.UsuarioFirma,
+                u.NombreCompleto AS NombreFirmante,
+                f.FechaFirma,
+                CASE WHEN f.FirmaDigital IS NOT NULL THEN 1 ELSE 0 END AS TieneFirmaDigital,
+                COUNT(v.IDVenta) AS TotalItems
+            FROM Factura f
+            INNER JOIN Cliente c ON f.CedulaCliente = c.Cedula
+            LEFT JOIN Mascota m ON f.IDMascota = m.IDMascota
+            INNER JOIN Usuarios u ON f.UsuarioFirma = u.UsuarioID
+            LEFT JOIN Venta v ON f.IDFactura = v.IDFactura
+            WHERE f.CedulaCliente = ?
+              AND f.totalFactura IS NOT NULL
+            GROUP BY f.IDFactura, f.CedulaCliente, c.Nombre, f.IDMascota, m.Nombre, 
+                     f.Fecha, f.subtotalf, f.ITBMSFactura, f.totalFactura, 
+                     f.UsuarioFirma, u.NombreCompleto, f.FechaFirma, f.FirmaDigital
+            ORDER BY f.Fecha DESC
+            LIMIT ?
+        ";
+        
+        $stmt = $this->conexion->getPDO()->prepare($sql);
+        $stmt->execute([$cedulaCliente, $limit]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error obteniendo facturas por cédula: " . $e->getMessage());
+        return [];
+    }
+}
+
 //verifica si el usuario tiene acceso a las facturas
 /**
  * Verificar acceso a facturas

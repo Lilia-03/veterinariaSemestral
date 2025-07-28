@@ -260,18 +260,32 @@ try {
                     echo json_encode(["estado" => "error", "mensaje" => "Usuario no autenticado"]);
                     exit;
                 }
-                
-                $limit = $_GET['limit'] ?? 20;
-                
-                $misFacturas = $factura->obtenerFacturasPorUsuario($_SESSION['usuario_id'], $limit);
-                
-                echo json_encode([
-                    "estado" => "ok", 
-                    "facturas" => $misFacturas,
-                    "total" => count($misFacturas),
-                    "usuario" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario']
-                ]);
-                
+                // Verificar que sea un cliente
+                if ($_SESSION['rol_id'] != 3) {
+                    echo json_encode(["estado" => "error", "mensaje" => "Acceso denegado"]);
+                    exit;
+                }
+
+                $limit = $_GET['limit'] ?? 50;
+                $usuarioId = $_SESSION['usuario_id']; // Usar el ID del usuario logueado
+
+                try {
+                    // USAR EL MÉTODO EXISTENTE obtenerFacturasPorUsuario
+                    $misFacturas = $factura->obtenerFacturasPorUsuario($usuarioId, $limit);
+
+                    echo json_encode([
+                        "estado" => "ok", 
+                        "facturas" => $misFacturas,
+                        "total" => count($misFacturas),
+                        "usuario" => $_SESSION['nombre_completo'] ?? $_SESSION['nombre_usuario'],
+                        "usuarioId" => $usuarioId
+                    ]);
+                } catch (Exception $e) {
+                    echo json_encode([
+                        "estado" => "error", 
+                        "mensaje" => "Error al obtener facturas: " . $e->getMessage()
+                    ]);
+                }
             } else {
                 http_response_code(400);
                 echo json_encode(["estado" => "error", "mensaje" => "Acción GET no válida"]);
